@@ -7,16 +7,13 @@
             </span>
             <ul class="flex flex-wrap items-center mt-3 text-sm font-medium text-gray-500 dark:text-gray-400 sm:mt-0">
                 <li>
-                    <a href="#" class="hover:underline me-4 md:me-6">GitHub</a>
+                    <a href="https://github.com/yy4382/tts-importer" class="hover:underline me-4 md:me-6">GitHub</a>
                 </li>
                 <li>
                     <a href="#" class="hover:underline me-4 md:me-6">Privacy Policy</a>
                 </li>
                 <li>
-                    <a href="#" class="hover:underline me-4 md:me-6">Licensing</a>
-                </li>
-                <li>
-                    <a href="#" class="hover:underline">Contact</a>
+                    <a href="https://github.com/yy4382/tts-importer/blob/main/LICENSE" class="hover:underline me-4 md:me-6">License</a>
                 </li>
             </ul>
         </div>
