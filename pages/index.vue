@@ -1,7 +1,7 @@
 <template>
     <NavBar />
     <div class="mb-auto py-4">
-        <Placement>
+        <Placement class="mb-4">
             <h2 class="text-4xl font-extrabold dark:text-white mb-4">输入 key：</h2>
             <div class="mb-5">
                 <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">API Region</label>
@@ -19,7 +19,7 @@
             <button type="submit" @click="getVoiceList" :disabled="!apiKey || !apiRegion"
                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:bg-gray-500 disabled:hover:bg-gray-500">Submit</button>
         </Placement>
-        <Placement>
+        <Placement class="mb-4">
             <h2 class="text-4xl font-extrabold dark:text-white mb-4">选择声音：</h2>
             <div class="mb-8">
                 <label for="voiceSelect" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">声音
