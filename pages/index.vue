@@ -2,29 +2,28 @@
     <NavBar />
     <div class="mb-auto py-4">
         <Placement class="mb-4">
-            <h2 class="text-4xl font-extrabold dark:text-white mb-4">输入 key：</h2>
+            <h2 class="text-4xl font-extrabold dark:text-white mb-4">输入 key</h2>
             <div class="mb-5">
-                <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">API Region</label>
+                <label for="email" class="label-general">API Region</label>
                 <input type="text" id="email" v-model="api.region"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="eastasia" required>
             </div>
             <div class="mb-5">
-                <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your API
+                <label for="password" class="label-general">Your API
                     Key</label>
                 <input type="password" id="password" v-model="api.key"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     required>
             </div>
-            <button type="submit" @click="getVoiceList" :disabled="!api.key || !api.region"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:bg-gray-500 disabled:hover:bg-gray-500">Submit</button>
+            <Button @click="getVoiceList" :disabled="!api.key || !api.region">获取声音列表</button>
         </Placement>
         <Placement v-if="voiceList" class="mb-4">
-            <h2 class="text-4xl font-extrabold dark:text-white mb-4">选择声音：</h2>
+            <h2 class="text-4xl font-extrabold dark:text-white mb-4">语音选择</h2>
             <div class="mb-8">
-                <label for="voiceSelect" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">声音
+                <label for="voiceSelect" class="label-general">声音
                     (voice)：</label>
-                <select id="voiceSelect" v-model="selAttr.voice"
+                <select id="voiceSelect" v-model="vconfig.voice"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option v-for="item in voiceList" :key="item.ShortName" :value="item">
                         {{ item.LocalName + " " + item.ShortName }}
@@ -33,27 +32,27 @@
             </div>
             <div class="mb-8">
                 <div class="flex items-center mb-4">
-                    <input type="checkbox" id="useVoiceStyle" v-model="selAttr.useStyle" :disabled="!hasStyle"
+                    <input type="checkbox" id="useVoiceStyle" v-model="vconfig.useStyle" :disabled="!hasStyle"
                         class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
                     <label for="useVoiceStyle" v-if="hasStyle"
                         class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">使用声音风格</label>
                     <label for="useVoiceStyle" v-else
                         class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">使用声音风格（禁用，该声音没有风格）</label>
                 </div>
-                <div v-if="selAttr.useStyle && hasStyle">
-                    <label style="align-items: self-start;" for="voiceStyleSelect"
-                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">声音风格 (voiceStyle)：</label>
-                    <select id="voiceStyleSelect" v-model="selAttr.style"
+                <div v-if="vconfig.useStyle && hasStyle">
+                    <label style="align-items: self-start;" for="voiceStyleSelect" class="label-general">声音风格
+                        (voiceStyle)：</label>
+                    <select id="voiceStyleSelect" v-model="vconfig.style"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                        <option v-for="style in selAttr.voice?.VoiceStyleNames" :key="style" :value="style">{{ style }}
+                        <option v-for="style in vconfig.voice?.VoiceStyleNames" :key="style" :value="style">{{ style }}
                         </option>
                     </select>
                 </div>
             </div>
             <div class="mb-8">
-                <label for="rateRange" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">语速
+                <label for="rateRange" class="label-general">语速
                     (rate)：</label>
-                <select name="sudo" id="rateRange" v-model="selAttr.rate"
+                <select name="sudo" id="rateRange" v-model="vconfig.rate"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option value="default">默认 (default)</option>
                     <option value="x-slow">极低 (x-slow)</option>
@@ -64,9 +63,8 @@
                 </select>
             </div>
             <div>
-                <label for="pitchRange"
-                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">音调(pitch)：</label>
-                <select name="sudo" id="pitchRange" v-model="selAttr.pitch"
+                <label for="pitchRange" class="label-general">音调(pitch)：</label>
+                <select name="sudo" id="pitchRange" v-model="vconfig.pitch"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     <option value="default">默认 (default)</option>
                     <option value="x-low">极低 (x-low)</option>
@@ -99,32 +97,22 @@
         <Placement v-if="voiceList && vconfig.voice">
             <h2 class="text-4xl font-extrabold dark:text-white mb-4">导出</h2>
             <div class="mb-4">
-                <label for="legadoButton" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">阅读
+                <label for="legadoButton" class="label-general">阅读
                     (legado)：</label>
                 <div id="legadoButton" class="inline-flex rounded-md shadow-sm" role="group">
-                    <button type="button" @click="copyLegadoConfig"
-                        class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white">
-                        复制配置
-                    </button>
-                    <button type="button" @click="copyLegadoLink"
-                        class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white">
-                        复制网络导入链接
-                    </button>
-                    <button type="button" @click="import2Legado"
-                        class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white">
-                        一键导入
-                    </button>
+                    <Button @click="copyLegadoConfig" class="mr-1"> 复制配置 </Button>
+                    <Button @click="copyLegadoLink" class="mr-1"> 复制网络导入链接 </Button>
+                    <Button @click="import2Legado" class="mr-1"> 一键导入 </Button>
                 </div>
             </div>
             <div class="mb-4">
-                <label for="AiyueButton" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">爱阅记：</label>
+                <label for="AiyueButton" class="label-general">爱阅记：</label>
                 <div id="AiyueButton">
-                    <Button @click="copyAiyueConfig">复制配置</button>
+                    <Button @click="copyAiyueConfig">复制配置</Button>
                 </div>
             </div>
             <div>
-                <label for="souceReaderButton"
-                    class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">源阅读：</label>
+                <label for="souceReaderButton" class="label-general">源阅读：</label>
                 <div id="souceReaderButton">
                     <Button @click="copySourceReaderLink">复制网络导入链接</Button>
                 </div>
@@ -135,29 +123,40 @@
 </template>
 
 <script setup lang="ts">
-import { defineComponent, ref, watch, type Ref } from 'vue'
-const api = ref({ key: '', region: 'eastasia' })
-const voiceList = ref()
-interface Voice {
+import genAiyue from '~/utils/genAiyue';
+import genLegado from '~/utils/genLegado';
+
+
+export interface Api {
+    key: string,
+    region: string
+}
+
+export interface VoiceAttr {
     LocalName: string,
     ShortName: string,
     VoiceStyleNames: Array<string> | null
 }
-interface SelAttr {
-    voice: Voice | null,
+export interface VoiceConfig {
+    voice: VoiceAttr | null,
     useStyle: boolean,
     style: string[] | null,
     rate: string,
     pitch: string
 }
-const initAttr: SelAttr = {
+
+const initApi: Api = {
+    key: '',
+    region: 'eastasia'
+}
+
+const initConfig: VoiceConfig = {
     voice: null,
     useStyle: false,
     style: null,
     rate: 'default',
     pitch: 'default'
 }
-const selAttr: Ref<SelAttr> = ref(initAttr)
 
 const api = ref(initApi)
 const voiceList = ref()
@@ -172,16 +171,16 @@ const hasStyle = computed(() =>
     vconfig.value.voice !== null && vconfig.value.voice.VoiceStyleNames !== null
 )
 onMounted(() => {
-    console.log(selAttr.value)
+    console.log(vconfig.value)
     api.value = {
         key: localStorage.getItem('apiKey') || '',
         region: localStorage.getItem('apiRegion') || ''
     }
     if (api.value.key && api.value.region) {
-        try{
-            voiceList.value = JSON.parse(localStorage.getItem('voiceList')||'')
+        try {
+            voiceList.value = JSON.parse(localStorage.getItem('voiceList') || '')
         }
-        catch(err){
+        catch (err) {
             console.log(err)
         }
     }
@@ -194,21 +193,6 @@ watch(voiceList, (newVal) => {
     localStorage.setItem('voiceList', JSON.stringify(newVal))
 }, { deep: true })
 
-/**
- * Generates a random string of the specified length.
- * 
- * @param {number} length - The length of the random string to generate.
- * @returns {string} The randomly generated string.
- */
-function generateRandomString(length: number): string {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-}
 
 /**
  * Retrieves the list of available voices.
@@ -257,50 +241,6 @@ function genSSML(config: VoiceConfig, text: string) {
     console.log(ssml)
     return ssml
 }
-function copyAiyueConfig() {
-    let config = generateAiyueConfig()
-    try {
-        navigator.clipboard.writeText(config);
-    } catch (err) {
-        console.log(err)
-        alert("复制失败")
-    }
-}
-function generateLegadoConfig() {
-    if (!selAttr.value.voice) {
-        alert("请选择声音")
-        return ""
-    }
-    let header = {
-        "Ocp-Apim-Subscription-Key": api.value.key,
-        "Content-Type": "application/ssml+xml",
-        "X-Microsoft-OutputFormat": "audio-16khz-128kbitrate-mono-mp3",
-        "User-Agent": "legado"
-    }
-    let ssml = `<speak version="1.0" xml:lang="zh-CN">` +
-        `<voice name="${selAttr.value.voice.ShortName}">` +
-        `<prosody rate="{{speakSpeed*4}}%" pitch="${selAttr.value.pitch}">` +
-        `${selAttr.value.useStyle ? `<mstts:express-as style="${selAttr.value.style}">` : ""}` +
-        `{{speakText}}` +
-        `${selAttr.value.useStyle ? `</mstts:express-as>` : ""}` +
-        `</prosody>` +
-        `</voice>` +
-        `</speak>`
-    let urlConfig = {
-        method: "POST",
-        body: ssml
-    }
-    let config = {
-        "concurrentRate": "0",
-        "contentType": "audio/mpeg",
-        "header": JSON.stringify(header),
-        "id": parseInt(Date.now() + "", 10),
-        "loginCheckJs": "",
-        "loginUi": "",
-        "loginUrl": "",
-        "name": `Azure ${selAttr.value.voice.LocalName}${selAttr.value.style || ""}${selAttr.value.pitch === "default" ? "" : " - " + selAttr.value.pitch}`,
-        "url": `https://${api.value.region}.tts.speech.microsoft.com/cognitiveservices/v1,${JSON.stringify(urlConfig)}`
-    }
 
 async function getTestAudio() {
     if (audioPlayer === null || !vconfig.value.voice)
@@ -334,7 +274,7 @@ async function getTestAudio() {
 }
 
 function copyLegadoConfig() {
-    let config = generateLegadoConfig()
+    let config = genLegado(api.value, vconfig.value)
     try {
         navigator.clipboard.writeText(config);
     } catch (err) {
@@ -342,8 +282,9 @@ function copyLegadoConfig() {
         alert("复制失败")
     }
 }
+
 function copyLegadoLink() {
-    let config = generateLegadoConfig()
+    let config = genLegado(api.value, vconfig.value)
     let link = `${window.location.protocol}//${window.location.host}/api/legado?config=${encodeURIComponent(config)}`
     try {
         navigator.clipboard.writeText(link);
@@ -352,8 +293,28 @@ function copyLegadoLink() {
         alert("复制失败，请手动复制")
     }
 }
+
+function import2Legado() {
+    let config = genLegado(api.value, vconfig.value)
+    let link = `${window.location.protocol}//${window.location.host}/api/legado?config=${encodeURIComponent(config)}`
+    let leagdoLink = `legado://import/httpTTS?src=${encodeURIComponent(link)}`
+    window.open(leagdoLink, "_blank")
+}
+
+
+function copyAiyueConfig() {
+    let config = genAiyue(api.value, vconfig.value)
+    try {
+        navigator.clipboard.writeText(config);
+    } catch (err) {
+        console.log(err)
+        alert("复制失败")
+    }
+}
+
+
 function copySourceReaderLink() {
-    let config = JSON.parse(generateLegadoConfig());
+    let config = JSON.parse(genLegado(api.value, vconfig.value));
     config = [config]
     config = JSON.stringify(config)
     let link = `${window.location.protocol}//${window.location.host}/api/legado?config=${encodeURIComponent(config)}`
@@ -364,10 +325,16 @@ function copySourceReaderLink() {
         alert("复制失败，请手动复制")
     }
 }
-function import2Legado() {
-    let config = generateLegadoConfig()
-    let link = `${window.location.protocol}//${window.location.host}/api/legado?config=${encodeURIComponent(config)}`
-    let leagdoLink = `legado://import/httpTTS?src=${encodeURIComponent(link)}`
-    window.open(leagdoLink, "_blank")
-}
 </script> 
+
+<style scoped lang="scss">
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .label-general {
+        @apply block mb-2 text-sm font-medium text-gray-900 dark:text-white;
+    }
+}
+</style>
