@@ -77,8 +77,27 @@
                 </select>
             </div>
         </Placement>
-        <Placement v-if="voiceList">
-            <h2 class="text-4xl font-extrabold dark:text-white mb-4">导出：</h2>
+        <Placement v-if="voiceList && vconfig.voice" class="mb-4">
+            <h2 class="text-4xl font-extrabold dark:text-white">试听
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" v-model="useTest" class="sr-only peer" @click="useTest = !useTest">
+                    <div
+                        class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
+                    </div>
+                    <span class="ml-3 text-sm font-medium text-gray-900 dark:text-white">{{ useTest ? "隐藏" : "显示" }}</span>
+                </label>
+            </h2>
+            <div v-if="useTest">
+                <textarea id="message" rows="4" v-model="testText"
+                    class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 my-4"
+                    placeholder="试听文字"></textarea>
+                <Button @click="getTestAudio()">试听</Button>
+                <audio controls v-if="audioBlobUrl !== ''" :src="audioBlobUrl" class="mt-8"></audio>
+            </div>
+
+        </Placement>
+        <Placement v-if="voiceList && vconfig.voice">
+            <h2 class="text-4xl font-extrabold dark:text-white mb-4">导出</h2>
             <div class="mb-4">
                 <label for="legadoButton" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">阅读
                     (legado)：</label>
@@ -140,11 +159,18 @@ const initAttr: SelAttr = {
 }
 const selAttr: Ref<SelAttr> = ref(initAttr)
 
-const hasStyle = computed(() => {
-    console.log(selAttr.value.voice)
-    console.log(selAttr.value.voice !== null && 'VoiceStyleNames' in selAttr.value.voice)
-    return selAttr.value.voice !== null && selAttr.value.voice.VoiceStyleNames !== null
-})
+const api = ref(initApi)
+const voiceList = ref()
+const vconfig: Ref<VoiceConfig> = ref(initConfig)
+
+const useTest = ref(false)
+const testText = ref("")
+const audioPlayer = ref(null);
+const audioBlobUrl = ref('');
+
+const hasStyle = computed(() =>
+    vconfig.value.voice !== null && vconfig.value.voice.VoiceStyleNames !== null
+)
 onMounted(() => {
     console.log(selAttr.value)
     api.value = {
@@ -215,64 +241,21 @@ function getVoiceList() {
         console.log("fetch list", err)
     })
 }
-/**
- * Generates the Aiyue configuration.
- * 
- * @returns {string} The Aiyue configuration.
- */
-function generateAiyueConfig(): string {
-    if (!selAttr.value.voice) {
-        alert("请选择声音")
-        return ""
-    }
-    let pitch = selAttr.value.pitch === "default" ? null : selAttr.value.pitch;
-    let ssml = `<speak version="1.0" xml:lang="zh-CN"><voice name="${selAttr.value.voice.ShortName}">${pitch ? `<prosody pitch="${selAttr.value.pitch}">` : ""}${selAttr.value.useStyle ? `<mstts:express-as style="${selAttr.value.style}">` : ""}%@${selAttr.value.useStyle ? `</mstts:express-as>` : ""}${pitch ? `</prosody>` : ""}</voice></speak>`
-    let config = {
-        "loginUrl": "",
-        "maxWordCount": "",
-        "ttsConfigGroup": "Azure",
-        "_ClassName": "JxdAdvCustomTTS",
-        "_TTSConfigID": generateRandomString(32),
-        "httpConfigs":
-        {
-            "useCookies": 1,
-            "headers": {}
-        },
-        "ttsHandles":
-            [
-                {
-                    "processType": 1,
-                    "maxPageCount": 1,
-                    "nextPageForGetMedthod": 1,
-                    "forGetMethod": 0,
-                    "requestByWebView": 0,
-                    "nextPageParams":
-                        {},
-                    "parser":
-                    {
-                        "playData": "ResponseData"
-                    },
-                    "url": `https://${api.value.region}.tts.speech.microsoft.com/cognitiveservices/v1`,
-                    "params":
-                    {
-                        "text": ssml
-                    },
-                    "httpConfigs":
-                    {
-                        "useCookies": 1,
-                        "customFormatParams": "params[text]",
-                        "headers":
-                        {
-                            "Content-Type": "application/ssml+xml",
-                            "X-Microsoft-OutputFormat": "audio-16khz-128kbitrate-mono-mp3",
-                            "ocp-apim-subscription-key": `${api.value.key}`
-                        }
-                    }
-                }
-            ],
-        "_TTSName": `Azure ${selAttr.value.voice.LocalName}${selAttr.value.style || ""}${pitch ? pitch : ""}`,
-    }
-    return JSON.stringify(config)
+function genSSML(config: VoiceConfig, text: string) {
+    if (!vconfig.value.voice)
+        return
+    let pitch = vconfig.value.pitch === "default" ? null : vconfig.value.pitch;
+    let ssml =
+        `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="en-US">` +
+        `<voice name="${vconfig.value.voice.ShortName}">` +
+        `${pitch ? `<prosody pitch="${vconfig.value.pitch}">` : ""}` +
+        `${vconfig.value.useStyle ? `<mstts:express-as style="${vconfig.value.style}">` : ""}` +
+        `${testText.value ? testText.value : "帮忙点个 Star 吧"}` +
+        `${vconfig.value.useStyle ? `</mstts:express-as>` : ""}` +
+        `${pitch ? `</prosody>` : ""}` +
+        `</voice></speak>`
+    console.log(ssml)
+    return ssml
 }
 function copyAiyueConfig() {
     let config = generateAiyueConfig()
@@ -319,9 +302,37 @@ function generateLegadoConfig() {
         "url": `https://${api.value.region}.tts.speech.microsoft.com/cognitiveservices/v1,${JSON.stringify(urlConfig)}`
     }
 
-    return JSON.stringify(config)
+async function getTestAudio() {
+    if (audioPlayer === null || !vconfig.value.voice)
+        return
+    $fetch(`https://${api.value.region}.tts.speech.microsoft.com/cognitiveservices/v1`, {
+        method: 'POST',
+        headers: {
+            'Ocp-Apim-Subscription-Key': api.value.key,
+            'Content-Type': 'application/ssml+xml',
+            'X-Microsoft-OutputFormat': 'audio-24khz-48kbitrate-mono-mp3',
+            'User-Agent': 'TTSForLegado',
+        },
+        body: genSSML(vconfig.value, testText.value),
+        responseType: "blob"
+    }).then(response => {
+        // 创建一个 Blob URL
+        const audioBlob = response;
+        if (audioBlobUrl.value !== '') {
+            URL.revokeObjectURL(audioBlobUrl.value);
+        }
+        audioBlobUrl.value = URL.createObjectURL(audioBlob as Blob);
+        console.log(audioBlobUrl.value)
 
+        // 绑定 Blob URL 到 <audio> 元素并播放
+        if (audioPlayer.value) {
+            (audioPlayer.value as HTMLAudioElement).src = audioBlobUrl.value;
+        }
+    }).catch(err => {
+        console.log("fetch audio", err)
+    })
 }
+
 function copyLegadoConfig() {
     let config = generateLegadoConfig()
     try {
