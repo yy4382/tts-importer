@@ -10,7 +10,7 @@
                     <a href="https://github.com/yy4382/tts-importer" class="hover:underline me-4 md:me-6">GitHub</a>
                 </li>
                 <li>
-                    <a href="#" class="hover:underline me-4 md:me-6">Privacy Policy</a>
+                    <a href="https://github.com/yy4382/tts-importer?tab=readme-ov-file#%E9%9A%90%E7%A7%81%E8%AF%B4%E6%98%8E" class="hover:underline me-4 md:me-6">Privacy Statement</a>
                 </li>
                 <li>
                     <a href="https://github.com/yy4382/tts-importer/blob/main/LICENSE" class="hover:underline me-4 md:me-6">License</a>

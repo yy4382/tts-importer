@@ -129,7 +129,7 @@
     </div>
     <Placement class="mx-auto dark:text-white">
         <p>本站不会储存你的 Key。数据缓存于本地浏览器中。</p>
-        <p>具体请见此<a href="#" class=" text-blue-700 dark:text-blue-400">说明</a>。</p>
+        <p>具体请见此<a href="https://github.com/yy4382/tts-importer?tab=readme-ov-file#%E9%9A%90%E7%A7%81%E8%AF%B4%E6%98%8E" class=" text-blue-700 dark:text-blue-400">说明</a>。</p>
     </Placement>
     <Footer />
 </template>
