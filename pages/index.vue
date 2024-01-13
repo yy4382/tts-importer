@@ -99,13 +99,13 @@
                         </label>
                     </div>
                 </div>
-                    <div v-if="useTest">
-                        <textarea id="message" rows="4" v-model="testText"
-                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 my-4"
-                            placeholder="试听文字"></textarea>
-                        <Button @click="getTestAudio()">试听</Button>
-                        <audio controls v-if="audioBlobUrl !== ''" :src="audioBlobUrl" class="mt-8"></audio>
-                    </div>
+                <div v-if="useTest">
+                    <textarea id="message" rows="4" v-model="testText"
+                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 my-4"
+                        placeholder="试听文字"></textarea>
+                    <Button @click="getTestAudio()">试听</Button>
+                    <audio controls v-if="audioBlobUrl !== ''" :src="audioBlobUrl" class="mt-8"></audio>
+                </div>
             </Placement>
 
             <Placement class="">
@@ -127,6 +127,10 @@
             </Placement>
         </div>
     </div>
+    <Placement class="mx-auto dark:text-white">
+        <p>本站不会储存你的 Key。数据缓存于本地浏览器中。</p>
+        <p>具体请见此<a href="#" class=" text-blue-700 dark:text-blue-400">说明</a>。</p>
+    </Placement>
     <Footer />
 </template>
 
@@ -358,5 +362,4 @@ function copySourceReaderLink() {
         @apply block mb-2 text-sm font-medium text-gray-900 dark:text-white;
     }
 }
-
 </style>
