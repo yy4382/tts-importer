@@ -10,7 +10,7 @@
 
 实际上，绝大多数的逻辑全部在客户端浏览器中实现，但是如果使用“一键导入”或者是“复制网络导入链接”，由于在阅读软件客户端中脱离了当前浏览器，只能将完整的配置编码在复制或打开的 URL 中，由阅读客户端向服务器发送这个请求，服务端返回配置。在此过程中，服务端只负责将请求的`config`参数以JSON形式返回，不会储存它。
 
-具体实现查看 <https://github.com/yy4382/tts-importer/blob/main/server/api/legado.ts>，在服务器执行的代码一共就5行。
+具体服务端实现查看 <https://github.com/yy4382/tts-importer/blob/main/server/api/>
 
 本站托管于 Vercel 直接由本仓库代码生成。
 
