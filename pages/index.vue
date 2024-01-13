@@ -16,19 +16,19 @@
                 </div>
                 <div class="mb-8">
                     <div class="flex items-center mb-4">
-                        <input type="checkbox" id="useVoiceStyle" v-model="vconfig.useStyle" :disabled="!hasStyle"
+                        <input type="checkbox" id="useVoiceStyle" v-model="vconfig.useStyle" :disabled="!selVoiceStyle"
                             class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
-                        <label for="useVoiceStyle" v-if="hasStyle"
+                        <label for="useVoiceStyle" v-if="selVoiceStyle"
                             class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">使用声音风格</label>
                         <label for="useVoiceStyle" v-else
                             class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">使用声音风格（禁用，该声音没有风格）</label>
                     </div>
-                    <div v-if="vconfig.useStyle && hasStyle">
+                    <div v-if="vconfig.useStyle && selVoiceStyle">
                         <label style="align-items: self-start;" for="voiceStyleSelect" class="label-general">声音风格
                             (voiceStyle)：</label>
                         <select id="voiceStyleSelect" v-model="vconfig.style"
                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                            <option v-for="style in vconfig.voice?.VoiceStyleNames" :key="style" :value="style">{{ style }}
+                            <option v-for="style in selVoiceStyle" :key="style" :value="style">{{ style }}
                             </option>
                         </select>
                     </div>
@@ -127,9 +127,10 @@
             </Placement>
         </div>
     </div>
-    <Placement class="mx-auto dark:text-white">
+    <Placement class="max-w-sm mx-auto dark:text-white">
         <p>本站不会储存你的 Key。数据缓存于本地浏览器中。</p>
-        <p>具体请见此<a href="https://github.com/yy4382/tts-importer?tab=readme-ov-file#%E9%9A%90%E7%A7%81%E8%AF%B4%E6%98%8E" class=" text-blue-700 dark:text-blue-400">说明</a>。</p>
+        <p>具体请见此<a href="https://github.com/yy4382/tts-importer?tab=readme-ov-file#%E9%9A%90%E7%A7%81%E8%AF%B4%E6%98%8E"
+                class=" text-blue-700 dark:text-blue-400">说明</a>。</p>
     </Placement>
     <Footer />
 </template>
@@ -147,7 +148,6 @@ export interface Api {
 export interface VoiceAttr {
     LocalName: string,
     ShortName: string,
-    VoiceStyleNames: Array<string> | null
 }
 export interface VoiceConfig {
     voice: VoiceAttr | null,
@@ -179,9 +179,11 @@ const testText = ref("")
 const audioPlayer = ref(null);
 const audioBlobUrl = ref('');
 
-const hasStyle = computed(() =>
-    vconfig.value.voice !== null && vconfig.value.voice.VoiceStyleNames !== null
-)
+const selVoiceStyle: ComputedRef<string[]> = computed(() => {
+    if (vconfig.value.voice === null) return Array<string>();
+    return voiceList.value.find((item: VoiceAttr) => item.ShortName === vconfig.value.voice?.ShortName)?.StyleNames || [];
+})
+
 onMounted(() => {
     console.log(vconfig.value)
     api.value = {
@@ -234,7 +236,7 @@ function getVoiceList() {
             return {
                 LocalName: voice.LocalName,
                 ShortName: voice.ShortName,
-                VoiceStyleNames: styles,
+                StyleNames: styles,
             };
         });
         // console.log(zhVoices)
@@ -331,9 +333,13 @@ function copyAiyueConfig() {
 }
 
 function import2Aiyue() {
-    let config = genAiyue(api.value, vconfig.value)
-    let link = `${window.location.protocol}//${window.location.host}/api/legado?config=${encodeURIComponent(config)}`
-    let aiyueLink = `iReadNote://import/itts=${encodeURIComponent(link)}`
+    if (!vconfig.value.voice) {
+        alert("请选择声音")
+        return {}
+    }
+    const config = JSON.stringify({ api: api.value, vconfig: vconfig.value });
+    const link = `${window.location.protocol}//${window.location.host}/api/ireadnote?config=${encodeURIComponent(config)}`
+    const aiyueLink = `iReadNote://import/itts=${link}`
     window.open(aiyueLink, "_blank")
 }
 
