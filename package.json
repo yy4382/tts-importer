@@ -21,6 +21,7 @@
     "vue-tsc": "^1.8.27"
   },
   "dependencies": {
+    "@vercel/analytics": "^1.1.1",
     "vue-github-button": "^3.1.0"
   }
 }
