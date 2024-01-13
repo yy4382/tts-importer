@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-full bg-stone-200 dark:bg-gray-900">
+  <div class="flex flex-col min-h-screen bg-stone-200 dark:bg-gray-900">
     <NuxtPage />
   </div>
 </template>
