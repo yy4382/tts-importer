@@ -188,7 +188,7 @@ onMounted(() => {
     console.log(vconfig.value)
     api.value = {
         key: localStorage.getItem('apiKey') || '',
-        region: localStorage.getItem('apiRegion') || ''
+        region: localStorage.getItem('apiRegion') || 'eastasia'
     }
     if (api.value.key && api.value.region) {
         try {
