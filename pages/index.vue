@@ -8,8 +8,7 @@
                     <div class="mb-8">
                         <label for="voiceSelect" class="label-general">声音
                             (voice)：</label>
-                        <select id="voiceSelect" v-model="vconfig.voice"
-                            class="select-general">
+                        <select id="voiceSelect" v-model="vconfig.voice" class="select-general">
                             <option v-for="item in voiceList" :key="item.ShortName" :value="item">
                                 {{ item.LocalName + " " + item.ShortName }}
                             </option>
@@ -27,14 +26,13 @@
                         <div v-if="vconfig.useStyle && selVoiceStyle">
                             <label style="align-items: self-start;" for="voiceStyleSelect" class="label-general">声音风格
                                 (voiceStyle)：</label>
-                            <select id="voiceStyleSelect" v-model="vconfig.style"
-                                class="select-general">
+                            <select id="voiceStyleSelect" v-model="vconfig.style" class="select-general">
                                 <option v-for="style in selVoiceStyle" :key="style" :value="style">{{ style }}
                                 </option>
                             </select>
                         </div>
                     </div>
-                    <div class="mb-8">
+                    <!-- <div class="mb-8">
                         <label for="rateRange" class="label-general">语速
                             (rate)：</label>
                         <select id="rateRange" v-model="vconfig.rate" name="sudo"
@@ -46,11 +44,10 @@
                             <option value="fast">高 (fast)</option>
                             <option value="x-fast">极高 (x-fast)</option>
                         </select>
-                    </div>
-                    <div>
+                    </div> -->
+                    <div class="mb-4">
                         <label for="pitchRange" class="label-general">音调(pitch)：</label>
-                        <select id="pitchRange" v-model="vconfig.pitch" name="sudo"
-                            class="select-general">
+                        <select id="pitchRange" v-model="vconfig.pitch" name="sudo" class="select-general">
                             <option value="default">默认 (default)</option>
                             <option value="x-low">极低 (x-low)</option>
                             <option value="low">低 (low)</option>
@@ -58,6 +55,10 @@
                             <option value="high">高 (high)</option>
                             <option value="x-high">极高 (x-high)</option>
                         </select>
+                    </div>
+                    <div class="dark:text-white text-sm">
+                        <p>*注：不再提供语速参数选择。</p>
+                        <p>各个阅读软件都有自带的语速选择，这里所选的语速会被覆盖。</p>
                     </div>
                 </IPlacement>
                 <IPlacement v-if="voiceList && vconfig.voice" class="mb-4">
@@ -114,16 +115,12 @@
                     <h2 class="text-4xl font-extrabold dark:text-white mb-4">🔑 输入 key</h2>
                     <div class="mb-5">
                         <label for="email" class="label-general">API Region</label>
-                        <input id="email" v-model="api.region" type="text"
-                            class="select-general"
-                            required>
+                        <input id="email" v-model="api.region" type="text" class="select-general" required>
                     </div>
                     <div class="mb-5">
                         <label for="password" class="label-general">Your API
                             Key</label>
-                        <input id="password" v-model="api.key" type="password"
-                            class="select-general"
-                            required>
+                        <input id="password" v-model="api.key" type="password" class="select-general" required>
                     </div>
                     <IButton :disabled="!api.key || !api.region" @click="getVoiceList">获取声音列表</IButton>
                 </IPlacement>
@@ -370,6 +367,7 @@ function copySourceReaderLink() {
     .label-general {
         @apply block mb-2 text-sm font-medium text-gray-900 dark:text-white;
     }
+
     .select-general {
         @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
     }
