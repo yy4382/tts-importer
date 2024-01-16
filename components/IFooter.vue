@@ -1,4 +1,3 @@
-
 <template>
     <footer class="bg-white rounded-lg shadow m-4 dark:bg-gray-800">
         <div class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
@@ -10,10 +9,12 @@
                     <a href="https://github.com/yy4382/tts-importer" class="hover:underline me-4 md:me-6">GitHub</a>
                 </li>
                 <li>
-                    <a href="https://github.com/yy4382/tts-importer?tab=readme-ov-file#%E9%9A%90%E7%A7%81%E8%AF%B4%E6%98%8E" class="hover:underline me-4 md:me-6">Privacy Statement</a>
+                    <a href="https://github.com/yy4382/tts-importer?tab=readme-ov-file#%E9%9A%90%E7%A7%81%E8%AF%B4%E6%98%8E"
+                        class="hover:underline me-4 md:me-6">Privacy Statement</a>
                 </li>
                 <li>
-                    <a href="https://github.com/yy4382/tts-importer/blob/main/LICENSE" class="hover:underline me-4 md:me-6">License</a>
+                    <a href="https://github.com/yy4382/tts-importer/blob/main/LICENSE"
+                        class="hover:underline me-4 md:me-6">License</a>
                 </li>
             </ul>
         </div>
