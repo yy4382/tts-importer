@@ -114,7 +114,7 @@
                     <label for="email" class="label-general">API Region</label>
                     <input type="text" id="email" v-model="api.region"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="eastasia" required>
+                        required>
                 </div>
                 <div class="mb-5">
                     <label for="password" class="label-general">Your API
@@ -218,7 +218,10 @@ watch(voiceList, (newVal) => {
  * Retrieves the list of available voices.
  */
 function getVoiceList() {
-    console.log(api.value.key, api.value.region)
+    if (!api.value.key || !api.value.region) {
+        alert("请输入 API Key 和 API Region")
+        return
+    }
     $fetch(`https://eastasia.tts.speech.microsoft.com/cognitiveservices/voices/list`, {
         headers: {
             'Ocp-Apim-Subscription-Key': api.value.key,
