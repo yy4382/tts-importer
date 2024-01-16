@@ -222,7 +222,7 @@ function getVoiceList() {
         alert("请输入 API Key 和 API Region")
         return
     }
-    $fetch(`https://eastasia.tts.speech.microsoft.com/cognitiveservices/voices/list`, {
+    $fetch(`https://${api.value.region}.tts.speech.microsoft.com/cognitiveservices/voices/list`, {
         headers: {
             'Ocp-Apim-Subscription-Key': api.value.key,
         }
