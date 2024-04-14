@@ -23,6 +23,7 @@ export default function (api: Api, vconfig: VoiceConfig) {
   const urlConfig = {
     method: "POST",
     body: ssml,
+    headers: header,
   };
   const config = {
     concurrentRate: "0",
