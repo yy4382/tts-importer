@@ -7,11 +7,11 @@ export default function (api: Api, vconfig: VoiceConfig) {
   const header = {
     "Ocp-Apim-Subscription-Key": api.key,
     "Content-Type": "application/ssml+xml",
-    "X-Microsoft-OutputFormat": vconfig.format,
+    "X-Microsoft-OutputFormat": "audio-16khz-128kbitrate-mono-mp3",
     "User-Agent": "legado",
   };
   const ssml =
-    `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="zh-CN">` +
+    `<speak version="1.0" xml:lang="zh-CN">` +
     `<voice name="${vconfig.voice.ShortName}">` +
     `<prosody rate="{{speakSpeed*4}}%" pitch="${vconfig.pitch}">` +
     `${vconfig.useStyle ? `<mstts:express-as style="${vconfig.style}">` : ""}` +
