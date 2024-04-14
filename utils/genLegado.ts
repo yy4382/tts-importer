@@ -7,7 +7,7 @@ export default function (api: Api, vconfig: VoiceConfig) {
   const header = {
     "Ocp-Apim-Subscription-Key": api.key,
     "Content-Type": "application/ssml+xml",
-    "X-Microsoft-OutputFormat": "audio-16khz-128kbitrate-mono-mp3",
+    "X-Microsoft-OutputFormat": vconfig.format,
     "User-Agent": "legado",
   };
   const ssml =

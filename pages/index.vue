@@ -56,6 +56,22 @@
                             <option value="x-high">极高 (x-high)</option>
                         </select>
                     </div>
+                    <div class="mb-4">
+                        <label for="voiceFormat" class="label-general">音频格式</label>
+                        <select
+                        id="voiceFormat"
+                        v-model="vconfig.format"
+                        class="select-general"
+                        >
+                        <option
+                            v-for="format in formatList"
+                            :key="format"
+                            :value="format"
+                        >
+                            {{ format }}
+                        </option>
+                        </select>
+                    </div>
                     <div class="dark:text-white text-sm">
                         <p>*注：不再提供语速参数选择。</p>
                         <p>各个阅读软件都有自带的语速选择，这里所选的语速会被覆盖。</p>
@@ -139,6 +155,36 @@
 import genAiyue from '~/utils/genAiyue';
 import genLegado from '~/utils/genLegado';
 
+const formatList = ref([
+  "amr-wb-16000hz",
+  "audio-16khz-16bit-32kbps-mono-opus",
+  "audio-16khz-32kbitrate-mono-mp3",
+  "audio-16khz-64kbitrate-mono-mp3",
+  "audio-16khz-128kbitrate-mono-mp3",
+  "audio-24khz-16bit-24kbps-mono-opus",
+  "audio-24khz-16bit-48kbps-mono-opus",
+  "audio-24khz-48kbitrate-mono-mp3",
+  "audio-24khz-96kbitrate-mono-mp3",
+  "audio-24khz-160kbitrate-mono-mp3",
+  "audio-48khz-96kbitrate-mono-mp3",
+  "audio-48khz-192kbitrate-mono-mp3",
+  "ogg-16khz-16bit-mono-opus",
+  "ogg-24khz-16bit-mono-opus",
+  "ogg-48khz-16bit-mono-opus",
+  "raw-8khz-8bit-mono-alaw",
+  "raw-8khz-8bit-mono-mulaw",
+  "raw-8khz-16bit-mono-pcm",
+  "raw-16khz-16bit-mono-pcm",
+  "raw-16khz-16bit-mono-truesilk",
+  "raw-22050hz-16bit-mono-pcm",
+  "raw-24khz-16bit-mono-pcm",
+  "raw-24khz-16bit-mono-truesilk",
+  "raw-44100hz-16bit-mono-pcm",
+  "raw-48khz-16bit-mono-pcm",
+  "webm-16khz-16bit-mono-opus",
+  "webm-24khz-16bit-24kbps-mono-opus",
+  "webm-24khz-16bit-mono-opus",
+]);
 
 export interface Api {
     key: string,
@@ -154,7 +200,8 @@ export interface VoiceConfig {
     useStyle: boolean,
     style: string[] | null,
     rate: string,
-    pitch: string
+    pitch: string,
+    format: string
 }
 
 const initApi: Api = {
@@ -167,7 +214,8 @@ const initConfig: VoiceConfig = {
     useStyle: false,
     style: null,
     rate: 'default',
-    pitch: 'default'
+    pitch: 'default',
+    format: 'audio-24khz-48kbitrate-mono-mp3'
 }
 
 const api = ref(initApi)
@@ -271,7 +319,7 @@ function getTestAudio() {
         headers: {
             'Ocp-Apim-Subscription-Key': api.value.key,
             'Content-Type': 'application/ssml+xml',
-            'X-Microsoft-OutputFormat': 'audio-24khz-48kbitrate-mono-mp3',
+            'X-Microsoft-OutputFormat': vconfig.value.format,
             'User-Agent': 'TTSForLegado',
         },
         body: genSSML(vconfig.value, testText.value),

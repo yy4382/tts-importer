@@ -55,7 +55,7 @@ export default function (api: Api, vconfig: VoiceConfig) {
           customFormatParams: "params[text]",
           headers: {
             "Content-Type": "application/ssml+xml",
-            "X-Microsoft-OutputFormat": "audio-16khz-128kbitrate-mono-mp3",
+            "X-Microsoft-OutputFormat": vconfig.format,
             "ocp-apim-subscription-key": `${api.key}`,
           },
         },
