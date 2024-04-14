@@ -10,21 +10,13 @@ function generateRandomString(length: number): string {
   return result;
 }
 
-export default function (api: Api, vconfig: VoiceConfig) {
-  if (!vconfig.voice) {
+export default function (api: Api, vConfig: VoiceConfig) {
+  if (!vConfig.voice) {
     alert("请选择声音");
     return "";
   }
-  const pitch = vconfig.pitch === "default" ? null : vconfig.pitch;
-  const ssml =
-    `<speak version="1.0" xml:lang="zh-CN">` +
-    `<voice name="${vconfig.voice.ShortName}">` +
-    `${pitch ? `<prosody pitch="${vconfig.pitch}">` : ""}` +
-    `${vconfig.useStyle ? `<mstts:express-as style="${vconfig.style}">` : ""}` +
-    `%@` +
-    `${vconfig.useStyle ? `</mstts:express-as>` : ""}` +
-    `${pitch ? `</prosody>` : ""}` +
-    `</voice></speak>`;
+  const pitch = vConfig.pitch === "default" ? null : vConfig.pitch;
+  const ssml = genSSML(vConfig, "%@");
   const config = {
     loginUrl: "",
     maxWordCount: "",
@@ -55,13 +47,13 @@ export default function (api: Api, vconfig: VoiceConfig) {
           customFormatParams: "params[text]",
           headers: {
             "Content-Type": "application/ssml+xml",
-            "X-Microsoft-OutputFormat": "audio-16khz-128kbitrate-mono-mp3",
+            "X-Microsoft-OutputFormat": vConfig.format,
             "ocp-apim-subscription-key": `${api.key}`,
           },
         },
       },
     ],
-    _TTSName: `Azure ${vconfig.voice.LocalName}${vconfig.style || ""}${pitch || ""}`,
+    _TTSName: `Azure ${vConfig.voice.LocalName}${vConfig.style || ""}${pitch || ""}`,
   };
   return JSON.stringify(config);
 }
