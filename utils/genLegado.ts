@@ -11,7 +11,7 @@ export default function (api: Api, vconfig: VoiceConfig) {
     "User-Agent": "legado",
   };
   const ssml =
-    `<speak version="1.0" xml:lang="zh-CN">` +
+    `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="zh-CN">` +
     `<voice name="${vconfig.voice.ShortName}">` +
     `<prosody rate="{{speakSpeed*4}}%" pitch="${vconfig.pitch}">` +
     `${vconfig.useStyle ? `<mstts:express-as style="${vconfig.style}">` : ""}` +
