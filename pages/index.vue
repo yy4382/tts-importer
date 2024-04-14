@@ -98,6 +98,7 @@
                         <label for="souceReaderButton" class="label-general">源阅读</label>
                         <div id="souceReaderButton">
                             <IButton @click="copySourceReaderLink">复制网络导入链接</IButton>
+                            <IButton @click="downloadSourceReaderFile">下载导入文件</IButton>
                         </div>
                     </div>
                 </IPlacement>
@@ -403,6 +404,26 @@ function copySourceReaderLink() {
         console.error(err)
         alert("复制失败，请手动复制")
     }
+}
+function downloadSourceReaderFile() {
+    if (!vconfig.value.voice) {
+        alert("请选择声音")
+        return
+    }
+    let config = JSON.parse(genLegado(api.value, vconfig.value));
+    const title = `Azure ${vconfig.value.voice.LocalName}${vconfig.value.style || ""}${vconfig.value.pitch === "default" ? "" : " - " + vconfig.value.pitch}`
+    config = [config]
+    config = JSON.stringify(config)
+    const blob = new Blob([config], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const downloadAnchor = document.createElement("a");
+    downloadAnchor.href = url;
+    downloadAnchor.download = title+".json"; // 指定下载文件的名称
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    document.body.removeChild(downloadAnchor);
+    URL.revokeObjectURL(url);
+
 }
 </script> 
 
