@@ -9,6 +9,8 @@ const props = defineProps<{
 const api = computed(() => props.api);
 const voiceConfig = computed(() => props.voiceConfig);
 
+const isLoading = ref(false);
+
 const testText = ref("");
 const audioPlayer = ref(null);
 const audioBlobUrl = ref("");
@@ -29,6 +31,7 @@ function genSSML(config: VoiceConfig, text: string) {
 
 function getTestAudio() {
   if (audioPlayer === null || !voiceConfig.value.voice) return;
+  isLoading.value = true;
   $fetch(
     `https://${api.value.region}.tts.speech.microsoft.com/cognitiveservices/v1`,
     {
@@ -66,6 +69,9 @@ function getTestAudio() {
       if (audioPlayer.value) {
         (audioPlayer.value as HTMLAudioElement).src = audioBlobUrl.value;
       }
+    })
+    .finally(() => {
+      isLoading.value = false;
     });
 }
 </script>
@@ -82,7 +88,7 @@ function getTestAudio() {
         placeholder="试听文字"
         class="mb-4 w-full"
       ></UTextarea>
-      <UButton @click="getTestAudio()"> 试听 </UButton>
+      <UButton :loading="isLoading" @click="getTestAudio()"> 试听 </UButton>
       <audio
         v-if="audioBlobUrl !== ''"
         controls
