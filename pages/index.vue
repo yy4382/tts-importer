@@ -109,7 +109,11 @@
               required
             />
           </div>
-          <UButton :disabled="!api.key || !api.region" @click="getVoiceList">
+          <UButton
+            :disabled="!api.key || !api.region"
+            :loading="isLoading"
+            @click="getVoiceList"
+          >
             {{ voiceList?.length === 0 ? "获取" : "更新" }}声音列表
           </UButton>
         </UCard>
@@ -189,7 +193,6 @@ const voiceConfig: Ref<VoiceConfig> = ref({
   pitch: "default",
   format: "audio-24khz-48kbitrate-mono-mp3",
 });
-
 /**
  *  根据选择的声音获取风格列表
  */
@@ -203,6 +206,7 @@ const styleList: ComputedRef<string[]> = computed(() => {
   );
 });
 
+const isLoading = ref(false);
 onMounted(() => {
   api.value = {
     key: localStorage.getItem("apiKey") || "",
@@ -246,6 +250,7 @@ function getVoiceList() {
     alert("请输入 API Key 和 API Region");
     return;
   }
+  isLoading.value = true;
   $fetch(
     `https://${api.value.region}.tts.speech.microsoft.com/cognitiveservices/voices/list`,
     {
@@ -272,6 +277,7 @@ function getVoiceList() {
         });
       // console.log(zhVoices)
       voiceList.value = zhVoices;
+      isLoading.value = false;
       toast.add({
         title: "获取声音列表成功",
         description: `共有${zhVoices.length}个中文语音`,
@@ -284,6 +290,7 @@ function getVoiceList() {
         description:
           "请检查 API Key 和 API Region 是否正确，打开F12控制台查看详细信息",
       });
+      isLoading.value = false;
     });
 }
 </script>
