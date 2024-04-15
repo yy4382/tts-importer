@@ -1,4 +1,4 @@
-import { type Api, type VoiceConfig } from "../pages/index.vue";
+import { type Api, type VoiceConfig } from "~/utils/types";
 export default function (api: Api, vconfig: VoiceConfig) {
   if (!vconfig.voice) {
     alert("请选择声音");

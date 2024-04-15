@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col min-h-screen bg-stone-200 dark:bg-gray-900">
+  <div class="flex flex-col min-h-screen bg-stone-200 dark:bg-gray-950">
     <NuxtPage />
     <UNotifications />
   </div>

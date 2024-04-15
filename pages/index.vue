@@ -3,17 +3,17 @@
     <NavBar />
     <div class="mb-auto mx-4 py-4 flex flex-col lg:flex-row justify-center">
       <div v-if="voiceList" class="lg:mr-4">
-        <IPlacement v-if="voiceList" class="mb-4">
-          <h2 class="text-4xl font-extrabold dark:text-white mb-4">
-            👇 语音选择
-          </h2>
+        <UCard v-if="voiceList" class="mb-4 lg:w-96">
+          <template #header>
+            <h2 class="text-4xl font-extrabold dark:text-white">👇 语音选择</h2>
+          </template>
           <div class="mb-8">
-            <label for="voiceSelect" class="label-general"
-              >声音 (voice)：</label
-            >
+            <label for="voiceSelect" class="label-general">
+              声音 (voice)：
+            </label>
             <select
               id="voiceSelect"
-              v-model="vconfig.voice"
+              v-model="voiceConfig.voice"
               class="select-general"
             >
               <option
@@ -27,66 +27,40 @@
           </div>
           <div class="mb-8">
             <div class="flex items-center mb-4">
-              <input
-                id="useVoiceStyle"
-                v-model="vconfig.useStyle"
-                type="checkbox"
-                :disabled="selVoiceStyle.length === 0"
-                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              <UCheckbox
+                v-model="voiceConfig.useStyle"
+                :disabled="styleList.length === 0"
+                :label="
+                  styleList.length !== 0
+                    ? '使用声音风格'
+                    : '该声音没有风格，无法启用声音风格'
+                "
               />
-              <label
-                v-if="selVoiceStyle"
-                for="useVoiceStyle"
-                class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                >使用声音风格</label
-              >
-              <label
-                v-else
-                for="useVoiceStyle"
-                class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                >使用声音风格（禁用，该声音没有风格）</label
-              >
             </div>
-            <div v-if="vconfig.useStyle && selVoiceStyle">
+            <div v-if="voiceConfig.useStyle && styleList.length !== 0">
               <label
                 style="align-items: self-start"
                 for="voiceStyleSelect"
                 class="label-general"
-                >声音风格 (voiceStyle)：</label
               >
+                声音风格 (voiceStyle)：
+              </label>
               <select
                 id="voiceStyleSelect"
-                v-model="vconfig.style"
+                v-model="voiceConfig.style"
                 class="select-general"
               >
-                <option
-                  v-for="style in selVoiceStyle"
-                  :key="style"
-                  :value="style"
-                >
+                <option v-for="style in styleList" :key="style" :value="style">
                   {{ style }}
                 </option>
               </select>
             </div>
           </div>
-          <!-- <div class="mb-8">
-                        <label for="rateRange" class="label-general">语速
-                            (rate)：</label>
-                        <select id="rateRange" v-model="vconfig.rate" name="sudo"
-                            class="select-general">
-                            <option value="default">默认 (default)</option>
-                            <option value="x-slow">极低 (x-slow)</option>
-                            <option value="slow">低 (slow)</option>
-                            <option value="medium">中 (medium)</option>
-                            <option value="fast">高 (fast)</option>
-                            <option value="x-fast">极高 (x-fast)</option>
-                        </select>
-                    </div> -->
           <div class="mb-4">
             <label for="pitchRange" class="label-general">音调(pitch)：</label>
             <select
               id="pitchRange"
-              v-model="vconfig.pitch"
+              v-model="voiceConfig.pitch"
               name="sudo"
               class="select-general"
             >
@@ -102,7 +76,7 @@
             <label for="voiceFormat" class="label-general">音频格式</label>
             <select
               id="voiceFormat"
-              v-model="vconfig.format"
+              v-model="voiceConfig.format"
               class="select-general"
             >
               <option
@@ -118,85 +92,23 @@
             <p>*注：不再提供语速参数选择。</p>
             <p>各个阅读软件都有自带的语速选择，这里所选的语速会被覆盖。</p>
           </div>
-        </IPlacement>
-        <IPlacement v-if="voiceList && vconfig.voice" class="mb-4">
-          <h2 class="text-4xl font-extrabold dark:text-white mb-4">📤 导出</h2>
-          <div class="mb-4">
-            <label for="legadoButton" class="label-general">阅读(legado)</label>
-            <div
-              id="legadoButton"
-              class="inline-flex rounded-md shadow-sm"
-              role="group"
-            >
-              <IButton class="mr-1" @click="copyLegadoConfig">
-                复制配置
-              </IButton>
-              <IButton class="mr-1" @click="copyLegadoLink">
-                复制网络导入链接
-              </IButton>
-              <IButton class="mr-1" @click="import2Legado"> 一键导入 </IButton>
-            </div>
-          </div>
-          <div class="mb-4">
-            <label for="AiyueButton" class="label-general">爱阅记</label>
-            <div id="AiyueButton">
-              <IButton class="mr-1" @click="copyAiyueConfig">复制配置</IButton>
-              <IButton @click="import2Aiyue">一键导入</IButton>
-            </div>
-          </div>
-          <div>
-            <label for="souceReaderButton" class="label-general">源阅读</label>
-            <div id="souceReaderButton">
-              <IButton @click="copySourceReaderLink">复制网络导入链接</IButton>
-              <IButton @click="downloadSourceReaderFile">下载导入文件</IButton>
-            </div>
-          </div>
-        </IPlacement>
+        </UCard>
+        <ExportPanel
+          v-if="voiceList && voiceConfig.voice"
+          :api="api"
+          :voice-config="voiceConfig"
+        />
       </div>
       <div>
-        <IPlacement v-if="voiceList && vconfig.voice" class="mb-4">
-          <div class="flex justify-between">
-            <h2 class="text-4xl font-extrabold dark:text-white">📢 试听</h2>
-            <div class="inline-flex items-center">
-              <label class="relative inline-flex items-center cursor-pointer">
-                <input
-                  v-model="useTest"
-                  type="checkbox"
-                  class="sr-only peer"
-                  @click="useTest = !useTest"
-                />
-                <div
-                  class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
-                ></div>
-                <span
-                  class="ml-3 text-sm font-medium text-gray-900 dark:text-white"
-                  >{{ useTest ? "隐藏" : "显示" }}</span
-                >
-              </label>
-            </div>
-          </div>
-          <div v-if="useTest">
-            <textarea
-              id="message"
-              v-model="testText"
-              rows="4"
-              class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 my-4"
-              placeholder="试听文字"
-            ></textarea>
-            <IButton @click="getTestAudio()">试听</IButton>
-            <audio
-              v-if="audioBlobUrl !== ''"
-              controls
-              :src="audioBlobUrl"
-              class="mt-8"
-            ></audio>
-          </div>
-        </IPlacement>
-
-        <IPlacement class="">
-          <h2 class="text-4xl font-extrabold dark:text-white mb-4">
-            🔑 输入 key
-          </h2>
+        <TryListen
+          v-if="voiceList && voiceConfig.voice"
+          :api="api"
+          :voice-config="voiceConfig"
+        />
+        <UCard class="lg:w-96">
+          <template #header>
+            <h2 class="text-4xl font-extrabold dark:text-white">🔑 输入 key</h2>
+          </template>
           <div class="mb-5">
             <label for="email" class="label-general">API Region</label>
             <input
@@ -217,10 +129,10 @@
               required
             />
           </div>
-          <IButton :disabled="!api.key || !api.region" @click="getVoiceList"
-            >获取声音列表</IButton
+          <UButton :disabled="!api.key || !api.region" @click="getVoiceList"
+            >获取声音列表</UButton
           >
-        </IPlacement>
+        </UCard>
       </div>
     </div>
     <IPlacement class="max-w-sm mx-auto dark:text-white">
@@ -238,8 +150,7 @@
 </template>
 
 <script setup lang="ts">
-import genAiyue from "~/utils/genAiyue";
-import genLegado from "~/utils/genLegado";
+import type { Api, VoiceAttr, VoiceConfig } from "~/utils/types";
 const toast = useToast();
 
 const formatList = ref([
@@ -273,52 +184,29 @@ const formatList = ref([
   "webm-24khz-16bit-mono-opus",
 ]);
 
-export interface Api {
-  key: string;
-  region: string;
-}
-
-export interface VoiceAttr {
-  LocalName: string;
-  ShortName: string;
-}
-export interface VoiceConfig {
-  voice: VoiceAttr | null;
-  useStyle: boolean;
-  style: string[] | null;
-  rate: string;
-  pitch: string;
-  format: string;
-}
-
-const initApi: Api = {
+const api: Ref<Api> = ref({
   key: "",
   region: "eastasia",
-};
-
-const initConfig: VoiceConfig = {
-  voice: null,
+});
+const voiceList: Ref<VoiceAttr[] | undefined> = ref();
+const voiceConfig: Ref<VoiceConfig> = ref({
+  voice: undefined,
   useStyle: false,
-  style: null,
+  style: undefined,
   rate: "default",
   pitch: "default",
   format: "audio-24khz-48kbitrate-mono-mp3",
-};
+});
 
-const api = ref(initApi);
-const voiceList = ref();
-const vconfig: Ref<VoiceConfig> = ref(initConfig);
-
-const useTest = ref(false);
-const testText = ref("");
-const audioPlayer = ref(null);
-const audioBlobUrl = ref("");
-
-const selVoiceStyle: ComputedRef<string[]> = computed(() => {
-  if (vconfig.value.voice === null) return Array<string>();
+/**
+ *  根据选择的声音获取风格列表
+ */
+const styleList: ComputedRef<string[]> = computed(() => {
+  if (voiceConfig.value.voice === null) return Array<string>();
   return (
-    voiceList.value.find(
-      (item: VoiceAttr) => item.ShortName === vconfig.value.voice?.ShortName,
+    voiceList.value!.find(
+      (item: VoiceAttr) =>
+        item.ShortName === voiceConfig.value.voice?.ShortName,
     )?.StyleNames || []
   );
 });
@@ -338,7 +226,7 @@ onMounted(() => {
   if (voiceList.value) {
     const voice = voiceList.value[0];
     if (voice) {
-      vconfig.value.voice = voice;
+      voiceConfig.value.voice = voice;
     }
   }
 });
@@ -402,173 +290,4 @@ function getVoiceList() {
       });
     });
 }
-function genSSML(config: VoiceConfig, text: string) {
-  if (!config.voice) return;
-  const pitch = config.pitch === "default" ? null : config.pitch;
-  const ssml =
-    `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="zh-CN">` +
-    `<voice name="${config.voice.ShortName}">` +
-    `${pitch ? `<prosody pitch="${config.pitch}">` : ""}` +
-    `${config.useStyle ? `<mstts:express-as style="${config.style}">` : ""}` +
-    `${testText.value ? text : "帮忙点个 Star 吧"}` +
-    `${config.useStyle ? `</mstts:express-as>` : ""}` +
-    `${pitch ? `</prosody>` : ""}` +
-    `</voice></speak>`;
-  return ssml;
-}
-
-function getTestAudio() {
-  if (audioPlayer === null || !vconfig.value.voice) return;
-  $fetch(
-    `https://${api.value.region}.tts.speech.microsoft.com/cognitiveservices/v1`,
-    {
-      method: "POST",
-      headers: {
-        "Ocp-Apim-Subscription-Key": api.value.key,
-        "Content-Type": "application/ssml+xml",
-        "X-Microsoft-OutputFormat": vconfig.value.format,
-        "User-Agent": "TTSForLegado",
-      },
-      body: genSSML(vconfig.value, testText.value),
-      responseType: "blob",
-    },
-  )
-    .then((response) => {
-      // 创建一个 Blob URL
-      const audioBlob = response;
-      if (audioBlobUrl.value !== "") {
-        URL.revokeObjectURL(audioBlobUrl.value);
-      }
-      audioBlobUrl.value = URL.createObjectURL(audioBlob as Blob);
-
-      // 绑定 Blob URL 到 <audio> 元素并播放
-      if (audioPlayer.value) {
-        (audioPlayer.value as HTMLAudioElement).src = audioBlobUrl.value;
-      }
-    })
-    .catch((err) => {
-      console.error("fetch audio", err);
-    });
-}
-
-function copyLegadoConfig() {
-  const config = genLegado(api.value, vconfig.value);
-  try {
-    navigator.clipboard.writeText(config);
-  } catch (err) {
-    console.error(err);
-    toast.add({
-      title: "复制失败",
-      description: "请使用更现代的浏览器",
-    });
-    return;
-  }
-  toast.add({
-    title: "复制成功",
-    description: "已复制配置到剪贴板",
-  });
-}
-
-function copyLegadoLink() {
-  const config = genLegado(api.value, vconfig.value);
-  const link = `${window.location.protocol}//${window.location.host}/api/legado?config=${encodeURIComponent(config)}`;
-  try {
-    navigator.clipboard.writeText(link);
-  } catch (err) {
-    console.error(err);
-    toast.add({
-      title: "复制失败",
-      description: "请使用更现代的浏览器",
-    });
-    return;
-  }
-  toast.add({
-    title: "复制成功",
-    description: "已复制配置到剪贴板",
-  });
-}
-
-function import2Legado() {
-  const config = genLegado(api.value, vconfig.value);
-  const link = `${window.location.protocol}//${window.location.host}/api/legado?config=${encodeURIComponent(config)}`;
-  const leagdoLink = `legado://import/httpTTS?src=${encodeURIComponent(link)}`;
-  window.open(leagdoLink, "_blank");
-}
-
-function copyAiyueConfig() {
-  const config = genAiyue(api.value, vconfig.value);
-  try {
-    navigator.clipboard.writeText(config);
-  } catch (err) {
-    console.error(err);
-    toast.add({
-      title: "复制失败",
-      description: "请使用更现代的浏览器",
-    });
-    return;
-  }
-  toast.add({
-    title: "复制成功",
-    description: "已复制配置到剪贴板",
-  });
-}
-
-function import2Aiyue() {
-  if (!vconfig.value.voice) {
-    alert("请选择声音");
-    return {};
-  }
-  const config = JSON.stringify({ api: api.value, vconfig: vconfig.value });
-  const link = `${window.location.protocol}//${window.location.host}/api/ireadnote?config=${encodeURIComponent(config)}`;
-  const aiyueLink = `iReadNote://import/itts=${link}`;
-  window.open(aiyueLink, "_blank");
-}
-
-function copySourceReaderLink() {
-  let config = JSON.parse(genLegado(api.value, vconfig.value));
-  config = [config];
-  config = JSON.stringify(config);
-  const link = `${window.location.protocol}//${window.location.host}/api/legado?config=${encodeURIComponent(config)}`;
-  try {
-    navigator.clipboard.writeText(link);
-  } catch (err) {
-    console.error(err);
-    alert("复制失败，请手动复制");
-  }
-}
-function downloadSourceReaderFile() {
-  if (!vconfig.value.voice) {
-    alert("请选择声音");
-    return;
-  }
-  let config = JSON.parse(genLegado(api.value, vconfig.value));
-  const title = `Azure ${vconfig.value.voice.LocalName}${vconfig.value.style || ""}${vconfig.value.pitch === "default" ? "" : " - " + vconfig.value.pitch}`;
-  config = [config];
-  config = JSON.stringify(config);
-  const blob = new Blob([config], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const downloadAnchor = document.createElement("a");
-  downloadAnchor.href = url;
-  downloadAnchor.download = title + ".json"; // 指定下载文件的名称
-  document.body.appendChild(downloadAnchor);
-  downloadAnchor.click();
-  document.body.removeChild(downloadAnchor);
-  URL.revokeObjectURL(url);
-}
 </script>
-
-<style scoped lang="scss">
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer components {
-  .label-general {
-    @apply block mb-2 text-sm font-medium text-gray-900 dark:text-white;
-  }
-
-  .select-general {
-    @apply bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
-  }
-}
-</style>
