@@ -1,7 +1,9 @@
 <template>
-  <div>
+  <div class="flex flex-col min-h-screen">
     <NavBar />
-    <div class="mb-auto mx-4 py-4 flex flex-col lg:flex-row justify-center">
+    <div
+      class="mb-auto mx-4 py-4 flex flex-col lg:flex-row justify-center flex-grow"
+    >
       <div v-if="voiceList" class="lg:mr-4">
         <UCard v-if="voiceList" class="mb-4 lg:w-96">
           <template #header>
