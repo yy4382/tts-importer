@@ -12,13 +12,11 @@
   "devDependencies": {
     "@nuxt/ui": "^2.15.2",
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
-    "autoprefixer": "^10.4.16",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "nuxt": "^3.9.0",
     "postcss": "^8.4.33",
     "prettier": "3.2.2",
-    "sass": "^1.69.7",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.3.3",
     "vue": "^3.4.5",
