@@ -5,25 +5,20 @@
       <div v-if="voiceList" class="lg:mr-4">
         <UCard v-if="voiceList" class="mb-4 lg:w-96">
           <template #header>
-            <h2 class="text-4xl font-extrabold dark:text-white">👇 语音选择</h2>
+            <h2>👇 语音选择</h2>
           </template>
           <div class="mb-8">
             <label for="voiceSelect" class="label-general">
               声音 (voice)：
             </label>
-            <select
-              id="voiceSelect"
+            <USelectMenu
               v-model="voiceConfig.voice"
-              class="select-general"
-            >
-              <option
-                v-for="item in voiceList"
-                :key="item.ShortName"
-                :value="item"
-              >
-                {{ item.LocalName + " " + item.ShortName }}
-              </option>
-            </select>
+              :options="voiceList"
+              option-attribute="LocalName"
+              searchable
+              :search-attributes="['LocalName', 'ShortName']"
+              placeholder="选择声音"
+            />
           </div>
           <div class="mb-8">
             <div class="flex items-center mb-4">
@@ -45,48 +40,31 @@
               >
                 声音风格 (voiceStyle)：
               </label>
-              <select
-                id="voiceStyleSelect"
+              <USelectMenu
                 v-model="voiceConfig.style"
-                class="select-general"
-              >
-                <option v-for="style in styleList" :key="style" :value="style">
-                  {{ style }}
-                </option>
-              </select>
+                :options="styleList"
+                placeholder="选择声音风格"
+                searchable
+              />
             </div>
           </div>
           <div class="mb-4">
             <label for="pitchRange" class="label-general">音调(pitch)：</label>
-            <select
-              id="pitchRange"
+            <USelectMenu
               v-model="voiceConfig.pitch"
-              name="sudo"
-              class="select-general"
-            >
-              <option value="default">默认 (default)</option>
-              <option value="x-low">极低 (x-low)</option>
-              <option value="low">低 (low)</option>
-              <option value="medium">中 (medium)</option>
-              <option value="high">高 (high)</option>
-              <option value="x-high">极高 (x-high)</option>
-            </select>
+              :options="pitchOptions"
+              option-attribute="desc"
+              value-attribute="id"
+              placeholder="选择音调"
+            />
           </div>
           <div class="mb-4">
             <label for="voiceFormat" class="label-general">音频格式</label>
-            <select
-              id="voiceFormat"
+            <USelectMenu
               v-model="voiceConfig.format"
-              class="select-general"
-            >
-              <option
-                v-for="format in formatList"
-                :key="format"
-                :value="format"
-              >
-                {{ format }}
-              </option>
-            </select>
+              :options="formatList"
+              placeholder="选择音频格式"
+            />
           </div>
           <div class="dark:text-white text-sm">
             <p>*注：不再提供语速参数选择。</p>
@@ -107,11 +85,11 @@
         />
         <UCard class="lg:w-96">
           <template #header>
-            <h2 class="text-4xl font-extrabold dark:text-white">🔑 输入 key</h2>
+            <h2>🔑 输入 key</h2>
           </template>
           <div class="mb-5">
             <label for="email" class="label-general">API Region</label>
-            <input
+            <UInput
               id="email"
               v-model="api.region"
               type="text"
@@ -121,7 +99,7 @@
           </div>
           <div class="mb-5">
             <label for="password" class="label-general">Your API Key</label>
-            <input
+            <UInput
               id="password"
               v-model="api.key"
               type="password"
@@ -129,14 +107,17 @@
               required
             />
           </div>
-          <UButton :disabled="!api.key || !api.region" @click="getVoiceList"
-            >获取声音列表</UButton
-          >
+          <UButton :disabled="!api.key || !api.region" @click="getVoiceList">
+            {{ voiceList?.length === 0 ? "获取" : "更新" }}声音列表
+          </UButton>
         </UCard>
       </div>
     </div>
-    <IPlacement class="max-w-sm mx-auto dark:text-white">
-      <p>本站不会储存你的 Key。数据缓存于本地浏览器中。</p>
+    <UCard class="max-w-[22rem] mx-auto">
+      <p>
+        本站不会储存你的 Key。<br />
+        数据缓存于本地浏览器中。
+      </p>
       <p>
         具体请见此<a
           href="https://github.com/yy4382/tts-importer?tab=readme-ov-file#%E9%9A%90%E7%A7%81%E8%AF%B4%E6%98%8E"
@@ -144,7 +125,7 @@
           >说明</a
         >。
       </p>
-    </IPlacement>
+    </UCard>
     <IFooter />
   </div>
 </template>
@@ -183,6 +164,15 @@ const formatList = ref([
   "webm-24khz-16bit-24kbps-mono-opus",
   "webm-24khz-16bit-mono-opus",
 ]);
+
+const pitchOptions = [
+  { id: "default", desc: "默认 (default)" },
+  { id: "x-low", desc: "极低 (x-low)" },
+  { id: "low", desc: "低 (low)" },
+  { id: "medium", desc: "中 (medium)" },
+  { id: "high", desc: "高 (high)" },
+  { id: "x-high", desc: "极高 (x-high)" },
+];
 
 const api: Ref<Api> = ref({
   key: "",
@@ -280,6 +270,10 @@ function getVoiceList() {
         });
       // console.log(zhVoices)
       voiceList.value = zhVoices;
+      toast.add({
+        title: "获取声音列表成功",
+        description: `共有${zhVoices.length}个中文语音`,
+      });
     })
     .catch((err) => {
       console.error("fetch list", err);

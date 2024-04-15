@@ -72,19 +72,17 @@ function getTestAudio() {
 <template>
   <UCard class="mb-4 lg:w-96">
     <template #header>
-      <h2 class="text-4xl font-extrabold dark:text-white">📢 试听</h2>
+      <h2>📢 试听</h2>
     </template>
     <div>
-      <textarea
+      <UTextarea
         id="message"
         v-model="testText"
         rows="4"
-        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 my-4"
         placeholder="试听文字"
-      ></textarea>
-      <UButton @click="getTestAudio()">
-        试听
-      </UButton>
+        class="mb-4 w-full"
+      ></UTextarea>
+      <UButton @click="getTestAudio()"> 试听 </UButton>
       <audio
         v-if="audioBlobUrl !== ''"
         controls

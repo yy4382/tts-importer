@@ -118,7 +118,7 @@ function downloadSourceReaderFile() {
 <template>
   <UCard class="mb-4 lg:w-96">
     <template #header>
-      <h2 class="text-4xl font-extrabold dark:text-white">📤 导出</h2>
+      <h2 >📤 导出</h2>
     </template>
     <div class="mb-4">
       <label for="legadoButton" class="label-general">阅读(legado)</label>
