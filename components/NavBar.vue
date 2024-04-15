@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="bg-stone-100 dark:bg-gray-900 shadow mx-4 rounded-b-lg flex flex-wrap items-center justify-between p-4"
+    class="bg-stone-100 dark:bg-gray-900 shadow mx-auto w-[calc(100vw-1rem)] rounded-b-lg flex flex-wrap items-center justify-between p-4 max-w-screen-xl"
   >
     <a href="#" class="flex items-center space-x-3 rtl:space-x-reverse">
       <img src="~/assets/favicon.svg" class="h-8" alt="Azure TTS logo" />
