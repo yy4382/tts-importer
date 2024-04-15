@@ -5,14 +5,19 @@
       class="mb-auto mx-4 py-4 flex flex-col lg:flex-row justify-center flex-grow"
     >
       <div v-if="voiceList" class="lg:mr-4">
-        <UCard v-if="voiceList" class="mb-4 lg:w-96">
+        <UCard
+          v-if="voiceList"
+          class="mb-4 lg:w-96"
+          :ui="{
+            body: {
+              base: 'space-y-5',
+            },
+          }"
+        >
           <template #header>
             <h2>👇 语音选择</h2>
           </template>
-          <div class="mb-8">
-            <label for="voiceSelect" class="label-general">
-              声音 (voice)：
-            </label>
+          <UFormGroup label="声音 (voice)" required>
             <USelectMenu
               v-model="voiceConfig.voice"
               :options="voiceList"
@@ -21,37 +26,33 @@
               :search-attributes="['LocalName', 'ShortName']"
               placeholder="选择声音"
             />
-          </div>
-          <div class="mb-8">
-            <div class="flex items-center mb-4">
-              <UCheckbox
-                v-model="voiceConfig.useStyle"
-                :disabled="styleList.length === 0"
-                :label="
-                  styleList.length !== 0
-                    ? '使用声音风格'
-                    : '该声音没有风格，无法启用声音风格'
-                "
-              />
-            </div>
-            <div v-if="voiceConfig.useStyle && styleList.length !== 0">
-              <label
-                style="align-items: self-start"
-                for="voiceStyleSelect"
-                class="label-general"
-              >
-                声音风格 (voiceStyle)：
-              </label>
+          </UFormGroup>
+          <div class="space-y-2">
+            <UCheckbox
+              v-model="voiceConfig.useStyle"
+              :disabled="styleList.length === 0"
+              :label="
+                styleList.length !== 0
+                  ? '使用声音风格'
+                  : '该声音没有风格，无法启用声音风格'
+              "
+            />
+            <UFormGroup
+              v-if="voiceConfig.useStyle && styleList.length !== 0"
+              label="声音风格 (voiceStyle)"
+            >
               <USelectMenu
                 v-model="voiceConfig.style"
                 :options="styleList"
                 placeholder="选择声音风格"
                 searchable
               />
-            </div>
+            </UFormGroup>
           </div>
-          <div class="mb-4">
-            <label for="pitchRange" class="label-general">音调(pitch)：</label>
+          <UFormGroup
+            label="音调(pitch)"
+            help="注：不再提供语速参数选择, 会使用各家 app 内的设置"
+          >
             <USelectMenu
               v-model="voiceConfig.pitch"
               :options="pitchOptions"
@@ -59,19 +60,28 @@
               value-attribute="id"
               placeholder="选择音调"
             />
-          </div>
-          <div class="mb-4">
-            <label for="voiceFormat" class="label-general">音频格式</label>
-            <USelectMenu
-              v-model="voiceConfig.format"
-              :options="formatList"
-              placeholder="选择音频格式"
-            />
-          </div>
-          <div class="dark:text-white text-sm">
-            <p>*注：不再提供语速参数选择。</p>
-            <p>各个阅读软件都有自带的语速选择，这里所选的语速会被覆盖。</p>
-          </div>
+          </UFormGroup>
+          <UAccordion
+            :items="[
+              {
+                label: '高级设置',
+                slot: 'content',
+              },
+            ]"
+            color="gray"
+            variant="solid"
+            size="md"
+          >
+            <template #content>
+              <UFormGroup label="音频格式">
+                <USelectMenu
+                  v-model="voiceConfig.format"
+                  :options="formatList"
+                  placeholder="选择音频格式"
+                />
+              </UFormGroup>
+            </template>
+          </UAccordion>
         </UCard>
         <ExportPanel
           v-if="voiceList && voiceConfig.voice"
@@ -90,24 +100,36 @@
             <h2>🔑 输入 key</h2>
           </template>
           <div class="mb-5">
-            <label for="email" class="label-general">API Region</label>
-            <UInput
-              id="email"
-              v-model="api.region"
-              type="text"
-              class="select-general"
-              required
-            />
+            <UFormGroup label="API Region" required>
+              <UInput
+                id="email"
+                v-model="api.region"
+                type="text"
+                class="select-general"
+                required
+              />
+            </UFormGroup>
           </div>
           <div class="mb-5">
-            <label for="password" class="label-general">Your API Key</label>
-            <UInput
-              id="password"
-              v-model="api.key"
-              type="password"
-              class="select-general"
-              required
-            />
+            <UFormGroup label="API Key" required>
+              <template #help>
+                <p>本站不会储存你的 Key。 数据缓存于本地浏览器中。</p>
+                <p>
+                  具体请见此<a
+                    href="https://github.com/yy4382/tts-importer?tab=readme-ov-file#%E9%9A%90%E7%A7%81%E8%AF%B4%E6%98%8E"
+                    class="text-blue-700 dark:text-blue-400"
+                    >说明</a
+                  >。
+                </p>
+              </template>
+              <UInput
+                id="password"
+                v-model="api.key"
+                type="password"
+                class="select-general"
+                required
+              />
+            </UFormGroup>
           </div>
           <UButton
             :disabled="!api.key || !api.region"
@@ -119,19 +141,6 @@
         </UCard>
       </div>
     </div>
-    <UCard class="max-w-[22rem] mx-auto">
-      <p>
-        本站不会储存你的 Key。<br />
-        数据缓存于本地浏览器中。
-      </p>
-      <p>
-        具体请见此<a
-          href="https://github.com/yy4382/tts-importer?tab=readme-ov-file#%E9%9A%90%E7%A7%81%E8%AF%B4%E6%98%8E"
-          class="text-blue-700 dark:text-blue-400"
-          >说明</a
-        >。
-      </p>
-    </UCard>
     <IFooter />
   </div>
 </template>
