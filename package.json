@@ -25,6 +25,7 @@
     "vue-tsc": "^1.8.27"
   },
   "dependencies": {
+    "@iconify-json/mingcute": "^1.1.17",
     "@vercel/analytics": "^1.2.2",
     "vue-github-button": "^3.1.0"
   }

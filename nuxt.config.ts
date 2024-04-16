@@ -20,4 +20,7 @@ export default defineNuxtConfig({
       },
     },
   },
+  ui: {
+    icons: ["mingcute"],
+  },
 });

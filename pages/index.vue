@@ -160,6 +160,15 @@
 <script setup lang="ts">
 import type { Api, VoiceAttr, VoiceConfig } from "~/utils/types";
 const toast = useToast();
+useHead({
+  title: "TTS Importer",
+  meta: [
+    {
+      name: "description",
+      content: "Azure TTS Importer",
+    },
+  ],
+});
 
 const formatList = ref([
   "amr-wb-16000hz",

@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@iconify-json/mingcute':
+    specifier: ^1.1.17
+    version: 1.1.17
   '@vercel/analytics':
     specifier: ^1.2.2
     version: 1.2.2
@@ -837,6 +840,12 @@ packages:
       '@iconify/types': 2.0.0
     dev: true
 
+  /@iconify-json/mingcute@1.1.17:
+    resolution: {integrity: sha512-WTKnn5OicUo18dE3rkJs00sUjOIAui8Ut9yZSXamRfjzmLxuX9FKqYQAbFXaV6lw0T4QwBQ8/y4ftaWl/1Entg==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: false
+
   /@iconify/collections@1.0.414:
     resolution: {integrity: sha512-DFBx4fmstsWwQoLkBuUKhHFh4J3uxVi7Ew68Vju9X7Oi/J6N3fuuWkVedFrUGoJMhYYFmyhwz6rcq9+H4fkWQA==}
     dependencies:
@@ -845,7 +854,6 @@ packages:
 
   /@iconify/types@2.0.0:
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
-    dev: true
 
   /@iconify/utils@2.1.22:
     resolution: {integrity: sha512-6UHVzTVXmvO8uS6xFF+L/QTSpTzA/JZxtgU+KYGFyDYMEObZ1bu/b5l+zNJjHy+0leWjHI+C0pXlzGvv3oXZMA==}
