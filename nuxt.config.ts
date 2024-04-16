@@ -9,6 +9,15 @@ export default defineNuxtConfig({
   },
 
   css: ["~/assets/css/main.css"],
-
-  modules: ["@nuxt/ui"]
+  modules: ["@nuxt/ui", "@nuxt/content"],
+  // @ts-ignore
+  content: {
+    // My custom configuration
+    markdown: {
+      anchorLinks: {
+        depth: 2,
+        exclude: [1],
+      },
+    },
+  },
 });
