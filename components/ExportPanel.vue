@@ -106,6 +106,13 @@ function downloadSourceReaderFile() {
   document.body.removeChild(downloadAnchor);
   URL.revokeObjectURL(url);
 }
+function copyIFreeTimeSSML() {
+  const config = getConfig(ConfigType.AiYue);
+  if (!config) return;
+  const configObj = JSON.parse(config) as any;
+  const ssml = configObj.ttsHandles[0].params.text;
+  if (ssml) copyText(ssml);
+}
 </script>
 
 <template>
@@ -161,7 +168,7 @@ function downloadSourceReaderFile() {
         >
       </div>
     </div>
-    <div>
+    <div class="mb-4">
       <label for="sourceReaderButton" class="label-general">源阅读</label>
       <div id="sourceReaderButton">
         <UButton
@@ -174,6 +181,30 @@ function downloadSourceReaderFile() {
         </UButton>
         <UButton color="gray" variant="solid" @click="downloadSourceReaderFile">
           下载导入文件
+        </UButton>
+      </div>
+    </div>
+    <div>
+      <label for="ifreetimeButton" class="label-general">爱阅书香</label>
+      <div id="ifreetimeButton">
+        <UButton
+          color="gray"
+          variant="solid"
+          class="mr-1"
+          @click="copyIFreeTimeSSML"
+        >
+          复制 SSML
+        </UButton>
+        <UButton
+          color="white"
+          variant="solid"
+          to="/help#%E7%88%B1%E9%98%85%E4%B9%A6%E9%A6%99%E5%AF%BC%E5%85%A5"
+          size="xs"
+        >
+          查看导入教程
+          <template #trailing>
+            <UIcon name="i-heroicons-arrow-right-20-solid" class="w-5 h-5" />
+          </template>
         </UButton>
       </div>
     </div>
