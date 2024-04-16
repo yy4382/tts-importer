@@ -274,7 +274,9 @@ watch(
  */
 function getVoiceList() {
   if (!api.value.key || !api.value.region) {
-    alert("请输入 API Key 和 API Region");
+    toast.add({
+      title: "请填写 API Key 和 API Region",
+    });
     return;
   }
   isLoading.value = true;
@@ -289,8 +291,7 @@ function getVoiceList() {
     .then((res) => {
       if (!Array.isArray(res)) {
         console.error("fetch list", res);
-        alert("获取声音列表失败，请检查 API Key 和 API Region 是否正确");
-        return;
+        throw new Error("Invalid response, should be an array");
       }
       const zhVoices = res
         .filter((voice) => voice.Locale.startsWith("zh"))

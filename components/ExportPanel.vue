@@ -9,10 +9,9 @@ const props = defineProps<{
 const api = computed(() => props.api);
 const voiceConfig = computed(() => props.voiceConfig);
 
-function copyLegadoConfig() {
-  const config = genLegado(api.value, voiceConfig.value);
+function copyText(text: string) {
   try {
-    navigator.clipboard.writeText(config);
+    navigator.clipboard.writeText(text);
   } catch (err) {
     console.error(err);
     toast.add({
@@ -25,50 +24,53 @@ function copyLegadoConfig() {
     title: "复制成功",
     description: "已复制配置到剪贴板",
   });
+}
+enum ConfigType {
+  AiYue,
+  Legado,
+  SourceReader,
+}
+function getConfig(configType: ConfigType): string | undefined {
+  try {
+    switch (configType) {
+      case ConfigType.AiYue:
+        return genAiyue(api.value, voiceConfig.value);
+      case ConfigType.Legado:
+        return genLegado(api.value, voiceConfig.value);
+      case ConfigType.SourceReader: {
+        let config = JSON.parse(genLegado(api.value, voiceConfig.value));
+        config = [config];
+        return JSON.stringify(config);
+      }
+    }
+  } catch (err) {
+    toast.add({ title: (err as Error).message });
+  }
+}
+
+function copyLegadoConfig() {
+  const config = getConfig(ConfigType.Legado);
+  if (config) copyText(config);
 }
 
 function copyLegadoLink() {
-  const config = genLegado(api.value, voiceConfig.value);
+  const config = getConfig(ConfigType.Legado);
+  if (!config) return;
   const link = `${window.location.protocol}//${window.location.host}/api/legado?config=${encodeURIComponent(config)}`;
-  try {
-    navigator.clipboard.writeText(link);
-  } catch (err) {
-    console.error(err);
-    toast.add({
-      title: "复制失败",
-      description: "请使用更现代的浏览器",
-    });
-    return;
-  }
-  toast.add({
-    title: "复制成功",
-    description: "已复制配置到剪贴板",
-  });
+  copyText(link);
 }
 
 function import2Legado() {
-  const config = genLegado(api.value, voiceConfig.value);
+  const config = getConfig(ConfigType.Legado);
+  if (!config) return;
   const link = `${window.location.protocol}//${window.location.host}/api/legado?config=${encodeURIComponent(config)}`;
   const legadoLink = `legado://import/httpTTS?src=${encodeURIComponent(link)}`;
   window.open(legadoLink, "_blank");
 }
 
 function copyAiyueConfig() {
-  const config = genAiyue(api.value, voiceConfig.value);
-  try {
-    navigator.clipboard.writeText(config);
-  } catch (err) {
-    console.error(err);
-    toast.add({
-      title: "复制失败",
-      description: "请使用更现代的浏览器",
-    });
-    return;
-  }
-  toast.add({
-    title: "复制成功",
-    description: "已复制配置到剪贴板",
-  });
+  const config = getConfig(ConfigType.AiYue);
+  if (config) copyText(config);
 }
 
 function import2Aiyue() {
@@ -85,26 +87,15 @@ function import2Aiyue() {
 }
 
 function copySourceReaderLink() {
-  let config = JSON.parse(genLegado(api.value, voiceConfig.value));
-  config = [config];
-  config = JSON.stringify(config);
+  const config = getConfig(ConfigType.SourceReader);
+  if (!config) return;
   const link = `${window.location.protocol}//${window.location.host}/api/legado?config=${encodeURIComponent(config)}`;
-  try {
-    navigator.clipboard.writeText(link);
-  } catch (err) {
-    console.error(err);
-    alert("复制失败，请手动复制");
-  }
+  copyText(link);
 }
 function downloadSourceReaderFile() {
-  if (!voiceConfig.value.voice) {
-    alert("请选择声音");
-    return;
-  }
-  let config = JSON.parse(genLegado(api.value, voiceConfig.value));
-  const title = `Azure ${voiceConfig.value.voice.LocalName}${voiceConfig.value.style || ""}${voiceConfig.value.pitch === "default" ? "" : " - " + voiceConfig.value.pitch}`;
-  config = [config];
-  config = JSON.stringify(config);
+  const config = getConfig(ConfigType.SourceReader);
+  if (!config) return;
+  const title = `Azure ${voiceConfig.value.voice!.LocalName}${voiceConfig.value.style || ""}${voiceConfig.value.pitch === "default" ? "" : " - " + voiceConfig.value.pitch}`;
   const blob = new Blob([config], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const downloadAnchor = document.createElement("a");
@@ -120,7 +111,7 @@ function downloadSourceReaderFile() {
 <template>
   <UCard class="mb-4 lg:w-96">
     <template #header>
-      <h2 >📤 导出</h2>
+      <h2>📤 导出</h2>
     </template>
     <div class="mb-4">
       <label for="legadoButton" class="label-general">阅读(legado)</label>

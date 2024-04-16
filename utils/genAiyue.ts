@@ -12,8 +12,7 @@ function generateRandomString(length: number): string {
 
 export default function (api: Api, voiceConfig: VoiceConfig) {
   if (!voiceConfig.voice) {
-    alert("请选择声音");
-    return "";
+    throw new Error("未选择语音")
   }
   const pitch = voiceConfig.pitch === "default" ? null : voiceConfig.pitch;
   const ssml =

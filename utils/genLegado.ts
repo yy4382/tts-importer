@@ -1,14 +1,15 @@
 import { type Api, type VoiceConfig } from "~/utils/types";
 export default function (api: Api, voiceConfig: VoiceConfig) {
   if (!voiceConfig.voice) {
-    alert("请选择声音");
-    return "";
+    throw new Error("未选择语音")
   }
   const header = {
     "Ocp-Apim-Subscription-Key": api.key,
     "Content-Type": "application/ssml+xml",
     "X-Microsoft-OutputFormat": voiceConfig.format,
-    "User-Agent": voiceConfig.useCustomAgent ? voiceConfig.customAgent : "legado",
+    "User-Agent": voiceConfig.useCustomAgent
+      ? voiceConfig.customAgent
+      : "legado",
   };
   const ssml =
     `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="zh-CN">` +
