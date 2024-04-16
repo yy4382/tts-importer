@@ -1,22 +1,22 @@
 import { type Api, type VoiceConfig } from "~/utils/types";
-export default function (api: Api, vconfig: VoiceConfig) {
-  if (!vconfig.voice) {
+export default function (api: Api, voiceConfig: VoiceConfig) {
+  if (!voiceConfig.voice) {
     alert("请选择声音");
     return "";
   }
   const header = {
     "Ocp-Apim-Subscription-Key": api.key,
     "Content-Type": "application/ssml+xml",
-    "X-Microsoft-OutputFormat": vconfig.format,
-    "User-Agent": "legado",
+    "X-Microsoft-OutputFormat": voiceConfig.format,
+    "User-Agent": voiceConfig.useCustomAgent ? voiceConfig.customAgent : "legado",
   };
   const ssml =
     `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="zh-CN">` +
-    `<voice name="${vconfig.voice.ShortName}">` +
-    `<prosody rate="{{speakSpeed*4}}%" pitch="${vconfig.pitch}">` +
-    `${vconfig.useStyle ? `<mstts:express-as style="${vconfig.style}">` : ""}` +
+    `<voice name="${voiceConfig.voice.ShortName}">` +
+    `<prosody rate="{{speakSpeed*4}}%" pitch="${voiceConfig.pitch}">` +
+    `${voiceConfig.useStyle ? `<mstts:express-as style="${voiceConfig.style}">` : ""}` +
     `{{speakText}}` +
-    `${vconfig.useStyle ? `</mstts:express-as>` : ""}` +
+    `${voiceConfig.useStyle ? `</mstts:express-as>` : ""}` +
     `</prosody>` +
     `</voice>` +
     `</speak>`;
@@ -33,7 +33,7 @@ export default function (api: Api, vconfig: VoiceConfig) {
     loginCheckJs: "",
     loginUi: "",
     loginUrl: "",
-    name: `Azure ${vconfig.voice.LocalName}${vconfig.style || ""}${vconfig.pitch === "default" ? "" : " - " + vconfig.pitch}`,
+    name: `Azure ${voiceConfig.voice.LocalName}${voiceConfig.style || ""}${voiceConfig.pitch === "default" ? "" : " - " + voiceConfig.pitch}`,
     url: `https://${api.region}.tts.speech.microsoft.com/cognitiveservices/v1,${JSON.stringify(urlConfig)}`,
   };
 

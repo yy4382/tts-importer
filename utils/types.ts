@@ -9,10 +9,12 @@ export interface VoiceAttr {
   StyleNames: string[] | null;
 }
 export interface VoiceConfig {
-  voice: VoiceAttr | undefined;
+  voice?: VoiceAttr;
   useStyle: boolean;
-  style: string | undefined;
+  style?: string;
   rate: string;
   pitch: string;
   format: string;
+  useCustomAgent: boolean;
+  customAgent: string;
 }

@@ -73,13 +73,29 @@
             size="md"
           >
             <template #content>
-              <UFormGroup label="音频格式">
-                <USelectMenu
-                  v-model="voiceConfig.format"
-                  :options="formatList"
-                  placeholder="选择音频格式"
-                />
-              </UFormGroup>
+              <div class="space-y-4">
+                <UFormGroup label="音频格式">
+                  <USelectMenu
+                    v-model="voiceConfig.format"
+                    :options="formatList"
+                    placeholder="选择音频格式"
+                  />
+                </UFormGroup>
+
+                <UFormGroup label="User-Agent">
+                  <UCheckbox
+                    v-model="voiceConfig.useCustomAgent"
+                    label="使用自定义 User-Agent"
+                    class="mb-1"
+                  />
+                  <UInput
+                    v-model="voiceConfig.customAgent"
+                    type="text"
+                    :disabled="!voiceConfig.useCustomAgent"
+                    placeholder="User-Agent"
+                  />
+                </UFormGroup>
+              </div>
             </template>
           </UAccordion>
         </UCard>
@@ -201,6 +217,8 @@ const voiceConfig: Ref<VoiceConfig> = ref({
   rate: "default",
   pitch: "default",
   format: "audio-24khz-48kbitrate-mono-mp3",
+  useCustomAgent: false,
+  customAgent: "",
 });
 /**
  *  根据选择的声音获取风格列表

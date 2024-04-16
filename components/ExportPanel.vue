@@ -73,7 +73,9 @@ function copyAiyueConfig() {
 
 function import2Aiyue() {
   if (!voiceConfig.value.voice) {
-    alert("请选择声音");
+    toast.add({
+      title: "请先选择声音",
+    });
     return {};
   }
   const config = JSON.stringify({ api: api.value, vconfig: voiceConfig.value });

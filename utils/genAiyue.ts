@@ -57,6 +57,9 @@ export default function (api: Api, voiceConfig: VoiceConfig) {
             "Content-Type": "application/ssml+xml",
             "X-Microsoft-OutputFormat": voiceConfig.format,
             "ocp-apim-subscription-key": `${api.key}`,
+            "User-Agent": voiceConfig.useCustomAgent
+              ? voiceConfig.customAgent
+              : "AiyueTTS",
           },
         },
       },
