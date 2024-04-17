@@ -195,12 +195,7 @@ function downloadSourceReaderFile() {
         >
           复制 SSML
         </UButton> -->
-        <UButton
-          color="white"
-          variant="solid"
-          to="/help#%E7%88%B1%E9%98%85%E4%B9%A6%E9%A6%99%E5%AF%BC%E5%85%A5"
-          size="xs"
-        >
+        <UButton color="white" variant="solid" to="/help/ifreetime" size="xs">
           查看导入教程
           <template #trailing>
             <UIcon name="i-heroicons-arrow-right-20-solid" class="w-5 h-5" />

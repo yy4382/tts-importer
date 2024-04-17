@@ -152,6 +152,9 @@
         >
           {{ voiceList?.length === 0 ? "获取" : "更新" }}声音列表
         </UButton>
+        <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+          不知道从那里获得 Key？请看<ULink to="/help/reg" inactive-class="text-primary">帮助：创建资源</ULink>
+        </div>
       </UCard>
     </div>
   </div>
