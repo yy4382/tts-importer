@@ -1,6 +1,6 @@
 <template>
   <footer
-    class="bg-stone-100 dark:bg-gray-900 shadow m-2 rounded-lg mx-auto w-[calc(100vw-1rem)] max-w-screen-xl"
+    class="bg-stone-100 dark:bg-gray-900 shadow !mb-2 rounded-lg mx-auto w-[calc(100vw-1rem)] max-w-screen-xl"
   >
     <div
       class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between"
