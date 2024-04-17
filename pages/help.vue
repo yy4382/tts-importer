@@ -3,7 +3,7 @@
 <template>
   <main class="flex-grow self-center">
     <UCard
-      class="w-[calc(100vw-2rem)] md:w-[48rem] prose dark:prose-invert prose-code:before:content-none prose-code:after:content-none"
+      class="w-[calc(100vw-2rem)] md:w-[48rem] prose dark:prose-invert prose-code:before:content-none prose-code:after:content-none font-sans prose-img:w-[60%] prose-img:mx-auto"
     >
       <template #header>
         <h1 class="mb-0">帮助</h1>

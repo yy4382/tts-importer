@@ -2,21 +2,40 @@
 
 ## 爱阅书香导入
 
-首先下载 <a href="files/Azure晓晓（模版）.itts" download="Azure晓晓（模版）.itts" target="_blank">Azure 晓晓（模版）.itts</a>，然后导入爱阅书香；
+从 App Store 下载一个爱阅记，首先导入到它里面，然后查看它的语音源，把每个选项复制粘贴到爱阅书香里。
 
-接着打开它，密码为 `yfi.moe`；
+简单来说，需要对照着爱阅记的内容修改以下内容：
 
-然后进入 `TTS 语音步骤：1` 中的 `Http 配置`，看到里面有一个参数值为 “你的 key”，将它改为你的；其他的不要动（除非你很明白你在干什么）
+#### “基本”段
 
-<div style="display: flex;">
-    <img src="img/select-http-config.jpeg" width="50%" style="margin: 0px 0px;">
-    <img src="img/http-config.jpeg" width="50%" style="margin: 0px 0px;">
-</div>
+- 名称：随意
+- 合成字符数：建议300
+- 分组：推荐 Azure，这样所有的微软语音源都在一个分组里
 
-接着回到上一级，看到 `参数` 中的 `text`，将它改为在 [本网站主页](/) 上复制的 “爱阅记 SSML”；
+#### “Http 默认配置” 和 “登录地址” 段
 
-![](img/text.jpeg)
+无须配置（也不要乱动里面的内容）
 
-然后就可以改下配置的标题，测试发音，看看有没有问题了。
+#### “TTS 语音步骤：1” 段
 
-这样的操作不会让ua和音质在主页上的选择生效，不过既然你有这样的需求，我就默认你有这样的能力找到这两个配置在爱阅书香哪里改了。
+- `请求方式`：改为 POST
+- `Http 配置`：需要更改，详见下一个小标题
+- `地址`：从爱阅记中复制同名字段
+- `参数`：和爱阅记中一样，添加一个 `text` 参数，值从爱阅记中复制
+- `解析字段`: 和爱阅记中一样，添加一个 `playData` 参数，值为 `ResponseData`
+
+![TTS 语音步骤：1](/img/text.jpeg)
+
+##### “Http 配置” 中
+
+首先，页面上有两个“Http 配置”，保证你进的是正确的那个。
+![Http 配置](/img/select-http-config.jpeg)
+
+按图添加字段，从爱阅记复制内容，包括 `请求參数总格式处理` 和 `自定义HTTP头` 中的四个内容。
+
+![Http 配置](/img/http-config.jpeg)
+
+#### 测试发音
+
+点击测试发音，如果能听到声音即为成功。
+如果出现合成失败，截图“查看请求与响应”的内容和配置内容（记得给key打码），发给[我](mailto:i@yfi.moe)或者发[群](https://t.me/aiyueshuxiangy)里，我会帮你看看。

@@ -106,13 +106,13 @@ function downloadSourceReaderFile() {
   document.body.removeChild(downloadAnchor);
   URL.revokeObjectURL(url);
 }
-function copyIFreeTimeSSML() {
-  const config = getConfig(ConfigType.AiYue);
-  if (!config) return;
-  const configObj = JSON.parse(config) as any;
-  const ssml = configObj.ttsHandles[0].params.text;
-  if (ssml) copyText(ssml);
-}
+// function copyIFreeTimeSSML() {
+//   const config = getConfig(ConfigType.AiYue);
+//   if (!config) return;
+//   const configObj = JSON.parse(config) as any;
+//   const ssml = configObj.ttsHandles[0].params.text;
+//   if (ssml) copyText(ssml);
+// }
 </script>
 
 <template>
@@ -187,14 +187,14 @@ function copyIFreeTimeSSML() {
     <div>
       <label for="ifreetimeButton" class="label-general">爱阅书香</label>
       <div id="ifreetimeButton">
-        <UButton
+        <!-- <UButton
           color="gray"
           variant="solid"
           class="mr-1"
           @click="copyIFreeTimeSSML"
         >
           复制 SSML
-        </UButton>
+        </UButton> -->
         <UButton
           color="white"
           variant="solid"
