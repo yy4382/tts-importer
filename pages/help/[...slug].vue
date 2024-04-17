@@ -15,7 +15,9 @@ const dataDoc = computed(() => {
       <UVerticalNavigation :links="dataDoc" class="mb-8" />
       <ContentDoc
         class="prose dark:prose-invert prose-code:before:content-none prose-code:after:content-none font-sans"
-      />
+      >
+        <template #not-found> 选择一个帮助文档以查看。 </template>
+      </ContentDoc>
     </UCard>
   </main>
 </template>
