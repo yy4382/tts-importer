@@ -163,13 +163,19 @@ function downloadSourceReaderFile() {
           @click="copyAiyueConfig"
           >复制配置</UButton
         >
-        <UButton color="gray" variant="solid" @click="import2Aiyue"
+        <UButton color="gray" variant="solid" class="mr-1" @click="import2Aiyue"
           >一键导入</UButton
         >
+        <UButton color="white" variant="solid" to="/help/ireadnote" size="xs">
+          查看导入教程
+          <template #trailing>
+            <UIcon name="i-heroicons-arrow-right-20-solid" class="w-5 h-5" />
+          </template>
+        </UButton>
       </div>
     </div>
     <div class="mb-4">
-      <label for="sourceReaderButton" class="label-general">源阅读</label>
+      <label for="sourceReaderButton" class="label-general">源阅</label>
       <div id="sourceReaderButton">
         <UButton
           color="gray"
@@ -182,6 +188,9 @@ function downloadSourceReaderFile() {
         <UButton color="gray" variant="solid" @click="downloadSourceReaderFile">
           下载导入文件
         </UButton>
+      </div>
+      <div class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+        网络导入因为未知原因对于源阅读无效（对源阅有效），如果使用源阅读，请下载导入文件。
       </div>
     </div>
     <div>
