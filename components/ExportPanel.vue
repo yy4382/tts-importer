@@ -152,6 +152,9 @@ function downloadSourceReaderFile() {
           一键导入
         </UButton>
       </div>
+      <div class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+        同样对服务器版阅读 (<a href="https://github.com/hectorqin/reader">hectorqin/reader</a>) 有效，只需复制配置之后粘贴到服务器版阅读的配置框即可。
+      </div>
     </div>
     <div class="mb-4">
       <label for="AiyueButton" class="label-general">爱阅记</label>
