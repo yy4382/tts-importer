@@ -22,7 +22,7 @@
     "typescript": "^5.4.5",
     "vue": "^3.4.27",
     "vue-router": "^4.3.2",
-    "vue-tsc": "^1.8.27"
+    "vue-tsc": "^2.0.16"
   },
   "dependencies": {
     "@iconify-json/mingcute": "^1.1.17",
