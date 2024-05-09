@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "@nuxt/content": "^2.12.1",
-    "@nuxt/ui": "^2.15.2",
+    "@nuxt/ui": "^2.16.0",
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
