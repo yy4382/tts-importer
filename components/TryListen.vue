@@ -30,7 +30,7 @@ function genSSML(config: VoiceConfig, text: string) {
 }
 
 function getTestAudio() {
-  if (audioPlayer === null || !voiceConfig.value.voice) return;
+  if (audioPlayer.value === null || !voiceConfig.value.voice) return;
   isLoading.value = true;
   $fetch(
     `https://${api.value.region}.tts.speech.microsoft.com/cognitiveservices/v1`,
@@ -84,17 +84,17 @@ function getTestAudio() {
       <UTextarea
         id="message"
         v-model="testText"
-        rows="4"
+        :rows="4"
         placeholder="试听文字"
         class="mb-4 w-full"
-      ></UTextarea>
+      />
       <UButton :loading="isLoading" @click="getTestAudio()"> 试听 </UButton>
       <audio
         v-if="audioBlobUrl !== ''"
         controls
         :src="audioBlobUrl"
         class="mt-8"
-      ></audio>
+      />
     </div>
   </UCard>
 </template>

@@ -6,7 +6,7 @@
       to="/"
       class="md:flex-1 flex items-center space-x-3 rtl:space-x-reverse"
     >
-      <img src="~/assets/favicon.svg" class="h-8" alt="Azure TTS logo" />
+      <img src="~/assets/favicon.svg" class="h-8" alt="Azure TTS logo" >
       <span
         class="self-center text-lg md:text-2xl font-semibold whitespace-nowrap dark:text-white"
         >TTS Importer</span
