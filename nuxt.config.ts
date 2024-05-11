@@ -9,8 +9,7 @@ export default defineNuxtConfig({
   },
 
   css: ["~/assets/css/main.css"],
-  modules: ["@nuxt/ui", "@nuxt/content"],
-  // @ts-ignore
+  modules: ["@nuxt/ui", "@nuxt/content", "@nuxt/eslint"],
   content: {
     // My custom configuration
     markdown: {
