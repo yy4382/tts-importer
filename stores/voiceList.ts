@@ -7,7 +7,10 @@ export const useVoiceListStore = defineStore("tts-i:voiceList", {
     voiceList: [] as VoiceAttr[],
   }),
   actions: {
-    async updateVoiceList(errCb?: (error: Error) => void) {
+    async updateVoiceList(
+      successCb?: ({ listLength }: { listLength: number }) => void,
+      errCb?: (error: Error) => void,
+    ) {
       const settings = useSettingsStore();
       if (!settings.notEmpty) {
         if (errCb) errCb(new Error("settings not valid"));
@@ -23,6 +26,7 @@ export const useVoiceListStore = defineStore("tts-i:voiceList", {
       );
       if (!Array.isArray(res)) {
         if (errCb) errCb(new Error("Invalid response, should be an array"));
+        else throw new Error("Invalid response, should be an array");
         return;
       }
       const zhVoices = res
@@ -36,6 +40,7 @@ export const useVoiceListStore = defineStore("tts-i:voiceList", {
           } satisfies VoiceAttr as VoiceAttr;
         });
       this.voiceList = zhVoices;
+      if (successCb) successCb({ listLength: zhVoices.length });
     },
   },
   persist: true,
