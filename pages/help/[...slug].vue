@@ -11,7 +11,7 @@ const dataDoc = computed(() => {
       <template #header>
         <h1 class="mb-0 text-4xl font-bold">帮助</h1>
       </template>
-      <span class="text-gray-700 dark:text-gray-400 text-sm">目录</span>
+      <span class="text-sm text-gray-700 dark:text-gray-400">目录</span>
       <UVerticalNavigation :links="dataDoc" class="mb-8" />
       <ContentDoc
         class="prose dark:prose-invert prose-code:before:content-none prose-code:after:content-none font-sans"

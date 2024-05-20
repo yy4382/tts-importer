@@ -1,13 +1,8 @@
 <script setup lang="ts">
-import type { Api, VoiceConfig } from "~/utils/types";
+import type { VoiceConfig } from "~/utils/types";
 const toast = useToast();
-
-const props = defineProps<{
-  api: Api;
-  voiceConfig: VoiceConfig;
-}>();
-const api = computed(() => props.api);
-const voiceConfig = computed(() => props.voiceConfig);
+const voiceChoice = useVoiceChoiceStore();
+const settings = useSettingsStore();
 
 const isLoading = ref(false);
 
@@ -30,19 +25,19 @@ function genSSML(config: VoiceConfig, text: string) {
 }
 
 function getTestAudio() {
-  if (audioPlayer.value === null || !voiceConfig.value.voice) return;
+  if (audioPlayer.value === null || !voiceChoice.voice) return;
   isLoading.value = true;
   $fetch(
-    `https://${api.value.region}.tts.speech.microsoft.com/cognitiveservices/v1`,
+    `https://${settings.region}.tts.speech.microsoft.com/cognitiveservices/v1`,
     {
       method: "POST",
       headers: {
-        "Ocp-Apim-Subscription-Key": api.value.key,
+        "Ocp-Apim-Subscription-Key": settings.key,
         "Content-Type": "application/ssml+xml",
-        "X-Microsoft-OutputFormat": voiceConfig.value.format,
+        "X-Microsoft-OutputFormat": voiceChoice.format,
         "User-Agent": "TTSForLegado",
       },
-      body: genSSML(voiceConfig.value, testText.value),
+      body: genSSML(voiceChoice, testText.value),
       responseType: "blob",
     },
   )
@@ -76,7 +71,7 @@ function getTestAudio() {
 }
 </script>
 <template>
-  <UCard class="mb-4 lg:w-96">
+  <UCard class="mb-4 max-w-xl">
     <template #header>
       <h2>📢 试听</h2>
     </template>

@@ -1,13 +1,7 @@
 <script setup lang="ts">
-import type { Api, VoiceConfig } from "~/utils/types";
 const toast = useToast();
-
-const props = defineProps<{
-  api: Api;
-  voiceConfig: VoiceConfig;
-}>();
-const api = computed(() => props.api);
-const voiceConfig = computed(() => props.voiceConfig);
+const voiceChoice = useVoiceChoiceStore();
+const settings = useSettingsStore();
 
 function copyText(text: string) {
   try {
@@ -25,43 +19,21 @@ function copyText(text: string) {
     description: "已复制配置到剪贴板",
   });
 }
-enum ConfigType {
-  AiYue,
-  Legado,
-  SourceReader,
-}
-function getConfig(configType: ConfigType): string | undefined {
-  try {
-    switch (configType) {
-      case ConfigType.AiYue:
-        return genAiyue(api.value, voiceConfig.value);
-      case ConfigType.Legado:
-        return genLegado(api.value, voiceConfig.value);
-      case ConfigType.SourceReader: {
-        let config = JSON.parse(genLegado(api.value, voiceConfig.value));
-        config = [config];
-        return JSON.stringify(config);
-      }
-    }
-  } catch (err) {
-    toast.add({ title: (err as Error).message });
-  }
-}
 
 function copyLegadoConfig() {
-  const config = getConfig(ConfigType.Legado);
+  const config = voiceChoice.legadoCfg;
   if (config) copyText(config);
 }
 
 function copyLegadoLink() {
-  const config = getConfig(ConfigType.Legado);
+  const config = voiceChoice.legadoCfg;
   if (!config) return;
   const link = `${window.location.protocol}//${window.location.host}/api/legado?config=${encodeURIComponent(config)}`;
   copyText(link);
 }
 
 function import2Legado() {
-  const config = getConfig(ConfigType.Legado);
+  const config = voiceChoice.legadoCfg;
   if (!config) return;
   const link = `${window.location.protocol}//${window.location.host}/api/legado?config=${encodeURIComponent(config)}`;
   const legadoLink = `legado://import/httpTTS?src=${encodeURIComponent(link)}`;
@@ -69,33 +41,33 @@ function import2Legado() {
 }
 
 function copyAiyueConfig() {
-  const config = getConfig(ConfigType.AiYue);
+  const config = voiceChoice.ifreetimeCfg;
   if (config) copyText(config);
 }
 
 function import2Aiyue() {
-  if (!voiceConfig.value.voice) {
+  if (!voiceChoice.voice) {
     toast.add({
       title: "请先选择声音",
     });
     return {};
   }
-  const config = JSON.stringify({ api: api.value, vconfig: voiceConfig.value });
+  const config = JSON.stringify({ api: settings, vconfig: voiceChoice });
   const link = `${window.location.protocol}//${window.location.host}/api/ireadnote?config=${encodeURIComponent(config)}`;
   const aiyueLink = `iReadNote://import/itts=${link}`;
   window.open(aiyueLink, "_blank");
 }
 
 function copySourceReaderLink() {
-  const config = getConfig(ConfigType.SourceReader);
+  const config = voiceChoice.sourceReaderCfg;
   if (!config) return;
   const link = `${window.location.protocol}//${window.location.host}/api/legado?config=${encodeURIComponent(config)}`;
   copyText(link);
 }
 function downloadSourceReaderFile() {
-  const config = getConfig(ConfigType.SourceReader);
+  const config = voiceChoice.sourceReaderCfg;
   if (!config) return;
-  const title = `Azure ${voiceConfig.value.voice!.LocalName}${voiceConfig.value.style || ""}${voiceConfig.value.pitch === "default" ? "" : " - " + voiceConfig.value.pitch}`;
+  const title = `Azure ${voiceChoice.voice!.LocalName}${voiceChoice.style || ""}${voiceChoice.pitch === "default" ? "" : " - " + voiceChoice.pitch}`;
   const blob = new Blob([config], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const downloadAnchor = document.createElement("a");
@@ -116,7 +88,7 @@ function downloadSourceReaderFile() {
 </script>
 
 <template>
-  <UCard class="mb-4 lg:w-96">
+  <UCard class="mb-4 max-w-xl">
     <template #header>
       <h2>📤 导出</h2>
     </template>
@@ -153,7 +125,9 @@ function downloadSourceReaderFile() {
         </UButton>
       </div>
       <div class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-        同样对服务器版阅读 (<a href="https://github.com/hectorqin/reader">hectorqin/reader</a>) 有效，只需复制配置之后粘贴到服务器版阅读的配置框即可。
+        同样对服务器版阅读 (<a href="https://github.com/hectorqin/reader"
+          >hectorqin/reader</a
+        >) 有效，只需复制配置之后粘贴到服务器版阅读的配置框即可。
       </div>
     </div>
     <div class="mb-4">
@@ -172,7 +146,7 @@ function downloadSourceReaderFile() {
         <UButton color="white" variant="solid" to="/help/ireadnote" size="xs">
           查看导入教程
           <template #trailing>
-            <UIcon name="i-heroicons-arrow-right-20-solid" class="w-5 h-5" />
+            <UIcon name="i-heroicons-arrow-right-20-solid" class="h-5 w-5" />
           </template>
         </UButton>
       </div>
@@ -210,7 +184,7 @@ function downloadSourceReaderFile() {
         <UButton color="white" variant="solid" to="/help/ifreetime" size="xs">
           查看导入教程
           <template #trailing>
-            <UIcon name="i-heroicons-arrow-right-20-solid" class="w-5 h-5" />
+            <UIcon name="i-heroicons-arrow-right-20-solid" class="h-5 w-5" />
           </template>
         </UButton>
       </div>

@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-col min-h-screen bg-stone-200 dark:bg-gray-950">
-    <div class="flex flex-col min-h-screen space-y-6">
+  <div class="flex min-h-screen flex-col bg-stone-200 dark:bg-gray-950">
+    <div class="flex min-h-screen flex-col space-y-6">
       <NavBar />
       <NuxtPage />
       <IFooter />

@@ -1,7 +1,7 @@
 import { type Api, type VoiceConfig } from "~/utils/types";
 export default function (api: Api, voiceConfig: VoiceConfig) {
   if (!voiceConfig.voice) {
-    throw new Error("未选择语音")
+    throw new Error("未选择语音");
   }
   const header = {
     "Ocp-Apim-Subscription-Key": api.key,

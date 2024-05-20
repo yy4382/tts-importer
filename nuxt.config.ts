@@ -9,7 +9,13 @@ export default defineNuxtConfig({
   },
 
   css: ["~/assets/css/main.css"],
-  modules: ["@nuxt/ui", "@nuxt/content", "@nuxt/eslint"],
+  modules: [
+    "@nuxt/ui",
+    "@nuxt/content",
+    "@nuxt/eslint",
+    "@pinia/nuxt",
+    "@pinia-plugin-persistedstate/nuxt",
+  ],
   content: {
     // My custom configuration
     markdown: {
@@ -21,5 +27,8 @@ export default defineNuxtConfig({
   },
   ui: {
     icons: ["mingcute"],
+  },
+  piniaPersistedstate: {
+    storage: "localStorage",
   },
 });
