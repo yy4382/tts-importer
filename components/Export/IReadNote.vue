@@ -1,33 +1,33 @@
 <template>
-  <UButton
-    color="gray"
-    variant="solid"
-    class="mr-1"
-    icon="i-mingcute-copy-2-line"
-    @click="copyAiyueConfig"
-  >
-    复制配置
-  </UButton>
-  <UButton
-    color="gray"
-    variant="solid"
-    class="mr-1"
-    icon="i-mingcute-file-import-line"
-    @click="import2Aiyue"
-  >
-    导入
-  </UButton>
-  <UButton
-    color="gray"
-    variant="solid"
-    to="/help/ireadnote"
-    icon="i-mingcute-book-2-line"
-  >
-    教程
-    <template #trailing>
-      <UIcon name="i-mingcute-arrow-right-up-line" class="-ml-1 h-4 w-4" />
-    </template>
-  </UButton>
+  <ExportDefault id="iReadNote" title="爱阅记">
+    <UButton
+      color="gray"
+      variant="solid"
+      icon="i-mingcute-copy-2-line"
+      @click="useCopy(voiceChoice.ifreetimeCfg, '配置')"
+    >
+      复制配置
+    </UButton>
+    <UButton
+      color="gray"
+      variant="solid"
+      icon="i-mingcute-file-import-line"
+      @click="showImportModal = true"
+    >
+      导入
+    </UButton>
+    <UButton
+      color="gray"
+      variant="solid"
+      to="/help/ireadnote"
+      icon="i-mingcute-book-2-line"
+    >
+      教程
+      <template #trailing>
+        <UIcon name="i-mingcute-arrow-right-up-line" class="-ml-1 h-4 w-4" />
+      </template>
+    </UButton>
+  </ExportDefault>
   <UModal v-model="showImportModal">
     <UCard>
       <template #header>
@@ -40,12 +40,13 @@
       <template #footer>
         <div class="flex justify-end gap-4">
           <UButton
-            :to="importUrl"
+            :to="configUrl"
             icon="i-mingcute-arrow-right-up-line"
             color="gray"
             target="_blank"
-            >查看配置</UButton
           >
+            配置链接
+          </UButton>
           <UButtonGroup>
             <UButton
               :to="directUrl"
@@ -70,32 +71,22 @@
 
 <script lang="ts" setup>
 import { useQRCode } from "@vueuse/integrations/useQRCode";
-const toast = useToast();
 const voiceChoice = useVoiceChoiceStore();
 const settings = useSettingsStore();
-const importUrl = ref("");
+const config = ref({
+  api: settings.$state,
+  vconfig: voiceChoice.$state,
+});
+const configUrl = computed(
+  () =>
+    window &&
+    voiceChoice.voice &&
+    `${window.location.protocol}//${window.location.host}/api/ireadnote` +
+      `?config=${encodeURIComponent(JSON.stringify(config.value))}`,
+);
 const directUrl = computed(() => {
-  return `iReadNote://import/itts=${importUrl.value}`;
+  return `iReadNote://import/itts=${configUrl.value}`;
 });
 const directUrlQR = useQRCode(directUrl);
 const showImportModal = ref(false);
-function copyAiyueConfig() {
-  const config = voiceChoice.ifreetimeCfg;
-  if (config) useCopy(config);
-}
-
-function import2Aiyue() {
-  if (!voiceChoice.voice) {
-    toast.add({
-      title: "请先选择声音",
-    });
-    return {};
-  }
-  const config = JSON.stringify({
-    api: settings.$state,
-    vconfig: voiceChoice.$state,
-  });
-  importUrl.value = `${window.location.protocol}//${window.location.host}/api/ireadnote?config=${encodeURIComponent(config)}`;
-  showImportModal.value = true;
-}
 </script>

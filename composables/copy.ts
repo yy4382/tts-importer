@@ -1,4 +1,5 @@
 export const useCopy = (text: string, title?: string) => {
+  if (!text) return;
   const toast = useToast();
   try {
     navigator.clipboard.writeText(text);
