@@ -10,6 +10,7 @@
           v-model="settings.region"
           type="text"
           class="select-general"
+          placeholder="eastasia"
           required
         />
       </UFormGroup>
@@ -84,4 +85,16 @@ const settings = useSettingsStore();
 const voiceList = useVoiceListStore();
 const isLoading = ref(false);
 const toast = useToast();
+
+onMounted(() => {
+  // migrate old settings
+  if (localStorage.getItem("apiRegion")) {
+    settings.region = localStorage.getItem("apiRegion") as string;
+    localStorage.removeItem("apiRegion");
+  }
+  if (localStorage.getItem("apiKey")) {
+    settings.key = localStorage.getItem("apiKey") as string;
+    localStorage.removeItem("apiKey");
+  }
+});
 </script>

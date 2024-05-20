@@ -1,10 +1,11 @@
 import { defineStore } from "pinia";
 import type { FetchError } from "ofetch";
 export const useSettingsStore = defineStore("tts-i:settings", {
-  state: () => ({
-    region: "eastasia",
-    key: "",
-  }),
+  state: () =>
+    ({
+      region: "",
+      key: "",
+    }) satisfies Settings as Settings,
   getters: {
     notEmpty(state) {
       return state.key !== "" && state.region !== "";
