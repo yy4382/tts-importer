@@ -1,4 +1,4 @@
-export const useCopy = (text: string) => {
+export const useCopy = (text: string, title?: string) => {
   const toast = useToast();
   try {
     navigator.clipboard.writeText(text);
@@ -12,6 +12,6 @@ export const useCopy = (text: string) => {
   }
   toast.add({
     title: "复制成功",
-    description: "已复制配置到剪贴板",
+    description: (title || "") + "已复制到剪贴板",
   });
 };

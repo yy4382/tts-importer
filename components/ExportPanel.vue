@@ -147,10 +147,18 @@ function downloadSourceReaderFile() {
         >
           复制 SSML
         </UButton> -->
-        <UButton color="white" variant="solid" to="/help/ifreetime" size="xs">
-          查看导入教程
+        <UButton
+          color="gray"
+          variant="solid"
+          to="/help/ifreetime"
+          icon="i-mingcute-book-2-line"
+        >
+          教程
           <template #trailing>
-            <UIcon name="i-heroicons-arrow-right-20-solid" class="h-5 w-5" />
+            <UIcon
+              name="i-mingcute-arrow-right-up-line"
+              class="-ml-1 h-4 w-4"
+            />
           </template>
         </UButton>
       </div>
