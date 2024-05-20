@@ -28,9 +28,6 @@ export const useVoiceChoiceStore = defineStore("tts-i:voiceChoice", {
       let config = JSON.parse(genLegado(settings, state));
       config = [config];
       return JSON.stringify(config);
-    },
-    stringify(state) {
-      return JSON.stringify(state);
     }
   },
 

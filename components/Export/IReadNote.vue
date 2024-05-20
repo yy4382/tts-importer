@@ -71,8 +71,8 @@ function import2Aiyue() {
     return {};
   }
   const config = JSON.stringify({
-    api: settings,
-    vconfig: voiceChoice.stringify,
+    api: settings.$state,
+    vconfig: voiceChoice.$state,
   });
   importUrl.value = `${window.location.protocol}//${window.location.host}/api/ireadnote?config=${encodeURIComponent(config)}`;
   showImportModal.value = true;
