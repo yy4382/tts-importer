@@ -1,4 +1,4 @@
-import { type Api, type VoiceConfig } from "~/utils/types";
+import { type Settings, type VoiceConfig } from "~/utils/types";
 function generateRandomString(length: number): string {
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -10,7 +10,7 @@ function generateRandomString(length: number): string {
   return result;
 }
 
-export default function (api: Api, voiceConfig: VoiceConfig) {
+export default function (api: Settings, voiceConfig: VoiceConfig) {
   if (!voiceConfig.voice) {
     throw new Error("未选择语音");
   }
@@ -63,7 +63,7 @@ export default function (api: Api, voiceConfig: VoiceConfig) {
         },
       },
     ],
-    _TTSName: `Azure ${voiceConfig.voice.LocalName}${voiceConfig.style || ""}${pitch || ""}`,
+    _TTSName: genName(voiceConfig),
   };
   return JSON.stringify(config);
 }

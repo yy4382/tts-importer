@@ -1,5 +1,5 @@
-import { type Api, type VoiceConfig } from "~/utils/types";
-export default function (api: Api, voiceConfig: VoiceConfig) {
+import { type Settings, type VoiceConfig } from "~/utils/types";
+export default function (api: Settings, voiceConfig: VoiceConfig) {
   if (!voiceConfig.voice) {
     throw new Error("未选择语音");
   }
@@ -34,7 +34,7 @@ export default function (api: Api, voiceConfig: VoiceConfig) {
     loginCheckJs: "",
     loginUi: "",
     loginUrl: "",
-    name: `Azure ${voiceConfig.voice.LocalName}${voiceConfig.style || ""}${voiceConfig.pitch === "default" ? "" : " - " + voiceConfig.pitch}`,
+    name: genName(voiceConfig),
     url: `https://${api.region}.tts.speech.microsoft.com/cognitiveservices/v1,${JSON.stringify(urlConfig)}`,
   };
 

@@ -1,4 +1,4 @@
-export interface Api {
+export interface Settings {
   key: string;
   region: string;
 }

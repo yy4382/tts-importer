@@ -57,7 +57,7 @@ const showImportModal = ref(false);
 function downloadSourceReaderFile() {
   const config = voiceChoice.sourceReaderCfg;
   if (!config) return;
-  const title = `Azure ${voiceChoice.voice!.LocalName}${voiceChoice.style || ""}${voiceChoice.pitch === "default" ? "" : " - " + voiceChoice.pitch}`;
+  const title = voiceChoice.configName;
   const blob = new Blob([config], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const downloadAnchor = document.createElement("a");
