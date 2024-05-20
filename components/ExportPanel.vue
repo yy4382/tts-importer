@@ -1,7 +1,6 @@
 <script setup lang="ts">
 const toast = useToast();
 const voiceChoice = useVoiceChoiceStore();
-const settings = useSettingsStore();
 
 function copyText(text: string) {
   try {
@@ -38,24 +37,6 @@ function import2Legado() {
   const link = `${window.location.protocol}//${window.location.host}/api/legado?config=${encodeURIComponent(config)}`;
   const legadoLink = `legado://import/httpTTS?src=${encodeURIComponent(link)}`;
   window.open(legadoLink, "_blank");
-}
-
-function copyAiyueConfig() {
-  const config = voiceChoice.ifreetimeCfg;
-  if (config) copyText(config);
-}
-
-function import2Aiyue() {
-  if (!voiceChoice.voice) {
-    toast.add({
-      title: "请先选择声音",
-    });
-    return {};
-  }
-  const config = JSON.stringify({ api: settings, vconfig: voiceChoice });
-  const link = `${window.location.protocol}//${window.location.host}/api/ireadnote?config=${encodeURIComponent(config)}`;
-  const aiyueLink = `iReadNote://import/itts=${link}`;
-  window.open(aiyueLink, "_blank");
 }
 
 function copySourceReaderLink() {
@@ -132,23 +113,8 @@ function downloadSourceReaderFile() {
     </div>
     <div class="mb-4">
       <label for="AiyueButton" class="label-general">爱阅记</label>
-      <div id="AiyueButton">
-        <UButton
-          color="gray"
-          variant="solid"
-          class="mr-1"
-          @click="copyAiyueConfig"
-          >复制配置</UButton
-        >
-        <UButton color="gray" variant="solid" class="mr-1" @click="import2Aiyue"
-          >一键导入</UButton
-        >
-        <UButton color="white" variant="solid" to="/help/ireadnote" size="xs">
-          查看导入教程
-          <template #trailing>
-            <UIcon name="i-heroicons-arrow-right-20-solid" class="h-5 w-5" />
-          </template>
-        </UButton>
+      <div id="AiyueButton" class="*:align-middle">
+        <ClientOnly> <ExportIReadNote /></ClientOnly>
       </div>
     </div>
     <div class="mb-4">

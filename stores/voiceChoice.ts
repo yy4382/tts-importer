@@ -29,6 +29,9 @@ export const useVoiceChoiceStore = defineStore("tts-i:voiceChoice", {
       config = [config];
       return JSON.stringify(config);
     },
+    stringify(state) {
+      return JSON.stringify(state);
+    }
   },
 
   actions: {},
