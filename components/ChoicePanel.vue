@@ -13,7 +13,7 @@
     </template>
     <UFormGroup label="声音 (voice)" required>
       <USelectMenu
-        v-model="voiceChoice.voice"
+        v-model="chosenVoice"
         :options="voiceList"
         option-attribute="LocalName"
         searchable
@@ -24,20 +24,22 @@
     <div class="space-y-2">
       <UCheckbox
         v-model="voiceChoice.useStyle"
-        :disabled="styleList.length === 0"
+        :disabled="!chosenVoice?.StyleNames"
         :label="
-          styleList.length !== 0
+          chosenVoice?.StyleNames
             ? '使用声音风格'
             : '该声音没有风格，无法启用声音风格'
         "
       />
       <UFormGroup
-        v-if="voiceChoice.useStyle && styleList.length !== 0"
+        v-if="
+          voiceChoice.useStyle && (chosenVoice?.StyleNames?.length ?? 0 > 0)
+        "
         label="声音风格 (voiceStyle)"
       >
         <USelectMenu
           v-model="voiceChoice.style"
-          :options="styleList"
+          :options="chosenVoice!.StyleNames!"
           placeholder="选择声音风格"
           searchable
         />
@@ -100,18 +102,22 @@ const voiceListStore = useVoiceListStore();
 const { voiceList } = toRefs(voiceListStore);
 const voiceChoice = useVoiceChoiceStore();
 
-/**
- *  根据选择的声音获取风格列表
- */
-const styleList: ComputedRef<string[]> = computed(() => {
-  if (voiceChoice.voice === null) return Array<string>();
-  return (
-    voiceList.value!.find(
-      (item: VoiceAttr) => item.ShortName === voiceChoice.voice?.ShortName,
-    )?.StyleNames || []
-  );
-});
+const chosenVoice = ref<VoiceAttr | null>(
+  voiceChoice.voice
+    ? voiceList.value.find((v) => v.ShortName === voiceChoice.voice) || null
+    : null,
+);
 
+watch(chosenVoice, (newVal) => {
+  voiceChoice.voice = newVal?.ShortName ?? null;
+  voiceChoice.voiceLocalName = newVal?.LocalName ?? null;
+  if (!newVal?.StyleNames) {
+    voiceChoice.useStyle = false;
+    voiceChoice.style = null;
+  } else {
+    voiceChoice.style = newVal.StyleNames[0];
+  }
+});
 const formatList = ref([
   "amr-wb-16000hz",
   "audio-16khz-16bit-32kbps-mono-opus",

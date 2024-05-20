@@ -1,4 +1,5 @@
 import { type Settings, type VoiceConfig } from "~/utils/types";
+import genName from "~/utils/genName";
 export default function (api: Settings, voiceConfig: VoiceConfig) {
   if (!voiceConfig.voice) {
     throw new Error("未选择语音");
@@ -13,7 +14,7 @@ export default function (api: Settings, voiceConfig: VoiceConfig) {
   };
   const ssml =
     `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="zh-CN">` +
-    `<voice name="${voiceConfig.voice.ShortName}">` +
+    `<voice name="${voiceConfig.voice}">` +
     `<prosody rate="{{speakSpeed*4}}%" pitch="${voiceConfig.pitch}">` +
     `${voiceConfig.useStyle ? `<mstts:express-as style="${voiceConfig.style}">` : ""}` +
     `{{speakText}}` +

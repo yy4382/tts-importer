@@ -47,10 +47,17 @@
 <script lang="ts" setup>
 import { useQRCode } from "@vueuse/integrations/useQRCode";
 const voiceChoice = useVoiceChoiceStore();
+const settings = useSettingsStore();
 const configUrl = computed(
   () =>
     window &&
-    `${window.location.protocol}//${window.location.host}/api/legado?config=${encodeURIComponent(voiceChoice.sourceReaderCfg)}`,
+    `${window.location.protocol}//${window.location.host}/api/sourceReader` +
+      `?config=${encodeURIComponent(
+        JSON.stringify({
+          api: settings.$state,
+          voiceChoice: voiceChoice.$state,
+        } satisfies Config4Server),
+      )}`,
 );
 const configQR = useQRCode(configUrl);
 const showImportModal = ref(false);

@@ -1,4 +1,5 @@
 import { type Settings, type VoiceConfig } from "~/utils/types";
+import genName from "~/utils/genName";
 function generateRandomString(length: number): string {
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -17,7 +18,7 @@ export default function (api: Settings, voiceConfig: VoiceConfig) {
   const pitch = voiceConfig.pitch === "default" ? null : voiceConfig.pitch;
   const ssml =
     `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="zh-CN">` +
-    `<voice name="${voiceConfig.voice.ShortName}">` +
+    `<voice name="${voiceConfig.voice}">` +
     `${pitch ? `<prosody pitch="${voiceConfig.pitch}">` : ""}` +
     `${voiceConfig.useStyle ? `<mstts:express-as style="${voiceConfig.style}">` : ""}` +
     `%@` +

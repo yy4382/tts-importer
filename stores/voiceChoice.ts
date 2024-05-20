@@ -5,10 +5,10 @@ import { useSettingsStore } from "./settings";
 export const useVoiceChoiceStore = defineStore("tts-i:voiceChoice", {
   state: () =>
     ({
-      voice: undefined,
+      voice: null,
+      voiceLocalName: null,
       useStyle: false,
-      style: undefined,
-      rate: "default",
+      style: null,
       pitch: "default",
       format: "audio-24khz-48kbitrate-mono-mp3",
       useCustomAgent: false,

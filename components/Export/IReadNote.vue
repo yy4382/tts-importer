@@ -71,18 +71,20 @@
 
 <script lang="ts" setup>
 import { useQRCode } from "@vueuse/integrations/useQRCode";
+import type { Config4Server } from "~/utils/types";
 const voiceChoice = useVoiceChoiceStore();
 const settings = useSettingsStore();
-const config = ref({
-  api: settings.$state,
-  vconfig: voiceChoice.$state,
-});
 const configUrl = computed(
   () =>
     window &&
     voiceChoice.voice &&
     `${window.location.protocol}//${window.location.host}/api/ireadnote` +
-      `?config=${encodeURIComponent(JSON.stringify(config.value))}`,
+      `?config=${encodeURIComponent(
+        JSON.stringify({
+          api: settings.$state,
+          voiceChoice: voiceChoice.$state,
+        } satisfies Config4Server),
+      )}`,
 );
 const directUrl = computed(() => {
   return `iReadNote://import/itts=${configUrl.value}`;
