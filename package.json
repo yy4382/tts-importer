@@ -16,7 +16,7 @@
     "@pinia-plugin-persistedstate/nuxt": "^1.2.0",
     "@pinia/nuxt": "^0.5.1",
     "@vueuse/core": "^10.9.0",
-    "@vueuse/nuxt": "^10.9.0",
+    "@vueuse/nuxt": "^10.10.0",
     "nuxt": "^3.11.2",
     "postcss": "^8.4.38",
     "prettier": "3.2.5",
