@@ -14,7 +14,7 @@ function genSSML(config: VoiceConfig, text: string) {
   const pitch = config.pitch === "default" ? null : config.pitch;
   const ssml =
     `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="zh-CN">` +
-    `<voice name="${config.voice.ShortName}">` +
+    `<voice name="${config.voice}">` +
     `${pitch ? `<prosody pitch="${config.pitch}">` : ""}` +
     `${config.useStyle ? `<mstts:express-as style="${config.style}">` : ""}` +
     `${testText.value ? text : "帮忙点个 Star 吧"}` +
@@ -83,9 +83,10 @@ function getTestAudio() {
         placeholder="试听文字"
         class="mb-4 w-full"
       />
-      <UButton :loading="isLoading" @click="getTestAudio()"> 试听 </UButton>
+      <UButton :loading="isLoading" @click="getTestAudio"> 试听 </UButton>
       <audio
-        v-if="audioBlobUrl !== ''"
+        v-show="audioBlobUrl !== ''"
+        ref="audioPlayer"
         controls
         :src="audioBlobUrl"
         class="mt-8"
