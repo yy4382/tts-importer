@@ -37,6 +37,7 @@
         <img :src="directUrlQR" alt="二维码" />
         <span class="text-sm">用 iOS 系统相机扫码即可自动导入</span>
       </div>
+      <p class="mt-4 text-sm opacity-70 text-center">感谢 CJ'sPig 提供的的语音库导入模板</p>
       <template #footer>
         <div class="flex justify-end gap-4">
           <UButton
