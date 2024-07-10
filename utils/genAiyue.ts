@@ -48,7 +48,7 @@ export default function (api: Settings, voiceConfig: VoiceConfig) {
         },
         url: `https://${api.region}.tts.speech.microsoft.com/cognitiveservices/v1`,
         params: {
-          text: ssml,
+          text: `@dyn:\np=def:& @=>和;\ntxt=keyword.jxd_executeRegexRules:p;\nformat('${ssml}',txt)`,
         },
         httpConfigs: {
           useCookies: 1,
