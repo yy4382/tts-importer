@@ -34,7 +34,7 @@ export const serverSchema = z.object({
     voiceLocalName: z.string(),
     format: z.string(),
     pitch: z.string(),
-    style: z.string(),
+    style: z.string().nullable(),
     useStyle: z.boolean(),
     useCustomAgent: z.boolean(),
     customAgent: z.string(),
