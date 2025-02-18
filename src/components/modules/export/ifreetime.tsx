@@ -47,7 +47,7 @@ export function IFreeTimeExport({
   );
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2">
       <ActionLine action="一键导入" description="仅适用于爱阅记">
         <Dialog>
           <DialogTrigger asChild>

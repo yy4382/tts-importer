@@ -86,3 +86,9 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .w-card {
+    @apply w-full min-w-80 max-w-96;
+  }
+}

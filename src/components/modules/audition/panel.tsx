@@ -80,19 +80,19 @@ export function AuditionPanel() {
   }, [audioBlob, audioRef]);
 
   return (
-    <Card className="w-[350px]">
+    <Card className="w-card">
       <CardHeader>
         <CardTitle>试听</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
         <Textarea
           value={text}
           onInput={(e) => {
             setText((e.target as HTMLTextAreaElement).value);
           }}
         ></Textarea>
-        <div className="flex justify-between items-center">
-          <audio controls ref={audioRef} />
+        <div className="flex justify-between items-center gap-4">
+          <audio controls ref={audioRef} className="h-10" />
           <Button onClick={onAudition}>试听</Button>
         </div>
       </CardContent>

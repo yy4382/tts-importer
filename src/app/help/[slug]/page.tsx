@@ -1,4 +1,5 @@
 // import { format, parseISO } from "date-fns";
+import { AppTopbar } from "@/components/modules/app-topbar";
 import { allDocs } from "contentlayer/generated";
 
 export const generateStaticParams = async () =>
@@ -25,15 +26,15 @@ const PostLayout = async ({
   if (!post) throw new Error(`Post not found for slug: ${slug}`);
 
   return (
-    <article className="mx-auto max-w-xl py-8">
-      <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold">{post.title}</h1>
-      </div>
-      <div
-        className="[&>*]:mb-3 [&>*:last-child]:mb-0"
-        dangerouslySetInnerHTML={{ __html: post.body.html }}
+    <div className="w-full">
+      <AppTopbar
+        location={[{ title: "帮助", link: "/help" }, { title: post.title }]}
       />
-    </article>
+      <article className="mx-auto max-w-xl py-8 prose dark:prose-dark">
+        <h1>{post.title}</h1>
+        <div dangerouslySetInnerHTML={{ __html: post.body.html }} />
+      </article>
+    </div>
   );
 };
 

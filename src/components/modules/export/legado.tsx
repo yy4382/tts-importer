@@ -47,7 +47,7 @@ export function LegadoExport({
   );
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2">
       <ActionLine action="一键导入">
         <Dialog>
           <DialogTrigger asChild>

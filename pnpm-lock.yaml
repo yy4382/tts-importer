@@ -107,6 +107,9 @@ importers:
       react-dom:
         specifier: ^19.0.0
         version: 19.0.0(react@19.0.0)
+      rehype-image-optim:
+        specifier: ^0.0.3
+        version: 0.0.3
       sonner:
         specifier: ^1.7.2
         version: 1.7.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -3449,6 +3452,9 @@ packages:
   regexp.prototype.flags@1.5.4:
     resolution: {integrity: sha512-dYqgNSZbDwkaJ2ceRd9ojCGjBq+mOm9LmtXnAnEGyHhN/5R7iDW2TRw3h+o/jCFxus3P2LfWIIiwowAjANm7IA==}
     engines: {node: '>= 0.4'}
+
+  rehype-image-optim@0.0.3:
+    resolution: {integrity: sha512-in6mAfAVcDM9N3f8vBGNg9LYPL49x6N91J0ceYcZyWjXASMX7LS/CLhI6LbrdhoLnM4GksxlWbgTtr5oCwAN+w==}
 
   rehype-recma@1.0.0:
     resolution: {integrity: sha512-lqA4rGUf1JmacCNWWZx0Wv1dHqMwxzsDWYMTowuplHF3xH0N/MmrZ/G3BDZnzAkRmxDadujCjaKM2hqYdCBOGw==}
@@ -8063,6 +8069,10 @@ snapshots:
       get-proto: 1.0.1
       gopd: 1.2.0
       set-function-name: 2.0.2
+
+  rehype-image-optim@0.0.3:
+    dependencies:
+      unist-util-visit: 5.0.0
 
   rehype-recma@1.0.0:
     dependencies:

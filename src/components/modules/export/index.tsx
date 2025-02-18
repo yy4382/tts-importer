@@ -14,12 +14,12 @@ export function Export() {
   const voiceConfigWithState = useAtomValue(voiceConfigAtom);
   const api = useAtomValue(apiConfig);
   return (
-    <Card className="w-[350px]">
+    <Card className="w-card">
       <CardHeader>
         <CardTitle>导入</CardTitle>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="ifreetime">
+        <Tabs defaultValue="ifreetime" className="space-y-4">
           <TabsList>
             <TabsTrigger value="ifreetime">爱阅</TabsTrigger>
             <TabsTrigger value="legado">阅读</TabsTrigger>

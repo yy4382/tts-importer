@@ -121,7 +121,7 @@ export const voiceConfigAtom = atom<VoiceConfigWithState>((get) => {
 
 export function VoiceConfigurer() {
   return (
-    <Card className="w-[350px]">
+    <Card className="w-card">
       <CardHeader>
         <CardTitle>Configure Voice</CardTitle>
       </CardHeader>

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "@/components/utils/providers";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/modules/app-sidebar";
 
 export const metadata: Metadata = {
@@ -22,7 +21,6 @@ export default function RootLayout({
       <body>
         <Providers>
           <AppSidebar />
-          <SidebarTrigger />
           {children}
         </Providers>
       </body>
