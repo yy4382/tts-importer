@@ -70,13 +70,15 @@ export function AppSidebar() {
           <SidebarGroupLabel>帮助</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {allDocs.map((doc, idx) => (
-                <SidebarMenuItem key={idx}>
-                  <SidebarItemActive asChild pathname={doc.url}>
-                    <Link href={doc.url}>{doc.title}</Link>
-                  </SidebarItemActive>
-                </SidebarMenuItem>
-              ))}
+              {allDocs
+                .sort((a, b) => (a.order < b.order ? -1 : 1))
+                .map((doc, idx) => (
+                  <SidebarMenuItem key={idx}>
+                    <SidebarItemActive asChild pathname={doc.url}>
+                      <Link href={doc.url}>{doc.title}</Link>
+                    </SidebarItemActive>
+                  </SidebarMenuItem>
+                ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

@@ -2,11 +2,13 @@ import { defineDocumentType, makeSource } from "contentlayer/source-files";
 import rehypeImageOptimization, {
   defineOptions as defineOptimizeOptions,
 } from "rehype-image-optim";
+
 export const Docs = defineDocumentType(() => ({
   name: "Docs",
   filePathPattern: `**/*.md`,
   fields: {
     title: { type: "string", required: true },
+    order: { type: "number", required: true },
   },
   computedFields: {
     url: {
