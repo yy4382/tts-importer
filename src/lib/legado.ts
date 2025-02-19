@@ -22,8 +22,7 @@ export default function legadoConfig(api: ApiConfig, voiceConfig: VoiceConfig) {
     }` +
     `{{speakText}}` +
     `${voiceConfig.style ? `</mstts:express-as>` : ""}` +
-    `${voiceConfig.pitch ? `</prosody>` : ""}` +
-    `</voice></speak>`;
+    `</prosody></voice></speak>`;
   const urlConfig = {
     method: "POST",
     body: ssml,
