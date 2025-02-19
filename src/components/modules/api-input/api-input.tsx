@@ -90,7 +90,7 @@ export function ApiInput() {
   return (
     <Card className="w-card">
       <CardHeader>
-        <CardTitle>API Info</CardTitle>
+        <CardTitle id="api-info">API Info</CardTitle>
         <CardDescription>Input your Azure API key and region.</CardDescription>
       </CardHeader>
       <CardContent>

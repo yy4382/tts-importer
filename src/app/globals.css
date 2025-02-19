@@ -89,6 +89,6 @@ body {
 
 @layer utilities {
   .w-card {
-    @apply w-full min-w-80 max-w-96;
+    @apply w-full min-w-72 sm:min-w-80 max-w-[min(90vw,24rem)];
   }
 }

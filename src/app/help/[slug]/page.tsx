@@ -3,7 +3,7 @@ import { AppTopbar } from "@/components/modules/app-topbar";
 import { allDocs } from "contentlayer/generated";
 
 export const generateStaticParams = async () =>
-  allDocs.map((post) => ({ slug: post._raw.flattenedPath }));
+  allDocs.map((post) => ({ slug: post.url.split("/").pop() }));
 
 export const generateMetadata = async ({
   params,
@@ -30,7 +30,7 @@ const PostLayout = async ({
       <AppTopbar
         location={[{ title: "帮助", link: "/help" }, { title: post.title }]}
       />
-      <article className="mx-auto max-w-xl py-8 prose dark:prose-dark">
+      <article className="mx-auto max-w-[min(56rem,90vw)] py-8 prose dark:prose-dark">
         <h1>{post.title}</h1>
         <div dangerouslySetInnerHTML={{ __html: post.body.html }} />
       </article>

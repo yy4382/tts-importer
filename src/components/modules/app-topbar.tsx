@@ -8,12 +8,13 @@ import {
 } from "../ui/breadcrumb";
 import { Separator } from "../ui/separator";
 import { SidebarTrigger } from "../ui/sidebar";
+import { ModeToggle } from "../ui/theme-changer";
 
 export function AppTopbar(prop: {
   location: { title: string; link?: string }[];
 }) {
   return (
-    <header className="flex items-center w-full gap-2 px-4 h-12 border-b mb-4">
+    <header className="flex items-center w-full gap-2 px-4 h-12 border-b mb-4 sticky top-0 bg-background z-10">
       <SidebarTrigger />
       <Separator orientation="vertical" className="mr-1 my-2 h-4" />
       <Breadcrumb>
@@ -30,6 +31,9 @@ export function AppTopbar(prop: {
           ))}
         </BreadcrumbList>
       </Breadcrumb>
+      <div className="flex-grow justify-end flex">
+        <ModeToggle className="justify-self-end" />
+      </div>
     </header>
   );
 }

@@ -45,6 +45,7 @@ import {
 } from "../api-input/api-input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { validVoiceConfigSchema } from "@/lib/config-to-url";
+import Link from "next/link";
 
 export type VoiceConfig = z.infer<typeof validVoiceConfigSchema>;
 
@@ -120,6 +121,7 @@ export const voiceConfigAtom = atom<VoiceConfigWithState>((get) => {
 });
 
 export function VoiceConfigurer() {
+  const voiceCount = useAtomValue(voiceListCountAtom);
   return (
     <Card className="w-card">
       <CardHeader>
@@ -130,6 +132,15 @@ export function VoiceConfigurer() {
           className="space-y-4"
           serverFallback={<Skeleton className="h-96 w-full" />}
         >
+          {voiceCount === 0 && (
+            <p>
+              还没有获取到语音。请填写并检查
+              <Link href="#api-info" className="text-blue-500">
+                {" "}
+                API 设置
+              </Link>
+            </p>
+          )}
           <VoiceSelector />
           <Separator />
           <StyleSelector />

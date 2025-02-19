@@ -1,7 +1,6 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -21,7 +20,7 @@ import { SidebarItemActive } from "../utils/sidebar-active";
 
 export function AppSidebar() {
   return (
-    <Sidebar>
+    <Sidebar className="z-20">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -82,7 +81,6 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter />
     </Sidebar>
   );
 }
