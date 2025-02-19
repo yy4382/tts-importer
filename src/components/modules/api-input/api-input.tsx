@@ -17,6 +17,7 @@ import { useHasMounted } from "@/hooks/use-mounted";
 import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { toast } from "sonner";
+import Link from "next/link";
 
 export type ApiConfig = {
   region: string;
@@ -125,17 +126,25 @@ export function ApiInput() {
           </div>
         </form>
       </CardContent>
-      <CardFooter className="flex justify-between">
-        {hasMounted ? (
-          <span>
-            {!voiceListCount
-              ? "还未获取到语音"
-              : `已获取 ${voiceListCount} 个语音`}
-          </span>
-        ) : (
-          <span>Loading...</span>
-        )}
-        <Button onClick={onGetVoices}>获取声音列表</Button>
+      <CardFooter className="flex flex-col gap-4 items-start">
+        <div className="flex justify-between w-full items-center">
+          {hasMounted ? (
+            <span>
+              {!voiceListCount
+                ? "还未获取到语音"
+                : `已获取 ${voiceListCount} 个语音`}
+            </span>
+          ) : (
+            <span>Loading...</span>
+          )}
+          <Button onClick={onGetVoices}>获取声音列表</Button>
+        </div>
+        <p className="text-sm text-gray-500">
+          不知道从那里获得 Key？请看
+          <Link href="/help/reg" className="text-blue-500">
+            帮助：创建资源
+          </Link>
+        </p>
       </CardFooter>
     </Card>
   );

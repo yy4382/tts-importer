@@ -18,6 +18,7 @@ import { Separator } from "@/components/ui/separator";
 import { QRCodeSVG } from "qrcode.react";
 import { ActionLine } from "@/components/ui/action-line";
 import LinkExportButton from "./link-export-button";
+import Link from "next/link";
 
 export function IFreeTimeExport({
   api,
@@ -89,6 +90,12 @@ export function IFreeTimeExport({
           复制
         </Button>
       </ActionLine>
+      <p className="text-sm text-gray-500">
+        帮助请查看
+        <Link href="/help/ifreetime" className="text-blue-500">
+          爱阅系列使用说明
+        </Link>
+      </p>
     </div>
   );
 }
