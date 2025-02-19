@@ -7,6 +7,19 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 export const metadata: Metadata = {
   title: "TTS Importer",
   description: "Import TTS to novel reading apps.",
+  icons: { icon: "/favicon.svg", apple: "/favicon.png" },
+  openGraph: {
+    type: "website",
+    locale: "zh_CN",
+    title: "TTS Importer",
+    description: "Import TTS to novel reading apps.",
+    images: [{ url: "/og-image.png", alt: "TTS Importer" }],
+  },
+  twitter: {
+    title: "TTS Importer",
+    description: "Import TTS to novel reading apps.",
+    images: "/og-image.png",
+  },
 };
 
 export default function RootLayout({
