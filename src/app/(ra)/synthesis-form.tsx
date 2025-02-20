@@ -76,7 +76,10 @@ function SynthesisFormInner() {
       return;
     }
     console.log(values);
-    const result = generateProfile(type, api.url, values);
+    const result = generateProfile(type, api.url, {
+      ...values,
+      token: api.url,
+    });
     navigator.clipboard
       .writeText(typeof result === "string" ? result : JSON.stringify(result))
       .then(() => {
