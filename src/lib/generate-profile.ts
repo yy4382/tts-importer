@@ -60,8 +60,8 @@ export function generateProfile(
             forGetMethod: 1,
             processType: 1,
             params: {
-              text: "%@",
               ...options,
+              text: "%@",
             },
             url: apiPath,
             parser: {
