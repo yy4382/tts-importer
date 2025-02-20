@@ -1,8 +1,15 @@
 "use client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { atom, useAtom } from "jotai";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
@@ -31,6 +38,12 @@ export default function ApiUrl() {
     <Card className="w-card">
       <CardHeader>
         <CardTitle>API 设置</CardTitle>
+        <CardDescription>
+          <Link href="https://ra.yfi.moe" className="text-blue-500">
+            Read Aloud
+          </Link>{" "}
+          项目的配置生成面板。
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-4 w-full">
