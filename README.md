@@ -1,6 +1,11 @@
 # Azure TTS Importer
 
-轻松将 Azure TTS 语音合成服务导入阅读软件。现支持 [阅读（legado）](https://github.com/gedoor/legado)、[爱阅记](https://apps.apple.com/cn/app/%E7%88%B1%E9%98%85%E8%AE%B0/id6450734655)、[服务器端阅读(hectorqin/reader)](https://github.com/hectorqin/reader)、爱阅书香、源阅读、源阅。
+轻松将 Azure TTS 语音合成服务导入阅读软件。现支持 [阅读（legado）](https://github.com/gedoor/legado)、[爱阅记](https://apps.apple.com/cn/app/id6450734655)、[服务器端阅读(hectorqin/reader)](https://github.com/hectorqin/reader)、爱阅书香、源阅读、源阅。
+
+> [!NOTE]
+> 已更新 2.0 版本，界面焕新。
+> 
+> 同时，本人其他的听书相关项目的配置生成过程也会逐渐迁移到这个项目中。目前已经完成的有：[Read Aloud](https://github.com/yy4382/read-aloud) 的 [配置生成](https://tts.yfi.moe/ra)。
 
 网站地址：[TTS Importer](https://tts.yfi.moe)
 
