@@ -38,11 +38,7 @@ import { atomWithStorage } from "jotai/utils";
 import { Check, ChevronsUpDown, Search } from "lucide-react";
 import { useState } from "react";
 import { z } from "zod";
-import {
-  Voice,
-  voiceListAtom,
-  voiceListCountAtom,
-} from "../api-input/api-input";
+import { Voice, voiceListAtom, voiceListCountAtom } from "./api-input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { validVoiceConfigSchema } from "@/lib/config-to-url";
 import Link from "next/link";

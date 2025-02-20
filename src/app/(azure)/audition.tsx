@@ -5,8 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { useAtomValue } from "jotai";
 import { useEffect, useRef, useState } from "react";
-import { ApiConfig, apiConfig } from "../api-input/api-input";
-import { VoiceConfig, voiceConfigAtom } from "../voice-configure";
+import { ApiConfig, apiConfig } from "./api-input";
+import { VoiceConfig, voiceConfigAtom } from "./voice-configure";
 
 function genSSML(config: VoiceConfig, text: string) {
   if (!config.voice) return;

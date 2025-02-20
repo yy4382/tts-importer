@@ -1,8 +1,8 @@
-import { ApiInput } from "@/components/modules/api-input/api-input";
+import { ApiInput } from "@/app/(azure)/api-input";
 import { AppTopbar } from "@/components/modules/app-topbar";
-import { AuditionPanel } from "@/components/modules/audition/panel";
-import { Export } from "@/components/modules/export";
-import { VoiceConfigurer } from "@/components/modules/voice-configure";
+import { AuditionPanel } from "@/app/(azure)/audition";
+import { Export } from "./export";
+import { VoiceConfigurer } from "./voice-configure";
 export default function Home() {
   return (
     <div className="w-full">

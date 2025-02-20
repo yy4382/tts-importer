@@ -1,14 +1,17 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { voiceConfigAtom } from "../voice-configure";
 import { useAtomValue } from "jotai";
-import { apiConfig } from "../api-input/api-input";
+import { apiConfig } from "../api-input";
 import { IFreeTimeExport } from "./ifreetime";
 import { ClientOnly } from "@/components/utils/client-only";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { VoiceConfig, VoiceConfigWithState } from "../voice-configure";
 import { LegadoExport } from "./legado";
+import {
+  type VoiceConfig,
+  voiceConfigAtom,
+  type VoiceConfigWithState,
+} from "../voice-configure";
 
 export function Export() {
   const voiceConfigWithState = useAtomValue(voiceConfigAtom);
