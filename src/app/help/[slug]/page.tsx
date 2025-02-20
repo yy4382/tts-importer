@@ -30,7 +30,7 @@ const PostLayout = async ({
       <AppTopbar
         location={[{ title: "帮助", link: "/help" }, { title: post.title }]}
       />
-      <article className="mx-auto max-w-[min(36rem,90%)] py-8 prose dark:prose-dark">
+      <article className="mx-auto max-w-[min(36rem,90%)] py-8 prose dark:prose-invert">
         <h1>{post.title}</h1>
         <div dangerouslySetInnerHTML={{ __html: post.body.html }} />
       </article>
