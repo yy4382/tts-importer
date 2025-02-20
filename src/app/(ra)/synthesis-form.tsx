@@ -78,7 +78,7 @@ function SynthesisFormInner() {
     console.log(values);
     const result = generateProfile(type, api.url, {
       ...values,
-      token: api.url,
+      token: api.token,
     });
     navigator.clipboard
       .writeText(typeof result === "string" ? result : JSON.stringify(result))
