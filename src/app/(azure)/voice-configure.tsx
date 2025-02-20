@@ -1,4 +1,5 @@
 "use client";
+import { VoiceSelect } from "@/components/shared/voice-select";
 import {
   Accordion,
   AccordionContent,
@@ -7,20 +8,8 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -29,19 +18,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { ClientOnly } from "@/components/utils/client-only";
-import { useDebounce } from "@/hooks/use-debounce";
-import { cn } from "@/lib/utils";
+import { validVoiceConfigSchema } from "@/lib/config-to-url";
 import { atom, useAtom, useAtomValue } from "jotai";
 import { atomWithStorage } from "jotai/utils";
-import { Check, ChevronsUpDown, Search } from "lucide-react";
-import { useState } from "react";
+import Link from "next/link";
 import { z } from "zod";
 import { Voice, voiceListAtom, voiceListCountAtom } from "./api-input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { validVoiceConfigSchema } from "@/lib/config-to-url";
-import Link from "next/link";
 
 export type VoiceConfig = z.infer<typeof validVoiceConfigSchema>;
 
@@ -172,85 +157,11 @@ const voiceAtom = atom(
   }
 );
 export function VoiceSelector() {
-  const [open, setOpen] = useState(false);
-
   const [voice, setVoice] = useAtom(voiceAtom);
   const voiceList = useAtomValue(voiceListAtom);
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const debouncedSearchTerm = useDebounce(searchTerm, 200);
-
-  const filteredVoices = voiceList.filter((v) => {
-    return (
-      v.localName.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-      v.shortName.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
-    );
-  });
-
   return (
-    <div className="space-y-1">
-      <Label>语音</Label>
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className={cn("justify-between w-full")}
-          >
-            {voice?.localName || "Select a voice"}
-            <ChevronsUpDown className="opacity-50" size={10} />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className={cn("p-0")}>
-          <Command>
-            <div className="relative border-b w-full">
-              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder={`Search voices...`}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="focus-visible:ring-0 rounded-b-none border-none pl-8 flex-1"
-              />
-            </div>
-            <CommandList>
-              <CommandEmpty>No voice loaded.</CommandEmpty>
-              <CommandGroup>
-                {filteredVoices.map((option) => (
-                  <CommandItem
-                    key={option.shortName}
-                    value={option.shortName}
-                    onSelect={(currentValue) => {
-                      setVoice(
-                        voiceList.find((v) => v.shortName === currentValue) ||
-                          null
-                      );
-                      setOpen(false);
-                    }}
-                    className="flex"
-                  >
-                    <p className="truncate">
-                      {option.localName}
-                      <span className="text-xs text-muted-foreground">
-                        {"  " + option.shortName}
-                      </span>
-                    </p>{" "}
-                    <Check
-                      className={cn(
-                        "ml-auto h-3 w-3",
-                        voice?.shortName === option.shortName
-                          ? "opacity-100"
-                          : "opacity-0"
-                      )}
-                    />
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </CommandList>
-          </Command>
-        </PopoverContent>
-      </Popover>
-    </div>
+    <VoiceSelect voiceList={voiceList} voice={voice} setVoice={setVoice} />
   );
 }
 

@@ -1,3 +1,4 @@
+import favicon from "@/assets/image/favicon.svg";
 import {
   Sidebar,
   SidebarContent,
@@ -9,13 +10,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import Link from "next/link";
-import Image from "next/image";
-import favicon from "@/assets/image/favicon.svg";
-import { GithubIcon } from "lucide-react";
-import { buttonVariants } from "../ui/button";
 import { cn } from "@/lib/utils";
 import { allDocs } from "contentlayer/generated";
+import { GithubIcon } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { buttonVariants } from "../ui/button";
 import { SidebarItemActive } from "../utils/sidebar-active";
 
 export function AppSidebar() {
@@ -61,6 +61,11 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarItemActive asChild pathname="/">
                   <Link href="/">Azure TTS</Link>
+                </SidebarItemActive>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarItemActive asChild pathname="/ra">
+                  <Link href="/ra">Edge TTS</Link>
                 </SidebarItemActive>
               </SidebarMenuItem>
             </SidebarMenu>

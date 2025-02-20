@@ -1,12 +1,13 @@
 {
-    "cSpell.words": [
-        "contentlayer",
-        "ifreetime",
-        "Legado",
-        "Oneline",
-        "qrcode",
-        "sonner",
-        "ssml",
-        "Topbar"
-    ]
+  "cSpell.words": [
+    "contentlayer",
+    "ifreetime",
+    "Legado",
+    "Oneline",
+    "qrcode",
+    "sonner",
+    "ssml",
+    "Topbar"
+  ],
+  "typescript.preferences.autoImportFileExcludePatterns": ["lucide-react"]
 }
