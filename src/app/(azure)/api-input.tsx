@@ -61,14 +61,27 @@ export function ApiInput() {
 
   const onGetVoices = async () => {
     // TODO error handling
-    const resRaw = await fetch(
-      `https://${api.region}.tts.speech.microsoft.com/cognitiveservices/voices/list`,
-      {
-        headers: {
-          "Ocp-Apim-Subscription-Key": api.key,
-        },
-      }
-    );
+    let resRaw;
+    try {
+      resRaw = await fetch(
+        `https://${api.region}.tts.speech.microsoft.com/cognitiveservices/voices/list`,
+        {
+          headers: {
+            "Ocp-Apim-Subscription-Key": api.key,
+          },
+        }
+      );
+    } catch (e) {
+      toast.error("获取声音列表失败：无法连接到微软服务器。");
+      console.error(e);
+      return;
+    }
+    if (!resRaw.ok) {
+      toast.error(
+        `获取声音列表失败：微软服务器响应 ${resRaw.status}。请检查 Key 和 Region 是否正确。`
+      );
+      return;
+    }
     const res = await resRaw.json();
     if (!Array.isArray(res)) {
       toast.error("获取声音列表失败");
