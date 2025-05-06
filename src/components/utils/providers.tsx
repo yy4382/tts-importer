@@ -9,15 +9,18 @@ if (process.env.NODE_ENV === "development") {
   // @ts-expect-error css
   import("jotai-devtools/styles.css");
 }
+import { PostHogProvider } from "./posthog-provider";
 
 export const Providers = ({ children }: PropsWithChildren) => {
   return (
-    <Provider>
-      <SidebarProvider>
-        <DevTools position="bottom-right" />
-        {children}
-        <Toaster richColors />
-      </SidebarProvider>
-    </Provider>
+    <PostHogProvider>
+      <Provider>
+        <SidebarProvider>
+          <DevTools position="bottom-right" />
+          {children}
+          <Toaster richColors />
+        </SidebarProvider>
+      </Provider>
+    </PostHogProvider>
   );
 };
