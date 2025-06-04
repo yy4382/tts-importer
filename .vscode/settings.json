@@ -9,5 +9,7 @@
     "ssml",
     "Topbar"
   ],
-  "typescript.preferences.autoImportFileExcludePatterns": ["lucide-react"]
+  "typescript.preferences.autoImportFileExcludePatterns": [
+    "lucide-react"
+  ]
 }

@@ -1,12 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
 import { useAtomValue } from "jotai";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { ApiConfig, apiConfig } from "./api-input";
 import { VoiceConfig, voiceConfigAtom } from "./voice-configure";
+import { AudioPreview } from "@/components/shared/audio-preview";
+import { toast } from "sonner";
 
 function genSSML(config: VoiceConfig, text: string) {
   if (!config.voice) return;
@@ -26,76 +25,67 @@ async function getTestAudio(
   api: ApiConfig,
   voiceChoice: VoiceConfig,
   text: string
-): Promise<{ ok: true; blob: Blob } | { ok: false; error: string }> {
-  const resp = await fetch(
-    `https://${api.region}.tts.speech.microsoft.com/cognitiveservices/v1`,
-    {
-      method: "POST",
-      headers: {
-        "Ocp-Apim-Subscription-Key": api.key,
-        "Content-Type": "application/ssml+xml",
-        "X-Microsoft-OutputFormat": voiceChoice.format,
-        ...(voiceChoice.customAgent
-          ? { "User-Agent": voiceChoice.customAgent }
-          : {}),
-      },
-      body: genSSML(voiceChoice, text),
-    }
-  );
+): Promise<Blob | null> {
+  let resp;
+  try {
+    resp = await fetch(
+      `https://${api.region}.tts.speech.microsoft.com/cognitiveservices/v1`,
+      {
+        method: "POST",
+        headers: {
+          "Ocp-Apim-Subscription-Key": api.key,
+          "Content-Type": "application/ssml+xml",
+          "X-Microsoft-OutputFormat": voiceChoice.format,
+          ...(voiceChoice.customAgent
+            ? { "User-Agent": voiceChoice.customAgent }
+            : {}),
+        },
+        body: genSSML(voiceChoice, text),
+      }
+    );
+  } catch {
+    return null;
+  }
   if (!resp.ok) {
-    return { ok: false, error: resp.statusText };
+    return null;
   }
   const blob = await resp.blob();
-  return { ok: true, blob };
+  return blob;
 }
 
-export function AuditionPanel() {
-  const [text, setText] = useState("");
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
-
+export function AudioPreviewAzure() {
   const api = useAtomValue(apiConfig);
   const voiceState = useAtomValue(voiceConfigAtom);
 
-  async function onAudition() {
-    if (voiceState.state !== "success") return;
-    const result = await getTestAudio(api, voiceState.data, text);
-    if (result.ok) {
-      console.log(result.blob);
-      setAudioBlob(result.blob);
-    } else {
-      setAudioBlob(null);
-      console.error(result.error);
-    }
-  }
+  const [url, setUrl] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!audioBlob || !audioRef.current) return;
-    const url = URL.createObjectURL(audioBlob);
-    console.log(url);
-    audioRef.current.src = url;
-    return () => {
-      URL.revokeObjectURL(url);
-    };
-  }, [audioBlob, audioRef]);
+  const getTestAudioCb = useCallback(
+    async (text: string) => {
+      if (voiceState.state !== "success") return;
+      const blob = await getTestAudio(api, voiceState.data, text);
+      if (url !== null) {
+        try {
+          URL.revokeObjectURL(url);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      if (blob) {
+        const url = URL.createObjectURL(blob);
+        setUrl(url);
+        toast("获取音频成功");
+      } else {
+        toast("获取音频失败");
+      }
+    },
+    [api, voiceState, url]
+  );
 
   return (
-    <Card className="w-card">
-      <CardHeader>
-        <CardTitle>试听</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <Textarea
-          value={text}
-          onInput={(e) => {
-            setText((e.target as HTMLTextAreaElement).value);
-          }}
-        ></Textarea>
-        <div className="flex justify-between items-center gap-4">
-          <audio controls ref={audioRef} className="h-10" />
-          <Button onClick={onAudition}>试听</Button>
-        </div>
-      </CardContent>
-    </Card>
+    <AudioPreview
+      getTestAudio={getTestAudioCb}
+      url={url}
+      enabled={voiceState.state === "success"}
+    />
   );
 }

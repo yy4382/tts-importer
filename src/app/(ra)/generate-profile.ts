@@ -1,16 +1,13 @@
+import { raApiConfigSchema, raVoiceConfigSchema } from "./ra-data";
+import { z } from "zod";
+
 function buildLegadoUrl(
-  apiPath: string,
-  options: {
-    voiceName: string;
-    pitch?: string;
-    rate?: string;
-    format?: string;
-    volume?: string;
-    token?: string;
-  },
+  api: z.infer<typeof raApiConfigSchema>,
+  voice: z.infer<typeof raVoiceConfigSchema>
 ) {
-  const { voiceName, pitch, volume, token, format } = options;
-  const url = new URL(apiPath);
+  const { voiceName, pitch, volume, format } = voice;
+  const url = new URL(api.url);
+  const { token } = api;
   url.searchParams.set("voiceName", voiceName);
   if (pitch) url.searchParams.set("pitch", pitch);
   // if (rate) url.searchParams.set("rate", rate);
@@ -20,32 +17,31 @@ function buildLegadoUrl(
   return `${url.toString()}&rate={{speakSpeed - 9}}&text={{String(speakText).replace(/&/g, '&amp;').replace(/\\\"/g, '&quot;').replace(/'/g, '&apos;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}}`;
 }
 
-function getName(options: { voiceName: string }) {
+function getName(options: z.infer<typeof raVoiceConfigSchema>) {
   return `Read Aloud ${options.voiceName}`;
 }
 
 export function generateProfile(
   type: "legado" | "ireadnote" | "sourcereader",
-  apiUrl: string,
-  options: {
-    voiceName: string;
-    pitch?: string;
-    rate?: string;
-    format?: string;
-    volume?: string;
-    token?: string;
-  },
+  apiRaw: z.infer<typeof raApiConfigSchema>,
+  voiceRaw: z.infer<typeof raVoiceConfigSchema>
 ) {
-  const apiPath = `${new URL(apiUrl).origin}/api/synthesis`;
-  const url = buildLegadoUrl(apiPath, options);
+  const apiParsed = raApiConfigSchema.safeParse(apiRaw);
+  const voiceParsed = raVoiceConfigSchema.safeParse(voiceRaw);
+
+  if (!apiParsed.success || !voiceParsed.success) {
+    return null;
+  }
+
+  const api = apiParsed.data;
+  const voice = voiceParsed.data;
+
+  const url = buildLegadoUrl(api, voice);
   switch (type) {
     case "legado":
       return {
-        name: getName(options),
+        name: getName(voice),
         url,
-        loginCheckJs: "",
-        loginUi: "",
-        loginUrl: "",
         id: Date.now(),
       };
     case "sourcereader":
@@ -54,22 +50,22 @@ export function generateProfile(
       const config = {
         _ClassName: "JxdAdvCustomTTS",
         _TTSConfigID: generateRandomString(16),
-        ttsConfigGroup: `☁️ Edge@CF ${new URL(apiPath).hostname}`,
+        ttsConfigGroup: `☁️ Edge@CF ${new URL(api.url).hostname}`,
         ttsHandles: [
           {
             forGetMethod: 1,
             processType: 1,
             params: {
-              ...options,
+              ...voice,
               text: "%@",
             },
-            url: apiPath,
+            url: api.url,
             parser: {
               playData: "ResponseData",
             },
           },
         ],
-        _TTSName: getName(options),
+        _TTSName: getName(voice),
       };
       return config;
     }

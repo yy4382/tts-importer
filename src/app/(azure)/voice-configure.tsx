@@ -161,7 +161,10 @@ export function VoiceSelector() {
   const voiceList = useAtomValue(voiceListAtom);
 
   return (
-    <VoiceSelect voiceList={voiceList} voice={voice} setVoice={setVoice} />
+    <div className="space-y-1">
+      <Label>语音</Label>
+      <VoiceSelect voiceList={voiceList} voice={voice} setVoice={setVoice} />
+    </div>
   );
 }
 

@@ -1,6 +1,6 @@
 import { ApiInput } from "@/app/(azure)/api-input";
 import { AppTopbar } from "@/components/modules/app-topbar";
-import { AuditionPanel } from "@/app/(azure)/audition";
+import { AudioPreviewAzure } from "@/app/(azure)/audition";
 import { Export } from "./export";
 import { VoiceConfigurer } from "./voice-configure";
 export default function Home() {
@@ -10,7 +10,7 @@ export default function Home() {
       <div className="flex flex-col lg:flex-row px-4 lg:px-0 w-fit flex-grow gap-4 mx-auto my-4">
         <div className="flex flex-col gap-4">
           <VoiceConfigurer />
-          <AuditionPanel />
+          <AudioPreviewAzure />
         </div>
         <div className="flex flex-col gap-4">
           <Export />

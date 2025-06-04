@@ -214,3 +214,7 @@
     @apply bg-background text-foreground;
   }
 }
+
+@utility w-card {
+  @apply w-[min(90vw,24rem)];
+}

@@ -8,20 +8,11 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { atom, useAtom } from "jotai";
+import { useAtom } from "jotai";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-
-export type RaApiConfig = {
-  url: string;
-  token: string;
-};
-
-export const raApiConfigAtom = atom<RaApiConfig>({
-  url: "",
-  token: "",
-});
+import { raApiConfigAtom } from "./ra-data";
 
 export default function ApiUrl() {
   const [api, setApi] = useAtom(raApiConfigAtom);
