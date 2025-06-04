@@ -5,14 +5,19 @@ import { CopyIcon, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
-const LinkExportButton = React.forwardRef<
-  HTMLDivElement,
-  React.PropsWithChildren<{
+const LinkExportButton = (
+  {
+    ref,
+    className,
+    ...props
+  }: React.PropsWithChildren<{
     link: string;
     copy: (text: string) => void;
     className?: string;
-  }>
->(({ className, ...props }, ref) => {
+  }> & {
+    ref: React.RefObject<HTMLDivElement>;
+  }
+) => {
   return (
     <div className={cn("flex", className)} ref={ref}>
       <Link
@@ -40,7 +45,7 @@ const LinkExportButton = React.forwardRef<
       </Button>
     </div>
   );
-});
+};
 
 LinkExportButton.displayName = "LinkExportButton";
 export default LinkExportButton;

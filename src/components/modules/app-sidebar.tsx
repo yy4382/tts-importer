@@ -42,7 +42,7 @@ export function AppSidebar() {
                 <Link
                   href="https://github.com/yy4382/tts-importer"
                   className={cn(
-                    buttonVariants({ variant: "none", size: "icon" }),
+                    buttonVariants({ variant: "ghost" }),
                     "hover:text-purple-400"
                   )}
                 >
