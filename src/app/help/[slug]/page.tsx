@@ -1,9 +1,10 @@
 // import { format, parseISO } from "date-fns";
 import { AppTopbar } from "@/components/modules/app-topbar";
-import { allDocs } from "contentlayer/generated";
+import { allHelps } from "content-collections";
+import { MDXContent } from "@content-collections/mdx/react";
 
 export const generateStaticParams = async () =>
-  allDocs.map((post) => ({ slug: post.url.split("/").pop() }));
+  allHelps.map((post) => ({ slug: post.slug }));
 
 export const generateMetadata = async ({
   params,
@@ -11,7 +12,7 @@ export const generateMetadata = async ({
   params: Promise<{ slug: string }>;
 }) => {
   const { slug } = await params;
-  const post = allDocs.find((post) => post.url.split("/").pop() === slug);
+  const post = allHelps.find((post) => post.slug === slug);
   if (!post) throw new Error(`Post not found for slug: ${slug}`);
   return { title: post.title };
 };
@@ -22,7 +23,7 @@ const PostLayout = async ({
   params: Promise<{ slug: string }>;
 }) => {
   const { slug } = await params;
-  const post = allDocs.find((post) => post.url.split("/").pop() === slug);
+  const post = allHelps.find((post) => post.slug === slug);
   if (!post) throw new Error(`Post not found for slug: ${slug}`);
 
   return (
@@ -32,7 +33,7 @@ const PostLayout = async ({
       />
       <article className="mx-auto max-w-[min(36rem,90%)] py-8 prose dark:prose-invert">
         <h1>{post.title}</h1>
-        <div dangerouslySetInnerHTML={{ __html: post.body.html }} />
+        <MDXContent code={post.mdx} />
       </article>
     </div>
   );
