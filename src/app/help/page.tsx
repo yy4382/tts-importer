@@ -1,13 +1,13 @@
 import Link from "next/link";
 // import { compareDesc, format, parseISO } from "date-fns";
-import { allDocs, Docs } from "contentlayer/generated";
+import { allHelps } from "content-collections";
 import { AppTopbar } from "@/components/modules/app-topbar";
 
-function DocsCard(doc: Docs) {
+function DocsCard(doc: (typeof allHelps)[number]) {
   return (
     <h2 className="mb-1 text-xl">
       <Link
-        href={doc.url}
+        href={`/help/${doc.slug}`}
         className="text-blue-700 hover:text-blue-900 dark:text-blue-400 underline underline-offset-2"
       >
         {doc.title}
@@ -17,7 +17,7 @@ function DocsCard(doc: Docs) {
 }
 
 export default function Home() {
-  const posts = allDocs;
+  const posts = allHelps;
 
   return (
     <div className="w-full">
