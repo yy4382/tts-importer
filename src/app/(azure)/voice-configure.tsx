@@ -49,9 +49,7 @@ const voiceConfigInputAtom = atomWithStorage<VoiceConfigInput>(
     pitch: "default",
     useCustomAgent: false,
     customAgent: "",
-  },
-  undefined,
-  { getOnInit: true }
+  }
 );
 
 export type VoiceConfigWithState =

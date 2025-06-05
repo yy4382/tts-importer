@@ -24,15 +24,10 @@ export type ApiConfig = {
   key: string;
 };
 
-const apiAtom = atomWithStorage<ApiConfig>(
-  "tts-i:settings",
-  {
-    region: "eastasia",
-    key: "",
-  },
-  undefined,
-  { getOnInit: true }
-);
+const apiAtom = atomWithStorage<ApiConfig>("tts-i:settings", {
+  region: "eastasia",
+  key: "",
+});
 
 export const apiConfig = atom((get) => get(apiAtom));
 
@@ -42,12 +37,7 @@ export type Voice = {
   styles?: string[];
 };
 
-const writableVoiceListAtom = atomWithStorage<Voice[]>(
-  "tts-i:voice-list",
-  [],
-  undefined,
-  { getOnInit: true }
-);
+const writableVoiceListAtom = atomWithStorage<Voice[]>("tts-i:voice-list", []);
 
 export const voiceListAtom = atom((get) => get(writableVoiceListAtom));
 export const voiceListCountAtom = atom((get) => get(voiceListAtom).length);
