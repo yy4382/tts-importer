@@ -22,7 +22,7 @@ export function Export() {
         <CardTitle>导入</CardTitle>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="ifreetime" className="space-y-4">
+        <Tabs defaultValue="ifreetime">
           <TabsList>
             <TabsTrigger value="ifreetime">爱阅</TabsTrigger>
             <TabsTrigger value="legado">阅读</TabsTrigger>
