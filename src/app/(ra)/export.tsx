@@ -6,10 +6,12 @@ import { toast } from "sonner";
 import { raApiConfigAtom, validRaVoiceConfigAtom } from "./ra-data";
 import { generateProfile } from "@/app/(ra)/generate-profile";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { usePostHog } from "posthog-js/react";
 
 export function ExportRa() {
   const voiceConfig = useAtomValue(validRaVoiceConfigAtom);
   const api = useAtomValue(raApiConfigAtom);
+  const posthog = usePostHog();
 
   function onSubmit(type: "legado" | "ireadnote" | "sourcereader") {
     if (!api.url) {
@@ -20,7 +22,18 @@ export function ExportRa() {
       toast("语音配置未设置");
       return;
     }
+
     const result = generateProfile(type, api, voiceConfig);
+    if (result === null) {
+      toast("生成配置失败");
+      return;
+    }
+
+    posthog?.capture("profile exported", {
+      type: "ra",
+      app: type,
+      method: "copy-profile",
+    });
 
     navigator.clipboard
       .writeText(typeof result === "string" ? result : JSON.stringify(result))

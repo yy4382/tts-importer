@@ -18,6 +18,7 @@ import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { toast } from "sonner";
 import Link from "next/link";
+import { usePostHog } from "posthog-js/react";
 
 export type ApiConfig = {
   region: string;
@@ -48,6 +49,8 @@ export function ApiInput() {
   const hasMounted = useHasMounted();
 
   const voiceListCount = useAtomValue(voiceListCountAtom);
+
+  const posthog = usePostHog();
 
   const onGetVoices = async () => {
     // TODO error handling
@@ -89,6 +92,7 @@ export function ApiInput() {
       });
     setVoices(zhVoices);
     toast.success(`获取到${zhVoices.length}个中文语音`);
+    posthog.capture("azure voices fetched");
   };
 
   return (
