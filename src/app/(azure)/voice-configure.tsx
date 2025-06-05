@@ -27,6 +27,7 @@ import { atomWithStorage } from "jotai/utils";
 import Link from "next/link";
 import { z } from "zod";
 import { Voice, voiceListAtom, voiceListCountAtom } from "./api-input";
+import { useMemo, useState } from "react";
 
 export type VoiceConfig = z.infer<typeof validVoiceConfigSchema>;
 
@@ -157,11 +158,30 @@ const voiceAtom = atom(
 export function VoiceSelector() {
   const [voice, setVoice] = useAtom(voiceAtom);
   const voiceList = useAtomValue(voiceListAtom);
+  const [onlyZh, setOnlyZh] = useState(true);
+
+  const filteredVoiceList = useMemo(() => {
+    return voiceList.filter((voice) => {
+      return onlyZh ? voice.shortName.startsWith("zh") : true;
+    });
+  }, [voiceList, onlyZh]);
 
   return (
     <div className="space-y-1">
       <Label>语音</Label>
-      <VoiceSelect voiceList={voiceList} voice={voice} setVoice={setVoice} />
+      <VoiceSelect
+        voiceList={filteredVoiceList}
+        voice={voice}
+        setVoice={setVoice}
+      />
+      <div className="flex items-center justify-between gap-2">
+        <Label htmlFor="only-zh">仅显示中文语音</Label>
+        <Switch
+          id="only-zh"
+          checked={onlyZh}
+          onCheckedChange={() => setOnlyZh(!onlyZh)}
+        />
+      </div>
     </div>
   );
 }

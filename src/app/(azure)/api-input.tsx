@@ -80,18 +80,16 @@ export function ApiInput() {
       toast.error("获取声音列表失败");
       return;
     }
-    const zhVoices = res
-      .filter((voice) => voice.Locale.startsWith("zh"))
-      .map((voice) => {
-        const styles: string[] | undefined = voice.StyleList || undefined;
-        return {
-          localName: voice.LocalName,
-          shortName: voice.ShortName,
-          styles: styles,
-        } satisfies Voice as Voice;
-      });
-    setVoices(zhVoices);
-    toast.success(`获取到${zhVoices.length}个中文语音`);
+    const voices = res.map((voice) => {
+      const styles: string[] | undefined = voice.StyleList || undefined;
+      return {
+        localName: voice.LocalName,
+        shortName: voice.ShortName,
+        styles: styles,
+      } satisfies Voice as Voice;
+    });
+    setVoices(voices);
+    toast.success(`获取到${voices.length}个中文语音`);
     posthog.capture("azure voices fetched");
   };
 
