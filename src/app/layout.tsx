@@ -5,6 +5,7 @@ import { AppSidebar } from "@/components/modules/app-sidebar";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://tts.yfi.moe"),
   title: "TTS Importer",
   description: "Import TTS to novel reading apps.",
   icons: { icon: "/favicon.svg", apple: "/favicon.png" },

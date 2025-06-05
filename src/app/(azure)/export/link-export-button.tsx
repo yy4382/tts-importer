@@ -5,21 +5,16 @@ import { CopyIcon, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
-const LinkExportButton = (
-  {
-    ref,
-    className,
-    ...props
-  }: React.PropsWithChildren<{
-    link: string;
-    copy: (text: string) => void;
-    className?: string;
-  }> & {
-    ref: React.RefObject<HTMLDivElement>;
-  }
-) => {
+const LinkExportButton = ({
+  className,
+  ...props
+}: React.PropsWithChildren<{
+  link: string;
+  copy: (text: string) => void;
+  className?: string;
+}>) => {
   return (
-    <div className={cn("flex", className)} ref={ref}>
+    <div className={cn("flex", className)}>
       <Link
         className={cn(
           buttonVariants({
