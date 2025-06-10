@@ -1,12 +1,18 @@
 import { raApiConfigSchema, raVoiceConfigSchema } from "./ra-data";
 import { z } from "zod";
 
+function getSynthesisUrl(apiBase: string) {
+  const url = new URL(apiBase);
+  url.pathname = "/api/synthesis";
+  return url;
+}
+
 function buildLegadoUrl(
   api: z.infer<typeof raApiConfigSchema>,
   voice: z.infer<typeof raVoiceConfigSchema>
 ) {
   const { voiceName, pitch, volume, format } = voice;
-  const url = new URL(api.url);
+  const url = getSynthesisUrl(api.url);
   const { token } = api;
   url.searchParams.set("voiceName", voiceName);
   if (pitch) url.searchParams.set("pitch", pitch);
@@ -57,9 +63,10 @@ export function generateProfile(
             processType: 1,
             params: {
               ...voice,
+              token: api.token,
               text: "%@",
             },
-            url: api.url,
+            url: getSynthesisUrl(api.url).toString(),
             parser: {
               playData: "ResponseData",
             },
