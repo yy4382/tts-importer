@@ -1,5 +1,5 @@
-import { url2config } from "@/lib/config-to-url";
-import legadoConfig from "@/lib/legado";
+import { url2config } from "@/lib/azure/config-to-url";
+import legadoConfig from "@/lib/azure/legado";
 import PostHogClient from "@/lib/posthog-server";
 
 export async function GET(request: Request) {

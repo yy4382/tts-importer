@@ -21,7 +21,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { ClientOnly } from "@/components/utils/client-only";
-import { validVoiceConfigSchema } from "@/lib/config-to-url";
+import { validVoiceConfigSchema } from "@/lib/azure/config-to-url";
 import { atom, useAtom, useAtomValue } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import Link from "next/link";

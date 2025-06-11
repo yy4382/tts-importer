@@ -1,15 +1,6 @@
-import genName from "@/lib/config-name";
-import type { ApiConfig, VoiceConfig } from "@/lib/types";
-function generateRandomString(length: number): string {
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const charactersLength = characters.length;
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
-}
+import genName from "@/lib/azure/config-name";
+import type { ApiConfig, VoiceConfig } from "@/lib/azure/types";
+import { ulid } from "ulid";
 
 export default function ifreetimeConfig(
   api: ApiConfig,
@@ -31,7 +22,7 @@ export default function ifreetimeConfig(
     maxWordCount: "",
     ttsConfigGroup: "Azure",
     _ClassName: "JxdAdvCustomTTS",
-    _TTSConfigID: generateRandomString(32),
+    _TTSConfigID: ulid(),
     httpConfigs: {
       useCookies: 1,
       headers: {},

@@ -1,5 +1,5 @@
-import genName from "@/lib/config-name";
-import type { ApiConfig, VoiceConfig } from "@/lib/types";
+import genName from "@/lib/azure/config-name";
+import type { ApiConfig, VoiceConfig } from "@/lib/azure/types";
 
 export default function legadoConfig(api: ApiConfig, voiceConfig: VoiceConfig) {
   if (!voiceConfig.voice) {
@@ -32,7 +32,7 @@ export default function legadoConfig(api: ApiConfig, voiceConfig: VoiceConfig) {
     concurrentRate: "0",
     contentType: "audio/mpeg",
     header: JSON.stringify(header),
-    id: parseInt(Date.now() + "", 10),
+    id: Date.now(),
     loginCheckJs: "",
     loginUi: "",
     loginUrl: "",

@@ -116,6 +116,9 @@ importers:
       tailwind-merge:
         specifier: ^3.3.0
         version: 3.3.0
+      ulid:
+        specifier: ^3.0.1
+        version: 3.0.1
     devDependencies:
       '@content-collections/core':
         specifier: ^0.9.0
@@ -3227,6 +3230,10 @@ packages:
   typescript@5.8.3:
     resolution: {integrity: sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ==}
     engines: {node: '>=14.17'}
+    hasBin: true
+
+  ulid@3.0.1:
+    resolution: {integrity: sha512-dPJyqPzx8preQhqq24bBG1YNkvigm87K8kVEHCD+ruZg24t6IFEFv00xMWfxcC4djmFtiTLdFuADn4+DOz6R7Q==}
     hasBin: true
 
   unbox-primitive@1.1.0:
@@ -6857,6 +6864,8 @@ snapshots:
       reflect.getprototypeof: 1.0.10
 
   typescript@5.8.3: {}
+
+  ulid@3.0.1: {}
 
   unbox-primitive@1.1.0:
     dependencies:

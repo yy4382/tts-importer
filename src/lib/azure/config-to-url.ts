@@ -9,7 +9,17 @@ export const validVoiceConfigSchema = z.object({
   style: z.string().nullish(),
   customAgent: z.string().nullish(),
 });
-
+/**
+ * Generate a URL for remote profile from api and voice config
+ *
+ * For Azure module, used in frontend.
+ *
+ * @param api - API config for Azure
+ * @param voice - Voice config for Azure
+ * @param origin - Origin of remote(generating) url
+ * @param pathname - Pathname of remote(generating) url
+ * @returns URL
+ */
 export function config2url(
   api: ApiConfig,
   voice: VoiceConfig,
@@ -22,6 +32,14 @@ export function config2url(
   return url;
 }
 
+/**
+ * Parse a URL to get api and voice config
+ *
+ * For Azure module, used in backend.
+ *
+ * @param url - URL to parse
+ * @returns API and voice config
+ */
 export function url2config(
   url: URL
 ):

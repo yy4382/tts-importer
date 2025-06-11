@@ -1,4 +1,4 @@
-import type { VoiceConfig } from "@/lib/types";
+import type { VoiceConfig } from "@/lib/azure/types";
 
 export default function generateConfigName(voiceChoice: VoiceConfig) {
   return `Azure ${voiceChoice.localName}${

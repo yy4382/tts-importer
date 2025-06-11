@@ -1,7 +1,7 @@
 "use client";
-import type { VoiceConfig, ApiConfig } from "@/lib/types";
+import type { VoiceConfig, ApiConfig } from "@/lib/azure/types";
 import { useCopyToClipboard } from "@/hooks/use-clipboard";
-import genLegadoConfig from "@/lib/legado";
+import genLegadoConfig from "@/lib/azure/legado";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { QrCodeIcon } from "lucide-react";
@@ -13,7 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { config2url } from "@/lib/config-to-url";
+import { config2url } from "@/lib/azure/config-to-url";
 import { Separator } from "@/components/ui/separator";
 import { QRCodeSVG } from "qrcode.react";
 import { ActionLine } from "@/components/ui/action-line";

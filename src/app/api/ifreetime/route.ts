@@ -1,5 +1,5 @@
-import { url2config } from "@/lib/config-to-url";
-import ifreetimeConfig from "@/lib/ifreetime";
+import { url2config } from "@/lib/azure/config-to-url";
+import ifreetimeConfig from "@/lib/azure/ifreetime";
 import PostHogClient from "@/lib/posthog-server";
 
 export async function GET(request: Request) {
