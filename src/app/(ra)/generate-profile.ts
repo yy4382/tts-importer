@@ -1,5 +1,6 @@
 import { raApiConfigSchema, raVoiceConfigSchema } from "./ra-data";
 import { z } from "zod";
+import { ulid } from "ulid";
 
 function getSynthesisUrl(apiBase: string) {
   const url = new URL(apiBase);
@@ -55,7 +56,7 @@ export function generateProfile(
     case "ireadnote": {
       const config = {
         _ClassName: "JxdAdvCustomTTS",
-        _TTSConfigID: generateRandomString(16),
+        _TTSConfigID: ulid(),
         ttsConfigGroup: `☁️ Edge@CF ${new URL(api.url).hostname}`,
         ttsHandles: [
           {
@@ -77,15 +78,4 @@ export function generateProfile(
       return config;
     }
   }
-}
-
-function generateRandomString(length: number): string {
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
-  const charactersLength = characters.length;
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
 }
