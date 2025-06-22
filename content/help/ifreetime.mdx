@@ -21,7 +21,7 @@ slug: ifreetime
 #### “基本”段
 
 - 名称：随意
-- 合成字符数：建议300
+- 合成字符数：建议 300
 - 分组：推荐 Azure，这样所有的微软语音源都在一个分组里
 
 #### “Http 默认配置” 和 “登录地址” 段
@@ -36,18 +36,39 @@ slug: ifreetime
 - `参数`：和爱阅记中一样，添加一个 `text` 参数，值从爱阅记中复制
 - `解析字段`: 和爱阅记中一样，添加一个 `playData` 参数，值为 `ResponseData`
 
-![TTS 语音步骤：1](/img/text.jpeg)
+{/* ![TTS 语音步骤：1](/img/text.jpeg) */}
+
+<img
+  src="/img/text.jpeg"
+  alt="TTS 语音步骤：1"
+  width={1170}
+  height={2532}
+  style={{ width: "50%", margin: "0 auto" }}
+/>
 
 ##### “Http 配置” 中
 
 首先，页面上有两个“Http 配置”，保证你进的是正确的那个。
-![Http 配置](/img/select-http-config.jpeg)
+
+<img
+  src="/img/select-http-config.jpeg"
+  alt="Http 配置"
+  width={1170}
+  height={2532}
+  style={{ width: "50%", margin: "0 auto" }}
+/>
 
 按图添加字段，从爱阅记复制内容，包括 `请求參数总格式处理` 和 `自定义HTTP头` 中的四个内容。
 
-![Http 配置](/img/http-config.jpeg)
+<img
+  src="/img/http-config.jpeg"
+  alt="Http 配置"
+  width={1170}
+  height={2532}
+  style={{ width: "50%", margin: "0 auto" }}
+/>
 
 #### 测试发音
 
 点击测试发音，如果能听到声音即为成功。
-如果出现合成失败，截图“查看请求与响应”的内容和配置内容（记得给key打码），发给[我](mailto:i@yfi.moe)或者发[群](https://t.me/aiyueshuxiangy)里，我会帮你看看。
+如果出现合成失败，截图“查看请求与响应”的内容和配置内容（记得给 key 打码），发给[我](mailto:i@yfi.moe)或者发[群](https://t.me/aiyueshuxiangy)里，我会帮你看看。
