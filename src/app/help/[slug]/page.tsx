@@ -2,6 +2,7 @@
 import { AppTopbar } from "@/components/modules/app-topbar";
 import { allHelps } from "content-collections";
 import { MDXContent } from "@content-collections/mdx/react";
+import { notFound } from "next/navigation";
 
 export const generateStaticParams = async () =>
   allHelps.map((post) => ({ slug: post.slug }));
@@ -24,7 +25,7 @@ const PostLayout = async ({
 }) => {
   const { slug } = await params;
   const post = allHelps.find((post) => post.slug === slug);
-  if (!post) throw new Error(`Post not found for slug: ${slug}`);
+  if (!post) notFound();
 
   return (
     <div className="w-full">
