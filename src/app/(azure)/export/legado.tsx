@@ -113,7 +113,7 @@ export function LegadoExport({
         </Button>
       </ActionLine>
       <p className="text-sm text-gray-500">
-        同样适用于源阅读、服务器端阅读或其他支持阅读格式语音源的软件。
+        同样适用于服务器端阅读等其他支持阅读格式语音源的软件。
       </p>
     </div>
   );

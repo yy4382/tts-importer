@@ -4,7 +4,7 @@ import { useCopyToClipboard } from "@/hooks/use-clipboard";
 import genIfreetimeConfig from "@/lib/azure/ifreetime";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import { QrCodeIcon } from "lucide-react";
+import { QrCodeIcon, CircleHelp } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -20,6 +20,11 @@ import { ActionLine } from "@/components/ui/action-line";
 import LinkExportButton from "./link-export-button";
 import Link from "next/link";
 import { usePostHog } from "posthog-js/react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 export function IFreeTimeExport({
   api,
@@ -51,7 +56,7 @@ export function IFreeTimeExport({
 
   return (
     <div className="flex flex-col gap-2">
-      <ActionLine action="一键导入" description="仅适用于爱阅记">
+      <ActionLine action="一键导入">
         <Dialog>
           <DialogTrigger asChild>
             <Button
@@ -100,6 +105,32 @@ export function IFreeTimeExport({
       </ActionLine>
       <Separator />
       <ActionLine action="配置文本">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <CircleHelp />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="space-y-2">
+            <p>
+              <span className="font-semibold">爱阅记导入：</span>
+              <br />
+              <span className="text-muted-foreground">
+                复制后粘贴在「设置-听书-在线语音库管理-右上角三点-JSON 输入」中
+              </span>
+            </p>
+            <p>
+              <span className="font-semibold">爱阅书香使用：</span>
+              <br />
+              <span className="text-muted-foreground">
+                参考
+                <Link href="/help/ifreetime" className="text-blue-500">
+                  爱阅系列使用说明
+                </Link>
+              </span>
+            </p>
+          </PopoverContent>
+        </Popover>
         <Button
           onClick={() => {
             copy(ifreetimeConfig);
@@ -114,10 +145,11 @@ export function IFreeTimeExport({
         </Button>
       </ActionLine>
       <p className="text-sm text-gray-500">
-        帮助请查看
+        爱阅书香用户请查看
         <Link href="/help/ifreetime" className="text-blue-500">
           爱阅系列使用说明
         </Link>
+        手动导入
       </p>
     </div>
   );
