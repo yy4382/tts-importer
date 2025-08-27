@@ -21,25 +21,37 @@ export function AudioPreviewRa() {
         toast("语音配置未设置");
         return;
       }
-      const url = new URL(api.url);
-      url.pathname = "/api/synthesis";
-      url.searchParams.set("token", api.token);
-      if (text) {
-        url.searchParams.set("text", text);
-      } else {
-        url.searchParams.set(
-          "text",
-          "你好，这是 Read Aloud 的默认测试语句。喜欢本项目的话，帮忙点个 Star 吧。"
-        );
+      if (Array.isArray(config.voiceName)) {
+        toast("只能在选择单个语音时预览音色");
+        return;
       }
-      if (config.voiceName) url.searchParams.set("voice", config.voiceName);
-      if (config.pitch) url.searchParams.set("pitch", config.pitch.toString());
-      if (config.rate) url.searchParams.set("rate", config.rate.toString());
-      if (config.volume)
-        url.searchParams.set("volume", config.volume.toString());
-      if (config.format) url.searchParams.set("format", config.format);
+      try {
+        const url = new URL(api.url);
+        url.pathname = "/api/synthesis";
+        url.searchParams.set("token", api.token);
+        if (text) {
+          url.searchParams.set("text", text);
+        } else {
+          url.searchParams.set(
+            "text",
+            "你好，这是 Read Aloud 的默认测试语句。喜欢本项目的话，帮忙点个 Star 吧。"
+          );
+        }
+        if (config.voiceName) url.searchParams.set("voice", config.voiceName);
+        if (config.pitch)
+          url.searchParams.set("pitch", config.pitch.toString());
+        if (config.rate) url.searchParams.set("rate", config.rate.toString());
+        if (config.volume)
+          url.searchParams.set("volume", config.volume.toString());
+        if (config.format) url.searchParams.set("format", config.format);
 
-      setAudioUrl(url.toString());
+        setAudioUrl(url.toString());
+      } catch (error) {
+        toast("获取音频失败", {
+          description: error instanceof Error ? error.message : "未知错误",
+        });
+        setAudioUrl(null);
+      }
     },
     [api, config]
   );

@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 
 export function RaVoiceConfig() {
   const [raVoiceConfig, setRaVoiceConfig] = useAtom(raVoiceConfigAtom);
+
   return (
     <Card className="w-card">
       <CardHeader>合成</CardHeader>
@@ -24,9 +25,9 @@ export function RaVoiceConfig() {
             <Label>Voice Name</Label>
             <VoiceNameSelect
               value={raVoiceConfig.voiceName}
-              onChange={(v) =>
-                setRaVoiceConfig({ ...raVoiceConfig, voiceName: v })
-              }
+              onChange={(v) => {
+                setRaVoiceConfig({ ...raVoiceConfig, voiceName: v });
+              }}
             />
           </div>
           <Accordion type="single" collapsible>

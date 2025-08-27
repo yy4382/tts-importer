@@ -1,5 +1,6 @@
 import { atom } from "jotai";
 import z from "zod";
+import { queryOptions } from "@tanstack/react-query";
 
 export const raApiConfigSchema = z.object({
   url: z.string().url(),
@@ -11,12 +12,15 @@ const raApiConfigAtom = atom<z.infer<typeof raApiConfigSchema>>({
   token: "",
 });
 
-export const raVoiceConfigSchema = z.object({
-  voiceName: z.string(),
+export const raVoiceConfigAdvancedSchema = z.object({
   pitch: z.string(),
   rate: z.string(),
   format: z.string(),
   volume: z.string(),
+});
+export const raVoiceConfigSchema = z.object({
+  ...raVoiceConfigAdvancedSchema.shape,
+  voiceName: z.string().or(z.array(z.string())),
 });
 
 const raVoiceConfigAtom = atom<z.infer<typeof raVoiceConfigSchema>>({
@@ -37,3 +41,19 @@ const validRaVoiceConfigAtom = atom((get) => {
 });
 
 export { raVoiceConfigAtom, validRaVoiceConfigAtom, raApiConfigAtom };
+
+async function fetchVoices() {
+  const res = await fetch(
+    "https://speech.platform.bing.com/consumer/speech/synthesize/readaloud/voices/list?trustedclienttoken=6A5AA1D4EAFF4E9FB37E23D68491D6F4"
+  );
+  return ((await res.json()) as { ShortName: string }[]).map(
+    (v) => v["ShortName"]
+  );
+}
+
+const voiceListQueryOptions = queryOptions({
+  queryKey: ["ra-voice-list"],
+  queryFn: fetchVoices,
+});
+
+export { voiceListQueryOptions };

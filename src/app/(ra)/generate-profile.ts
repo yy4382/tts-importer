@@ -1,6 +1,11 @@
-import { raApiConfigSchema, raVoiceConfigSchema } from "./ra-data";
+import {
+  raApiConfigSchema,
+  raVoiceConfigAdvancedSchema,
+  raVoiceConfigSchema,
+} from "./ra-data";
 import { z } from "zod";
 import { ulid } from "ulid";
+import { toast } from "sonner";
 
 function getSynthesisUrl(apiBase: string) {
   const url = new URL(apiBase);
@@ -10,7 +15,7 @@ function getSynthesisUrl(apiBase: string) {
 
 function buildLegadoUrl(
   api: z.infer<typeof raApiConfigSchema>,
-  voice: z.infer<typeof raVoiceConfigSchema>
+  voice: z.infer<typeof raVoiceConfigAdvancedSchema> & { voiceName: string }
 ) {
   const { voiceName, pitch, volume, format } = voice;
   const url = getSynthesisUrl(api.url);
@@ -43,17 +48,31 @@ export function generateProfile(
   const api = apiParsed.data;
   const voice = voiceParsed.data;
 
-  const url = buildLegadoUrl(api, voice);
   switch (type) {
-    case "legado":
+    case "legado": {
+      if (Array.isArray(voice.voiceName)) {
+        return voice.voiceName.map((v) => ({
+          name: getName({ ...voice, voiceName: v }),
+          url: buildLegadoUrl(api, { ...voice, voiceName: v }),
+          id: Date.now(),
+        }));
+      }
       return {
         name: getName(voice),
-        url,
+        url: buildLegadoUrl(api, { ...voice, voiceName: voice.voiceName }),
         id: Date.now(),
       };
+    }
     case "sourcereader":
-      return url;
+      if (Array.isArray(voice.voiceName)) {
+        try {
+          toast("源阅读只支持单个语音");
+        } catch {}
+        return null;
+      }
+      return buildLegadoUrl(api, { ...voice, voiceName: voice.voiceName });
     case "ireadnote": {
+      const isSingle = !Array.isArray(voice.voiceName);
       const config = {
         _ClassName: "JxdAdvCustomTTS",
         _TTSConfigID: ulid(),
@@ -64,6 +83,7 @@ export function generateProfile(
             processType: 1,
             params: {
               ...voice,
+              voiceName: isSingle ? voice.voiceName : "@json:voiceName",
               token: api.token,
               text: "%@",
             },
@@ -73,8 +93,21 @@ export function generateProfile(
             },
           },
         ],
-        _TTSName: getName(voice),
+        _TTSName: getName(
+          isSingle ? voice : { ...voice, voiceName: ulid().slice(0, 8) }
+        ),
       };
+      if (!isSingle) {
+        // @ts-expect-error voiceList is not in the type
+        config.voiceList = [];
+        for (const v of voice.voiceName) {
+          // @ts-expect-error voiceList is not in the type
+          config.voiceList.push({
+            name: v,
+            display: v,
+          });
+        }
+      }
       return config;
     }
   }
