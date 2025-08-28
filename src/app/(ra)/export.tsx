@@ -15,6 +15,28 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { usePostHog } from "posthog-js/react";
 
+function copyToClipboard(text: string) {
+  navigator.clipboard
+    .writeText(text)
+    .then(() => {
+      toast("已复制到剪贴板");
+    })
+    .catch(() => {
+      toast("复制失败");
+    });
+}
+
+function downloadFile(text: string, filename: string) {
+  const blob = new Blob([text], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast("已开始下载配置文件，请使用软件的“本地导入”功能导入配置");
+}
+
 export function ExportRa() {
   const voiceConfig = useAtomValue(validRaVoiceConfigAtom);
   const api = useAtomValue(raApiConfigAtom);
@@ -27,11 +49,6 @@ export function ExportRa() {
     }
     if (!voiceConfig) {
       toast("语音配置未设置");
-      return;
-    }
-
-    if (type === "sourcereader" && voiceConfig.voiceName.type !== "single") {
-      toast("源阅读只支持单个语音");
       return;
     }
 
@@ -62,23 +79,30 @@ export function ExportRa() {
       method: "copy-profile",
     });
 
-    if (type === "ireadnote" || voiceConfig.voiceName.type === "single") {
-      navigator.clipboard
-        .writeText(result)
-        .then(() => {
-          toast("已复制到剪贴板");
-        })
-        .catch(() => {
-          toast("复制失败");
-        });
-    } else {
-      const blob = new Blob([result], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `ra-profile-${type}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
+    switch (type) {
+      case "ireadnote":
+        copyToClipboard(result);
+        break;
+      case "legado":
+        if (voiceConfig.voiceName.type === "single") {
+          copyToClipboard(result);
+        } else {
+          downloadFile(
+            result,
+            `ra-profile-${type}-${voiceConfig.voiceName.type}.json`
+          );
+        }
+        break;
+      case "sourcereader":
+        downloadFile(
+          result,
+          `ra-profile-${type}-${
+            voiceConfig.voiceName.type === "single"
+              ? voiceConfig.voiceName.name
+              : voiceConfig.voiceName.type
+          }.json`
+        );
+        break;
     }
   }
 
@@ -88,9 +112,9 @@ export function ExportRa() {
         <CardTitle>导出配置</CardTitle>
       </CardHeader>
       <CardContent className="flex flex-row gap-2 flex-wrap">
-        <Button onClick={() => onSubmit("legado")}>复制阅读配置</Button>
-        <Button onClick={() => onSubmit("ireadnote")}>复制爱阅记配置</Button>
-        <Button onClick={() => onSubmit("sourcereader")}>复制源阅读配置</Button>
+        <Button onClick={() => onSubmit("legado")}>阅读配置</Button>
+        <Button onClick={() => onSubmit("ireadnote")}>爱阅记配置</Button>
+        <Button onClick={() => onSubmit("sourcereader")}>源阅读配置</Button>
       </CardContent>
     </Card>
   );
