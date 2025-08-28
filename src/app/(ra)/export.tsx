@@ -3,8 +3,15 @@
 import { Button } from "@/components/ui/button";
 import { useAtomValue } from "jotai";
 import { toast } from "sonner";
-import { raApiConfigAtom, validRaVoiceConfigAtom } from "./ra-data";
-import { generateProfile } from "@/app/(ra)/generate-profile";
+import {
+  raApiConfigAtom,
+  raStateSchema,
+  validRaVoiceConfigAtom,
+} from "./ra-data";
+import {
+  generateProfileLegado,
+  generateProfileIreadnote,
+} from "@/app/(ra)/generate-profile";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { usePostHog } from "posthog-js/react";
 
@@ -23,11 +30,31 @@ export function ExportRa() {
       return;
     }
 
-    const result = generateProfile(type, api, voiceConfig);
-    if (result === null) {
-      toast("生成配置失败");
+    if (type === "sourcereader" && voiceConfig.voiceName.type !== "single") {
+      toast("源阅读只支持单个语音");
       return;
     }
+
+    const raState = raStateSchema.safeParse({ api, voice: voiceConfig });
+    if (!raState.success) {
+      toast("生成配置失败", {
+        description: raState.error.issues
+          .map((issue) => issue.message)
+          .join(", "),
+      });
+      return;
+    }
+
+    const result = (() => {
+      switch (type) {
+        case "legado":
+          return generateProfileLegado(raState.data);
+        case "ireadnote":
+          return generateProfileIreadnote(raState.data);
+        case "sourcereader":
+          return generateProfileLegado(raState.data);
+      }
+    })();
 
     posthog?.capture("profile exported", {
       type: "ra",
@@ -35,14 +62,24 @@ export function ExportRa() {
       method: "copy-profile",
     });
 
-    navigator.clipboard
-      .writeText(typeof result === "string" ? result : JSON.stringify(result))
-      .then(() => {
-        toast("已复制到剪贴板");
-      })
-      .catch(() => {
-        toast("复制失败");
-      });
+    if (type === "ireadnote" || voiceConfig.voiceName.type === "single") {
+      navigator.clipboard
+        .writeText(result)
+        .then(() => {
+          toast("已复制到剪贴板");
+        })
+        .catch(() => {
+          toast("复制失败");
+        });
+    } else {
+      const blob = new Blob([result], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `ra-profile-${type}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
   }
 
   return (

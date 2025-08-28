@@ -3,8 +3,8 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { VoiceNameSelect } from "./voice-name-select";
-import { raVoiceConfigAtom } from "../ra-data";
-import { useAtom } from "jotai";
+import { raVoiceConfigAdvancedSchema, raVoiceConfigAtom } from "../ra-data";
+import { atom, useAtom } from "jotai";
 import {
   Accordion,
   AccordionContent,
@@ -12,9 +12,17 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
+import z from "zod";
+
+const raVoiceConfigAdvancedAtom = atom(
+  (get) => get(raVoiceConfigAtom).advanced,
+  (_, set, advanced: z.infer<typeof raVoiceConfigAdvancedSchema>) => {
+    set(raVoiceConfigAtom, (prev) => ({ ...prev, advanced }));
+  }
+);
 
 export function RaVoiceConfig() {
-  const [raVoiceConfig, setRaVoiceConfig] = useAtom(raVoiceConfigAtom);
+  const [advanced, setAdvanced] = useAtom(raVoiceConfigAdvancedAtom);
 
   return (
     <Card className="w-card">
@@ -23,12 +31,7 @@ export function RaVoiceConfig() {
         <div className="grid gap-4">
           <div className="grid gap-2">
             <Label>Voice Name</Label>
-            <VoiceNameSelect
-              value={raVoiceConfig.voiceName}
-              onChange={(v) => {
-                setRaVoiceConfig({ ...raVoiceConfig, voiceName: v });
-              }}
-            />
+            <VoiceNameSelect />
           </div>
           <Accordion type="single" collapsible>
             <AccordionItem value="item-1">
@@ -47,10 +50,10 @@ export function RaVoiceConfig() {
                   <div key={key} className="grid gap-2">
                     <Label>{key.charAt(0).toUpperCase() + key.slice(1)}</Label>
                     <Input
-                      value={raVoiceConfig[key]}
+                      value={advanced[key]}
                       onChange={(e) =>
-                        setRaVoiceConfig({
-                          ...raVoiceConfig,
+                        setAdvanced({
+                          ...advanced,
                           [key]: e.target.value,
                         })
                       }

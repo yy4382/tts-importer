@@ -3,9 +3,11 @@ import z from "zod";
 import { queryOptions } from "@tanstack/react-query";
 
 export const raApiConfigSchema = z.object({
-  url: z.string().url(),
+  url: z.url("API URL 需要是合法 URL"),
   token: z.string(),
 });
+
+export type RaApiConfig = z.infer<typeof raApiConfigSchema>;
 
 const raApiConfigAtom = atom<z.infer<typeof raApiConfigSchema>>({
   url: "",
@@ -18,18 +20,48 @@ export const raVoiceConfigAdvancedSchema = z.object({
   format: z.string(),
   volume: z.string(),
 });
+
+const raVoiceNameSchema = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("single"),
+    name: z.string(),
+  }),
+  z.object({
+    type: z.literal("all"),
+    nameList: z.array(z.string()),
+  }),
+  z.object({
+    type: z.literal("all-zh"),
+    nameList: z.array(z.string()),
+  }),
+]);
+export type RaVoiceName = z.infer<typeof raVoiceNameSchema>;
+
 export const raVoiceConfigSchema = z.object({
-  ...raVoiceConfigAdvancedSchema.shape,
-  voiceName: z.string().or(z.array(z.string())),
+  voiceName: raVoiceNameSchema,
+  advanced: raVoiceConfigAdvancedSchema,
+});
+export type RaVoiceConfig = z.infer<typeof raVoiceConfigSchema>;
+
+const raVoiceConfigAtom = atom<RaVoiceConfig>({
+  voiceName: {
+    type: "single",
+    name: "zh-CN-XiaoxiaoNeural",
+  },
+  advanced: {
+    pitch: "",
+    rate: "",
+    format: "audio-24khz-48kbitrate-mono-mp3",
+    volume: "",
+  },
 });
 
-const raVoiceConfigAtom = atom<z.infer<typeof raVoiceConfigSchema>>({
-  voiceName: "zh-CN-XiaoxiaoNeural",
-  pitch: "",
-  rate: "",
-  format: "audio-24khz-48kbitrate-mono-mp3",
-  volume: "",
-});
+export const raVoiceNameAtom = atom(
+  (get) => get(raVoiceConfigAtom).voiceName,
+  (get, set, voiceName: RaVoiceName) => {
+    set(raVoiceConfigAtom, (prev) => ({ ...prev, voiceName }));
+  }
+);
 
 const validRaVoiceConfigAtom = atom((get) => {
   const config = get(raVoiceConfigAtom);
@@ -40,7 +72,30 @@ const validRaVoiceConfigAtom = atom((get) => {
   return result.data;
 });
 
-export { raVoiceConfigAtom, validRaVoiceConfigAtom, raApiConfigAtom };
+const raStateSchema = z
+  .object({
+    api: raApiConfigSchema,
+    voice: raVoiceConfigSchema,
+  })
+  .brand("RaState");
+
+export type RaState = z.infer<typeof raStateSchema>;
+
+function parseRaState(state: { api: RaApiConfig; voice: RaVoiceConfig }) {
+  const appState = raStateSchema.safeParse(state);
+  if (!appState.success) {
+    throw new Error(appState.error.issues[0].message);
+  }
+  return appState.data;
+}
+
+export {
+  raVoiceConfigAtom,
+  validRaVoiceConfigAtom,
+  raApiConfigAtom,
+  raStateSchema,
+  parseRaState,
+};
 
 async function fetchVoices() {
   const res = await fetch(

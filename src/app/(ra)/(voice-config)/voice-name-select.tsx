@@ -5,8 +5,13 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { voiceListQueryOptions } from "../ra-data";
+import {
+  RaVoiceName,
+  raVoiceNameAtom,
+  voiceListQueryOptions,
+} from "../ra-data";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useAtom } from "jotai";
 
 function makeStandardVoice(voices: string) {
   return {
@@ -15,13 +20,7 @@ function makeStandardVoice(voices: string) {
   };
 }
 
-export function VoiceNameSelect({
-  value,
-  onChange,
-}: {
-  value: string | string[];
-  onChange: (value: string | string[]) => void;
-}) {
+export function VoiceNameSelect() {
   const {
     data: voices,
     isError,
@@ -29,29 +28,29 @@ export function VoiceNameSelect({
     error,
   } = useQuery(voiceListQueryOptions);
 
-  const [voiceSelectType, setVoiceSelectType] = useState<
-    "single" | "all" | "all-zh"
-  >("single");
+  const [voiceName, setVoiceName] = useAtom(raVoiceNameAtom);
 
-  function onVoiceSelectChange(type: "single" | "all" | "all-zh") {
+  function onVoiceSelectChange(type: RaVoiceName["type"]) {
     if (!voices) return;
-    setVoiceSelectType(type);
     switch (type) {
       case "single": {
         const voice = voices.find((v) => v.startsWith("zh-"));
         if (voice) {
-          onChange(voice);
+          setVoiceName({ type: "single", name: voice });
         } else {
-          onChange(voices[0]);
+          setVoiceName({ type: "single", name: voices[0] });
         }
         break;
       }
       case "all": {
-        onChange(voices);
+        setVoiceName({ type: "all", nameList: voices });
         break;
       }
       case "all-zh": {
-        onChange(voices.filter((v) => v.startsWith("zh-")));
+        setVoiceName({
+          type: "all-zh",
+          nameList: voices.filter((v) => v.startsWith("zh-")),
+        });
         break;
       }
     }
@@ -65,7 +64,7 @@ export function VoiceNameSelect({
         <>
           <RadioGroup
             defaultValue="single"
-            value={voiceSelectType}
+            value={voiceName.type}
             onValueChange={onVoiceSelectChange}
           >
             <div className="flex items-center gap-3">
@@ -87,11 +86,11 @@ export function VoiceNameSelect({
               <Label htmlFor="radio-all-zh">全部中文</Label>
             </div>
           </RadioGroup>
-          {voiceSelectType === "single" && typeof value === "string" && (
+          {voiceName.type === "single" && (
             <SingleVoiceSelect
               voices={voices}
-              value={value}
-              onChange={onChange}
+              value={voiceName.name}
+              onChange={(v) => setVoiceName({ type: "single", name: v })}
             />
           )}
         </>

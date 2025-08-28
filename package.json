@@ -49,9 +49,9 @@
     "ulid": "^3.0.1"
   },
   "devDependencies": {
-    "@content-collections/core": "^0.9.0",
+    "@content-collections/core": "^0.11.0",
     "@content-collections/mdx": "^0.2.2",
-    "@content-collections/next": "^0.2.6",
+    "@content-collections/next": "^0.2.7",
     "@eslint/eslintrc": "^3.3.1",
     "@tailwindcss/postcss": "^4.1.8",
     "@types/node": "^22.15.29",
@@ -63,7 +63,7 @@
     "tailwindcss": "^4.1.8",
     "tw-animate-css": "^1.3.4",
     "typescript": "^5.8.3",
-    "zod": "^3.25.50"
+    "zod": "^4.1.3"
   },
   "packageManager": "pnpm@10.12.1+sha512.f0dda8580f0ee9481c5c79a1d927b9164f2c478e90992ad268bbb2465a736984391d6333d2c327913578b2804af33474ca554ba29c04a8b13060a717675ae3ac"
 }
