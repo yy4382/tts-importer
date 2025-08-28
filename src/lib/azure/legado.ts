@@ -1,5 +1,10 @@
 import genName from "@/lib/azure/config-name";
-import type { AzureState, speakerSchema, voiceConfigSchema } from "./schema";
+import {
+  azureStateSchema,
+  type AzureState,
+  type speakerSchema,
+  type voiceConfigSchema,
+} from "./schema";
 import z from "zod";
 
 function buildSSML(
@@ -25,15 +30,16 @@ function buildSSML(
   return ssml;
 }
 
+/**
+ * @param state - AzureState
+ * @returns legado config
+ * @throws {ZodError} if the state is invalid
+ */
 export default function legadoConfig(state: AzureState) {
-  const { api, voice: voiceConfig } = state;
+  const { api, voice: voiceConfig } = azureStateSchema.parse(state);
   if (voiceConfig.speakerConfig.type !== "single") {
     // TODO: support multiple speakers
     throw new Error("multiple speakers not supported yet");
-  }
-
-  if (!voiceConfig.speakerConfig.speaker.name) {
-    throw new Error("未选择语音");
   }
 
   const header = {

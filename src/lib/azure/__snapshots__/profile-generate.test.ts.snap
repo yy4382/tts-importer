@@ -1,0 +1,61 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ifreetimeConfig > should generate a valid ifreetime config 1`] = `
+{
+  "_ClassName": "JxdAdvCustomTTS",
+  "_TTSName": "☁️ Azure 晓晓",
+  "httpConfigs": {
+    "headers": {},
+    "useCookies": 1,
+  },
+  "loginUrl": "",
+  "maxWordCount": "",
+  "ttsConfigGroup": "☁️ Azure",
+  "ttsHandles": [
+    {
+      "forGetMethod": 0,
+      "httpConfigs": {
+        "customFormatParams": "params[text]",
+        "headers": {
+          "Content-Type": "application/ssml+xml",
+          "User-Agent": "AiyueTTS",
+          "X-Microsoft-OutputFormat": "audio-16khz-128kbitrate-mono-mp3",
+          "ocp-apim-subscription-key": "test",
+        },
+        "useCookies": 1,
+      },
+      "maxPageCount": 1,
+      "nextPageForGetMedthod": 1,
+      "nextPageParams": {},
+      "params": {
+        "text": "@dyn:
+p=def:& @=>和;
+txt=keyword.jxd_executeRegexRules:p;
+format('<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="zh-CN"><voice name="zh-CN-XiaoxiaoNeural">%@</voice></speak>',txt)",
+      },
+      "parser": {
+        "playData": "ResponseData",
+      },
+      "processType": 1,
+      "requestByWebView": 0,
+      "url": "https://eastasia.tts.speech.microsoft.com/cognitiveservices/v1",
+    },
+  ],
+}
+`;
+
+exports[`legadoConfig > should generate a valid legado config 1`] = `
+[
+  {
+    "concurrentRate": "0",
+    "contentType": "audio/mpeg",
+    "header": "{"Ocp-Apim-Subscription-Key":"test","Content-Type":"application/ssml+xml","X-Microsoft-OutputFormat":"audio-16khz-128kbitrate-mono-mp3","User-Agent":"legado"}",
+    "id": 1735660800000,
+    "loginCheckJs": "",
+    "loginUi": "",
+    "loginUrl": "",
+    "name": "☁️ Azure 晓晓",
+    "url": "https://eastasia.tts.speech.microsoft.com/cognitiveservices/v1,{"method":"POST","body":"<speak version=\\"1.0\\" xmlns=\\"http://www.w3.org/2001/10/synthesis\\" xmlns:mstts=\\"https://www.w3.org/2001/mstts\\" xml:lang=\\"zh-CN\\"><voice name=\\"zh-CN-XiaoxiaoNeural\\"><prosody rate=\\"{{speakSpeed*4}}%\\" >{{speakText}}</prosody></voice></speak>","headers":{"Ocp-Apim-Subscription-Key":"test","Content-Type":"application/ssml+xml","X-Microsoft-OutputFormat":"audio-16khz-128kbitrate-mono-mp3","User-Agent":"legado"}}",
+  },
+]
+`;

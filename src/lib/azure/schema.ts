@@ -1,19 +1,33 @@
 import { z } from "zod";
 
 export const speakerSchema = z.object({
+  /**
+   * @example "zh-CN-XiaoxiaoNeural"
+   */
   name: z.string(),
+  /**
+   * @example "晓晓"
+   */
   localName: z.string(),
-  // empty array or [null] interpreted as not using style
-  // non empty array with null means using style, but also include unstyled
+  /**
+   * The voice style of the speaker.
+   *
+   * - empty array or [null] interpreted as not using style
+   * - non empty array with null means using style, but also include unstyled
+   */
   style: z.array(z.union([z.string(), z.null()])),
 });
 
 export const voiceConfigSchema = z.object({
   shared: z.object({
-    // empty string or "default" (preferred than empty string) interpreted not exist (not sending)
+    /**
+     * empty string or "default" (preferred than empty string) interpreted not exist (not sending)
+     */
     pitch: z.string(),
     format: z.string(),
-    // no UA header if null, and empty string is valid (send as empty string)
+    /**
+     * use Default UA header if null, and empty string is valid (send as empty string)
+     */
     customUA: z.string().nullable(),
   }),
   speakerConfig: z.discriminatedUnion("type", [
@@ -30,7 +44,7 @@ const apiConfigSchema = z.object({
 });
 export type ApiConfig = z.infer<typeof apiConfigSchema>;
 
-const azureStateSchema = z.object({
+export const azureStateSchema = z.object({
   api: apiConfigSchema,
   voice: voiceConfigSchema,
 });

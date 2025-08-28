@@ -1,6 +1,6 @@
 import genName from "@/lib/azure/config-name";
 import { ulid } from "ulid";
-import { AzureState, speakerSchema, voiceConfigSchema } from "./schema";
+import { AzureState, azureStateSchema, speakerSchema, voiceConfigSchema } from "./schema";
 import z from "zod";
 
 function buildSSML(
@@ -25,7 +25,7 @@ function buildSSML(
 }
 
 export default function ifreetimeConfig(state: AzureState) {
-  const { api, voice: voiceConfig } = state;
+  const { api, voice: voiceConfig } = azureStateSchema.parse(state);
   if (voiceConfig.speakerConfig.type !== "single") {
     // TODO: support multiple speakers
     throw new Error("multiple speakers not supported yet");
@@ -34,7 +34,7 @@ export default function ifreetimeConfig(state: AzureState) {
   const config = {
     loginUrl: "",
     maxWordCount: "",
-    ttsConfigGroup: "Azure",
+    ttsConfigGroup: "☁️ Azure",
     _ClassName: "JxdAdvCustomTTS",
     _TTSConfigID: ulid(),
     httpConfigs: {
