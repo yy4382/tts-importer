@@ -48,16 +48,14 @@ export default function ApiUrl() {
               }}
             />
             <p className="text-[0.8rem] text-neutral-500 dark:text-neutral-400">
-              Cloudflare Workers 部署的 URL。
+              Read Aloud 项目部署到的 URL。
             </p>
             {!api.url && (
               <p className="prose dark:prose-invert w-full text-sm">
                 本网页是 <a href="https://ra.yfi.moe">Read Aloud 转发 API</a>{" "}
                 的附属项目。 如果想要使用，需要先部署
-                <a href="https://github.com/yy4382/read-aloud">
-                  这个 Cloudflare Workers&nbsp;
-                </a>
-                服务，然后填入 API URL。
+                <a href="https://github.com/yy4382/read-aloud">这个服务</a>
+                （支持 CF Worker，Vercel，Docker），然后填入 API URL。
               </p>
             )}
           </div>
