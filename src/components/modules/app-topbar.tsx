@@ -9,6 +9,7 @@ import {
 import { Separator } from "../ui/separator";
 import { SidebarTrigger } from "../ui/sidebar";
 import { ModeToggle } from "../ui/theme-changer";
+import { buttonVariants } from "../ui/button";
 
 export function AppTopbar(prop: {
   location: { title: string; link?: string }[];
@@ -31,7 +32,14 @@ export function AppTopbar(prop: {
           ))}
         </BreadcrumbList>
       </Breadcrumb>
-      <div className="flex-grow justify-end flex">
+      <div className="flex-grow justify-end flex gap-2">
+        <a
+          href="https://github.com/yy4382/tts-importer/issues/new"
+          target="_blank"
+          className={buttonVariants({ variant: "outline" })}
+        >
+          问题反馈
+        </a>
         <ModeToggle className="justify-self-end" />
       </div>
     </header>
