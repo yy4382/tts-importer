@@ -18,6 +18,8 @@ import { useDebounce } from "@/hooks/use-debounce";
 import { cn } from "@/lib/utils";
 import { Check, ChevronsUpDown, Search } from "lucide-react";
 import { useState } from "react";
+import { Label } from "../ui/label";
+import { Switch } from "../ui/switch";
 
 export function VoiceSelect<
   T extends { shortName: string; localName?: string }
@@ -31,16 +33,21 @@ export function VoiceSelect<
   setVoice: (voice: T | null) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const [onlyZh, setOnlyZh] = useState(true);
 
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 200);
 
-  const filteredVoices = voiceList.filter((v) => {
-    return (
-      v.localName?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-      v.shortName.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
-    );
-  });
+  const filteredVoices = voiceList
+    .filter((v) => (onlyZh ? v.shortName.startsWith("zh-") : true))
+    .filter((v) => {
+      return (
+        v.localName
+          ?.toLowerCase()
+          .includes(debouncedSearchTerm.toLowerCase()) ||
+        v.shortName.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+      );
+    });
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -64,6 +71,14 @@ export function VoiceSelect<
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="focus-visible:ring-0 rounded-b-none border-none pl-8 flex-1"
+            />
+          </div>
+          <div className="flex items-center gap-2 w-full justify-between px-2 py-1.5 border-b">
+            <Label htmlFor="only-zh">仅显示中文语音</Label>
+            <Switch
+              id="only-zh"
+              checked={onlyZh}
+              onCheckedChange={() => setOnlyZh(!onlyZh)}
             />
           </div>
           <CommandList>

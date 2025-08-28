@@ -2,9 +2,7 @@
 
 import { VoiceSelect } from "@/components/shared/voice-select";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
 import {
   RaVoiceName,
   raVoiceNameAtom,
@@ -67,32 +65,50 @@ export function VoiceNameSelect() {
             value={voiceName.type}
             onValueChange={onVoiceSelectChange}
           >
-            <div className="flex items-center gap-3">
-              <RadioGroupItem value="single" id="radio-single">
-                单选
-              </RadioGroupItem>
-              <Label htmlFor="radio-single">单选</Label>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-3">
+                <RadioGroupItem value="single" id="radio-single">
+                  单选
+                </RadioGroupItem>
+                <Label htmlFor="radio-single">单选</Label>
+              </div>
+              {voiceName.type === "single" && (
+                <div className="ml-6">
+                  <SingleVoiceSelect
+                    voices={voices}
+                    value={voiceName.name}
+                    onChange={(v) => setVoiceName({ type: "single", name: v })}
+                  />
+                </div>
+              )}
             </div>
-            <div className="flex items-center gap-3">
-              <RadioGroupItem value="all" id="radio-all">
-                全部
-              </RadioGroupItem>
-              <Label htmlFor="radio-all">全部</Label>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-3">
+                <RadioGroupItem value="all" id="radio-all">
+                  全部
+                </RadioGroupItem>
+                <Label htmlFor="radio-all">全部</Label>
+              </div>
+              {voiceName.type === "all" && (
+                <p className="ml-6 text-sm text-muted-foreground">
+                  将导入 {voiceName.nameList.length} 个语音
+                </p>
+              )}
             </div>
-            <div className="flex items-center gap-3">
-              <RadioGroupItem value="all-zh" id="radio-all-zh">
-                全部中文
-              </RadioGroupItem>
-              <Label htmlFor="radio-all-zh">全部中文</Label>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-3">
+                <RadioGroupItem value="all-zh" id="radio-all-zh">
+                  全部中文
+                </RadioGroupItem>
+                <Label htmlFor="radio-all-zh">全部中文</Label>
+              </div>
+              {voiceName.type === "all-zh" && (
+                <p className="ml-6 text-sm text-muted-foreground">
+                  将导入 {voiceName.nameList.length} 个语音
+                </p>
+              )}
             </div>
           </RadioGroup>
-          {voiceName.type === "single" && (
-            <SingleVoiceSelect
-              voices={voices}
-              value={voiceName.name}
-              onChange={(v) => setVoiceName({ type: "single", name: v })}
-            />
-          )}
         </>
       )}
     </div>
@@ -108,33 +124,17 @@ function SingleVoiceSelect({
   value: string;
   onChange: (value: string) => void;
 }) {
-  const [onlyZh, setOnlyZh] = useState(true);
-  const voicesFiltered = useMemo<string[]>(() => {
-    if (onlyZh) {
-      return voices?.filter((v) => v.startsWith("zh-"));
-    }
-    return voices;
-  }, [voices, onlyZh]);
-
   return (
     <>
-      {voicesFiltered && (
+      {voices && (
         <VoiceSelect
-          voiceList={voicesFiltered.map(makeStandardVoice)}
+          voiceList={voices.map(makeStandardVoice)}
           voice={makeStandardVoice(value)}
           setVoice={(v) => {
             if (v) onChange(v?.shortName ?? "");
           }}
         />
       )}
-      <div className="flex items-center gap-2">
-        <Switch
-          id="only-zh"
-          checked={onlyZh}
-          onCheckedChange={() => setOnlyZh(!onlyZh)}
-        />
-        <Label htmlFor="only-zh">仅显示中文语音</Label>
-      </div>
     </>
   );
 }
