@@ -1,5 +1,5 @@
 "use client";
-import type { VoiceConfig, ApiConfig } from "@/lib/azure/types";
+import type { VoiceConfig, ApiConfig } from "@/lib/azure/schema";
 import { useCopyToClipboard } from "@/hooks/use-clipboard";
 import genIfreetimeConfig from "@/lib/azure/ifreetime";
 import { useMemo } from "react";
@@ -13,7 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { config2url } from "@/lib/azure/config-to-url";
+import { config2urlNoThrow } from "@/lib/azure/config-to-url";
 import { Separator } from "@/components/ui/separator";
 import { QRCodeSVG } from "qrcode.react";
 import { ActionLine } from "@/components/ui/action-line";
@@ -28,31 +28,28 @@ import {
 
 export function IFreeTimeExport({
   api,
-  voiceConfig,
+  voice,
 }: {
   api: ApiConfig;
-  voiceConfig: VoiceConfig;
+  voice: VoiceConfig;
 }) {
   const copy = useCopyToClipboard();
   const posthog = usePostHog();
 
   const ifreetimeConfig = useMemo(() => {
-    return genIfreetimeConfig(api, voiceConfig);
-  }, [api, voiceConfig]);
+    return genIfreetimeConfig({ api, voice });
+  }, [api, voice]);
 
-  const configUrl = useMemo(() => {
-    return config2url(
-      api,
-      voiceConfig,
-      window.location.origin,
-      "/api/ifreetime"
-    ).toString();
-  }, [api, voiceConfig]);
-
-  const directUrl = useMemo(
-    () => `iReadNote://import/itts=${configUrl}`,
-    [configUrl]
+  const configUrl = config2urlNoThrow(
+    { api, voice },
+    window.location.origin,
+    "/api/ifreetime"
   );
+  if (configUrl instanceof Error) {
+    return <p>{configUrl.message}</p>;
+  }
+
+  const directUrl = `iReadNote://import/itts=${configUrl}`;
 
   return (
     <div className="flex flex-col gap-2">

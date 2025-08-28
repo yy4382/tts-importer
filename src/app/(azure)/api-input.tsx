@@ -89,7 +89,7 @@ export function ApiInput() {
       } satisfies Voice as Voice;
     });
     setVoices(voices);
-    toast.success(`获取到${voices.length}个中文语音`);
+    toast.success(`获取到${voices.length}个语音`);
     posthog.capture("azure voices fetched");
   };
 

@@ -1,5 +1,5 @@
 "use client";
-import type { VoiceConfig, ApiConfig } from "@/lib/azure/types";
+import type { VoiceConfig, ApiConfig } from "@/lib/azure/schema";
 import { useCopyToClipboard } from "@/hooks/use-clipboard";
 import genLegadoConfig from "@/lib/azure/legado";
 import { useMemo } from "react";
@@ -13,7 +13,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { config2url } from "@/lib/azure/config-to-url";
+import { config2urlNoThrow } from "@/lib/azure/config-to-url";
 import { Separator } from "@/components/ui/separator";
 import { QRCodeSVG } from "qrcode.react";
 import { ActionLine } from "@/components/ui/action-line";
@@ -31,22 +31,21 @@ export function LegadoExport({
   const posthog = usePostHog();
 
   const legadoConfig = useMemo(() => {
-    return genLegadoConfig(api, voiceConfig);
+    return genLegadoConfig({ api, voice: voiceConfig });
   }, [api, voiceConfig]);
 
-  const configUrl = useMemo(() => {
-    return config2url(
-      api,
-      voiceConfig,
-      window.location.origin,
-      "/api/legado"
-    ).toString();
-  }, [api, voiceConfig]);
-
-  const directUrl = useMemo(
-    () => `legado://import/httpTTS?src=${encodeURIComponent(configUrl)}`,
-    [configUrl]
+  const configUrl = config2urlNoThrow(
+    { api, voice: voiceConfig },
+    window.location.origin,
+    "/api/legado"
   );
+  if (configUrl instanceof Error) {
+    return <p>{configUrl.message}</p>;
+  }
+
+  const directUrl = `legado://import/httpTTS?src=${encodeURIComponent(
+    configUrl
+  )}`;
 
   return (
     <div className="flex flex-col gap-2">

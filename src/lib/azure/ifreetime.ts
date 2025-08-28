@@ -1,22 +1,36 @@
 import genName from "@/lib/azure/config-name";
-import type { ApiConfig, VoiceConfig } from "@/lib/azure/types";
 import { ulid } from "ulid";
+import { AzureState, speakerSchema, voiceConfigSchema } from "./schema";
+import z from "zod";
 
-export default function ifreetimeConfig(
-  api: ApiConfig,
-  voiceConfig: VoiceConfig
+function buildSSML(
+  speaker: z.infer<typeof speakerSchema>,
+  shared: z.infer<typeof voiceConfigSchema>["shared"]
 ) {
+  // TODO: support multiple styles
+  const style = speaker.style.find((s) => s !== null);
+
+  const usePitch = shared.pitch && shared.pitch !== "default";
+
   const ssml =
     `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="zh-CN">` +
-    `<voice name="${voiceConfig.voice}">` +
-    `${voiceConfig.pitch ? `<prosody pitch="${voiceConfig.pitch}">` : ""}` +
-    `${
-      voiceConfig.style ? `<mstts:express-as style="${voiceConfig.style}">` : ""
-    }` +
+    `<voice name="${speaker.name}">` +
+    `${usePitch ? `<prosody pitch="${shared.pitch}">` : ""}` +
+    `${style ? `<mstts:express-as style="${style}">` : ""}` +
     `%@` +
-    `${voiceConfig.style ? `</mstts:express-as>` : ""}` +
-    `${voiceConfig.pitch ? `</prosody>` : ""}` +
+    `${style ? `</mstts:express-as>` : ""}` +
+    `${usePitch ? `</prosody>` : ""}` +
     `</voice></speak>`;
+  return ssml;
+}
+
+export default function ifreetimeConfig(state: AzureState) {
+  const { api, voice: voiceConfig } = state;
+  if (voiceConfig.speakerConfig.type !== "single") {
+    // TODO: support multiple speakers
+    throw new Error("multiple speakers not supported yet");
+  }
+  const ssml = buildSSML(voiceConfig.speakerConfig.speaker, voiceConfig.shared);
   const config = {
     loginUrl: "",
     maxWordCount: "",
@@ -47,9 +61,9 @@ export default function ifreetimeConfig(
           customFormatParams: "params[text]",
           headers: {
             "Content-Type": "application/ssml+xml",
-            "X-Microsoft-OutputFormat": voiceConfig.format,
+            "X-Microsoft-OutputFormat": voiceConfig.shared.format,
             "ocp-apim-subscription-key": `${api.key}`,
-            "User-Agent": voiceConfig.customAgent ?? "AiyueTTS",
+            "User-Agent": voiceConfig.shared.customUA ?? "AiyueTTS",
           },
         },
       },

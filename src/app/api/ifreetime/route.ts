@@ -18,12 +18,13 @@ export async function GET(request: Request) {
     });
     posthog?.shutdown();
 
-    return new Response(ifreetimeConfig(result.data.api, result.data.voice), {
+    return new Response(ifreetimeConfig(result.data), {
       headers: {
         "content-type": "application/json",
       },
     });
   } else {
+    console.error(result.error);
     return new Response("Bad Request", {
       status: 400,
     });

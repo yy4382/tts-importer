@@ -21,14 +21,11 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { ClientOnly } from "@/components/utils/client-only";
-import { validVoiceConfigSchema } from "@/lib/azure/config-to-url";
 import { atom, useAtom, useAtomValue } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import Link from "next/link";
-import { z } from "zod";
 import { Voice, voiceListAtom, voiceListCountAtom } from "./api-input";
-
-export type VoiceConfig = z.infer<typeof validVoiceConfigSchema>;
+import { VoiceConfig, voiceConfigSchema } from "@/lib/azure/schema";
 
 type VoiceConfigInput = {
   voice: Voice | null;
@@ -73,20 +70,27 @@ export const voiceConfigAtom = atom<VoiceConfigWithState>((get) => {
       state: "no voice selected",
     };
   }
-  const { data, success } = validVoiceConfigSchema.safeParse({
-    voice: input.voice.shortName,
-    localName: input.voice.localName,
-    format: input.format,
-    pitch: input.pitch === "default" ? null : input.pitch,
-    style:
-      input.voice.styles &&
-      input.voice.styles.length > 0 &&
-      input.useStyle &&
-      input.style
-        ? input.style
-        : null,
-    customAgent:
-      input.useCustomAgent && input.customAgent ? input.customAgent : null,
+  const { data, success } = voiceConfigSchema.safeDecode({
+    shared: {
+      pitch: input.pitch,
+      format: input.format,
+      customUA:
+        input.useCustomAgent && input.customAgent ? input.customAgent : null,
+    },
+    speakerConfig: {
+      type: "single",
+      speaker: {
+        name: input.voice.shortName,
+        localName: input.voice.localName,
+        style:
+          input.voice.styles &&
+          input.voice.styles.length > 0 &&
+          input.useStyle &&
+          input.style
+            ? [input.style]
+            : [],
+      },
+    },
   });
   if (!success) {
     return {

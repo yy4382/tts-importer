@@ -3,20 +3,36 @@
 import { useAtomValue } from "jotai";
 import { useCallback, useState } from "react";
 import { ApiConfig, apiConfig } from "./api-input";
-import { VoiceConfig, voiceConfigAtom } from "./voice-configure";
+import { voiceConfigAtom } from "./voice-configure";
+import { VoiceConfig } from "@/lib/azure/schema";
 import { AudioPreview } from "@/components/shared/audio-preview";
 import { toast } from "sonner";
 
 function genSSML(config: VoiceConfig, text: string) {
-  if (!config.voice) return;
+  if (
+    config.speakerConfig.type !== "single" ||
+    config.speakerConfig.speaker.style.filter((style) => style !== null)
+      .length >= 2
+  ) {
+    throw new Error("试听只支持单个语音");
+  }
+
+  const styles = config.speakerConfig.speaker.style.filter(
+    (style) => style !== null
+  );
+  if (styles.length >= 2) {
+    toast(`当前选择了多个风格，试听只会使用第一个风格 ${styles[0]}`);
+  }
+  const style = styles.at(0);
+
   const ssml =
     `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="zh-CN">` +
-    `<voice name="${config.voice}">` +
-    `${config.pitch ? `<prosody pitch="${config.pitch}">` : ""}` +
-    `${config.style ? `<mstts:express-as style="${config.style}">` : ""}` +
+    `<voice name="${config.speakerConfig.speaker.name}">` +
+    `${config.shared.pitch ? `<prosody pitch="${config.shared.pitch}">` : ""}` +
+    `${style ? `<mstts:express-as style="${style}">` : ""}` +
     `${text ? text : "帮忙点个 Star 吧"}` +
-    `${config.style ? `</mstts:express-as>` : ""}` +
-    `${config.pitch ? `</prosody>` : ""}` +
+    `${style ? `</mstts:express-as>` : ""}` +
+    `${config.shared.pitch ? `</prosody>` : ""}` +
     `</voice></speak>`;
   return ssml;
 }
@@ -35,15 +51,18 @@ async function getTestAudio(
         headers: {
           "Ocp-Apim-Subscription-Key": api.key,
           "Content-Type": "application/ssml+xml",
-          "X-Microsoft-OutputFormat": voiceChoice.format,
-          ...(voiceChoice.customAgent
-            ? { "User-Agent": voiceChoice.customAgent }
+          "X-Microsoft-OutputFormat": voiceChoice.shared.format,
+          ...(voiceChoice.shared.customUA
+            ? { "User-Agent": voiceChoice.shared.customUA }
             : {}),
         },
         body: genSSML(voiceChoice, text),
       }
     );
-  } catch {
+  } catch (e) {
+    toast("获取音频失败", {
+      description: e instanceof Error ? e.message : "未知错误",
+    });
     return null;
   }
   if (!resp.ok) {

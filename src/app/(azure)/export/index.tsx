@@ -7,12 +7,9 @@ import { ClientOnly } from "@/components/utils/client-only";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LegadoExport } from "./legado";
-import {
-  type VoiceConfig,
-  voiceConfigAtom,
-  type VoiceConfigWithState,
-} from "../voice-configure";
+import { voiceConfigAtom, type VoiceConfigWithState } from "../voice-configure";
 import { SourceReaderExport } from "./source-reader";
+import { VoiceConfig } from "@/lib/azure/schema";
 
 export function Export() {
   const voiceConfigWithState = useAtomValue(voiceConfigAtom);
@@ -33,7 +30,7 @@ export function Export() {
             <TabContentExport
               voice={voiceConfigWithState}
               render={(voiceConfig) => (
-                <IFreeTimeExport voiceConfig={voiceConfig} api={api} />
+                <IFreeTimeExport voice={voiceConfig} api={api} />
               )}
             />
           </TabsContent>

@@ -1,7 +1,10 @@
-import type { VoiceConfig } from "@/lib/azure/types";
+import type { VoiceConfig } from "./schema";
 
-export default function generateConfigName(voiceChoice: VoiceConfig) {
-  return `Azure ${voiceChoice.localName}${
-    voiceChoice.style ? " " + voiceChoice.style : ""
-  }${voiceChoice.pitch ? " - " + voiceChoice.pitch : ""}`;
+export default function generateConfigName(voice: VoiceConfig) {
+  // TODO multiple speakers enhance
+  return `☁️ Azure ${
+    voice.speakerConfig.type === "single"
+      ? voice.speakerConfig.speaker.localName
+      : "Multiple Speakers"
+  }`;
 }

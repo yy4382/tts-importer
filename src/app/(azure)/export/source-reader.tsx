@@ -1,8 +1,7 @@
 import { useCopyToClipboard } from "@/hooks/use-clipboard";
-import { config2url } from "@/lib/azure/config-to-url";
-import { ApiConfig, VoiceConfig } from "@/lib/azure/types";
+import { config2urlNoThrow } from "@/lib/azure/config-to-url";
+import { ApiConfig, VoiceConfig } from "@/lib/azure/schema";
 import { usePostHog } from "posthog-js/react";
-import { useMemo } from "react";
 import { ActionLine } from "@/components/ui/action-line";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,14 +31,14 @@ export function SourceReaderExport({
   const copy = useCopyToClipboard();
   const posthog = usePostHog();
 
-  const configUrl = useMemo(() => {
-    return config2url(
-      api,
-      voiceConfig,
-      window.location.origin,
-      "/api/legado"
-    ).toString();
-  }, [api, voiceConfig]);
+  const configUrl = config2urlNoThrow(
+    { api, voice: voiceConfig },
+    window.location.origin,
+    "/api/legado"
+  );
+  if (configUrl instanceof Error) {
+    return <p>{configUrl.message}</p>;
+  }
 
   return (
     <div className="flex flex-col gap-2">
@@ -91,7 +90,7 @@ export function SourceReaderExport({
               </DialogDescription>
             </DialogHeader>
             <div className="grid p-4 place-items-center">
-              <QRCodeSVG value={configUrl} size={256} />
+              <QRCodeSVG value={configUrl.toString()} size={256} />
             </div>
           </DialogContent>
         </Dialog>
