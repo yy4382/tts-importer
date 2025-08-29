@@ -94,7 +94,7 @@ export function SourceReaderExport({
               <ErrorBoundary
                 errorComponent={() => <p>导入链接过长，无法生成二维码</p>}
               >
-                <QRCodeSVG value={configUrl.toString()} size={512} />
+                <QRCodeSVG value={configUrl.toString()} size={256} />
               </ErrorBoundary>
             </div>
           </DialogContent>
