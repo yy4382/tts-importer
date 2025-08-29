@@ -32,10 +32,10 @@ function buildSSML(
 
   const ssml =
     `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="zh-CN">` +
-    `<voice name="${speaker?.name ?? "@json:voiceName"}">` +
+    `<voice name="${speaker?.name ?? "%@voiceName&"}">` +
     `${usePitch ? `<prosody pitch="${shared.pitch}">` : ""}` +
     `${style ? `<mstts:express-as style="${style}">` : ""}` +
-    `%@` +
+    `%@content&` +
     `${style ? `</mstts:express-as>` : ""}` +
     `${usePitch ? `</prosody>` : ""}` +
     `</voice></speak>`;
@@ -55,7 +55,10 @@ export default function ifreetimeConfig(state: AzureState) {
   function getConfigName() {
     switch (speakerConfig.type) {
       case "single":
-        return genName(speakerConfig.speaker);
+        return genName(
+          speakerConfig.speaker.localName,
+          speakerConfig.speaker.style.at(0) ?? null
+        );
       case "all":
         return `☁️ Azure 全语言 ${speakerConfig.speakers.length} 个`;
       case "all-zh":
@@ -93,7 +96,10 @@ export default function ifreetimeConfig(state: AzureState) {
         },
         url: `https://${api.region}.tts.speech.microsoft.com/cognitiveservices/v1`,
         params: {
-          text: `@dyn:\np=def:& @=>和;\ntxt=keyword.jxd_executeRegexRules:p;\nformat('${ssml}',txt)`,
+          text: [
+            "@dyn:\np=def:&|\\< @=>;\ntxt=keyword.jxd_executeRegexRules:p;",
+            ssml,
+          ],
         },
         httpConfigs: {
           useCookies: 1,

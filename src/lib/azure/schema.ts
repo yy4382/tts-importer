@@ -1,4 +1,5 @@
 import { z } from "zod";
+import pako from "pako";
 
 export const speakerSchema = z.object({
   /**
@@ -78,11 +79,36 @@ export const azureStateToSearchParams = z.codec(
       if (state.voice.shared.customUA !== null) {
         params.set("custom-ua", state.voice.shared.customUA);
       }
-      params.set("speaker", JSON.stringify(state.voice.speakerConfig));
+      const speakerConfigStr = JSON.stringify(state.voice.speakerConfig);
+      if (speakerConfigStr.length > 500) {
+        const compressed = pako.deflate(speakerConfigStr);
+        const base64 = uint8ArrayToBase64(compressed);
+        params.set("speaker", base64);
+        params.set("speaker-compressed", "true");
+      } else {
+        params.set("speaker", speakerConfigStr);
+      }
 
       return params;
     },
-    encode: (params) => {
+    encode: (params, ctx) => {
+      const speaker = params.get("speaker");
+      if (!speaker) {
+        ctx.issues.push({
+          code: "custom",
+          input: params,
+        });
+        return z.NEVER;
+      }
+      let speakerConfig: VoiceConfig["speakerConfig"];
+      if (params.get("speaker-compressed") === "true") {
+        const compressed = base64ToUint8Array(speaker!);
+        const decompressed = pako.inflate(compressed, { to: "string" });
+        speakerConfig = JSON.parse(decompressed);
+      } else {
+        speakerConfig = JSON.parse(speaker);
+      }
+
       return {
         api: {
           region: params.get("api-region")!,
@@ -94,9 +120,32 @@ export const azureStateToSearchParams = z.codec(
             format: params.get("format")!,
             customUA: params.get("custom-ua") ?? null,
           },
-          speakerConfig: JSON.parse(params.get("speaker")!),
+          speakerConfig,
         },
       };
     },
   }
 );
+
+function uint8ArrayToBase64(uint8Array: Uint8Array) {
+  const chunkSize = 0x8000; // 32KB chunks
+  let binaryString = "";
+
+  for (let i = 0; i < uint8Array.length; i += chunkSize) {
+    const chunk = uint8Array.subarray(i, i + chunkSize);
+    binaryString += String.fromCharCode(...chunk);
+  }
+
+  return btoa(binaryString);
+}
+
+function base64ToUint8Array(base64String: string) {
+  const binaryString = atob(base64String);
+  const uint8Array = new Uint8Array(binaryString.length);
+
+  for (let i = 0; i < binaryString.length; i++) {
+    uint8Array[i] = binaryString.charCodeAt(i);
+  }
+
+  return uint8Array;
+}

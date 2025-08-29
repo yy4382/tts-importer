@@ -267,6 +267,23 @@ describe("legadoConfig", () => {
       const config = legadoConfig(state);
       expect(JSON.parse(config)).toHaveLength(3);
     });
+    it("id should be unique", () => {
+      const state = produce(azureState, (draft) => {
+        draft.voice.speakerConfig = {
+          type: "all",
+          speakers: Array.from({ length: 20 }, (_, i) => ({
+            name: `zh-CN-XiaoxiaoNeural-${i}`,
+            localName: `晓晓-${i}`,
+            style: [],
+          })),
+        };
+      });
+      const config = legadoConfig(state);
+      const parsed = JSON.parse(config);
+      const ids = parsed.map((item: { id: number }) => item.id);
+      const uniqueIds = [...new Set(ids)];
+      expect(uniqueIds).toHaveLength(ids.length);
+    });
   });
 });
 
@@ -274,7 +291,7 @@ describe("ifreetimeConfig", () => {
   function extractSsmlFromIfreetimeConfig(configStr: string) {
     const configObj = JSON.parse(configStr);
     const text = configObj.ttsHandles[0].params.text;
-    return text.split("format('")[1].split("',txt)")[0];
+    return text[1].replaceAll(/%\@content&/g, "test content");
   }
   function isSsmlValidInConfig(configStr: string) {
     const ssml = extractSsmlFromIfreetimeConfig(configStr);

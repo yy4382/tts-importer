@@ -20,6 +20,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { QRCodeSVG } from "qrcode.react";
+import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 
 export function SourceReaderExport({
   api,
@@ -90,7 +91,11 @@ export function SourceReaderExport({
               </DialogDescription>
             </DialogHeader>
             <div className="grid p-4 place-items-center">
-              <QRCodeSVG value={configUrl.toString()} size={256} />
+              <ErrorBoundary
+                errorComponent={() => <p>导入链接过长，无法生成二维码</p>}
+              >
+                <QRCodeSVG value={configUrl.toString()} size={512} />
+              </ErrorBoundary>
             </div>
           </DialogContent>
         </Dialog>

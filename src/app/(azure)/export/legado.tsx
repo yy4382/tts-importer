@@ -19,6 +19,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { ActionLine } from "@/components/ui/action-line";
 import LinkExportButton from "./link-export-button";
 import { usePostHog } from "posthog-js/react";
+import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 
 export function LegadoExport({
   api,
@@ -71,7 +72,11 @@ export function LegadoExport({
               <DialogDescription>使用系统相机扫描二维码即可</DialogDescription>
             </DialogHeader>
             <div className="grid p-4 place-items-center">
-              <QRCodeSVG value={directUrl} size={256} />
+              <ErrorBoundary
+                errorComponent={() => <p>导入链接过长，无法生成二维码</p>}
+              >
+                <QRCodeSVG value={directUrl} size={256} />
+              </ErrorBoundary>
             </div>
             <div className="flex gap-4 justify-end">
               <LinkExportButton link={configUrl}>配置链接</LinkExportButton>

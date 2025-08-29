@@ -28,10 +28,12 @@ exports[`ifreetimeConfig > multiple speakers > should generate a valid ifreetime
       "nextPageForGetMedthod": 1,
       "nextPageParams": {},
       "params": {
-        "text": "@dyn:
-p=def:& @=>和;
-txt=keyword.jxd_executeRegexRules:p;
-format('<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="zh-CN"><voice name="@json:voiceName">%@</voice></speak>',txt)",
+        "text": [
+          "@dyn:
+p=def:&|\\< @=>;
+txt=keyword.jxd_executeRegexRules:p;",
+          "<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="zh-CN"><voice name="%@voiceName&">%@content&</voice></speak>",
+        ],
       },
       "parser": {
         "playData": "ResponseData",
@@ -82,10 +84,12 @@ exports[`ifreetimeConfig > should generate a valid ifreetime config 1`] = `
       "nextPageForGetMedthod": 1,
       "nextPageParams": {},
       "params": {
-        "text": "@dyn:
-p=def:& @=>和;
-txt=keyword.jxd_executeRegexRules:p;
-format('<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="zh-CN"><voice name="zh-CN-XiaoxiaoNeural">%@</voice></speak>',txt)",
+        "text": [
+          "@dyn:
+p=def:&|\\< @=>;
+txt=keyword.jxd_executeRegexRules:p;",
+          "<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="zh-CN"><voice name="zh-CN-XiaoxiaoNeural">%@content&</voice></speak>",
+        ],
       },
       "parser": {
         "playData": "ResponseData",

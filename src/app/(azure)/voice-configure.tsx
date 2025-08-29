@@ -22,32 +22,90 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { ClientOnly } from "@/components/utils/client-only";
 import { atom, useAtom, useAtomValue } from "jotai";
-import { atomWithStorage } from "jotai/utils";
 import Link from "next/link";
 import { Voice, voiceListAtom, voiceListCountAtom } from "./api-input";
-import { VoiceConfig, voiceConfigSchema } from "@/lib/azure/schema";
+import {
+  dedupeSpeakerStyle,
+  VoiceConfig,
+  voiceConfigSchema,
+} from "@/lib/azure/schema";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
-type VoiceConfigInput = {
+type SpeakerSingleInput = {
   voice: Voice | null;
   useStyle: boolean;
+  // TODO: multiple style support
   style: string;
+};
+type SpeakerListInput =
+  | {
+      type: "single";
+      speaker: SpeakerSingleInput;
+    }
+  | {
+      type: "all" | "all-zh";
+      useAllStyle: boolean;
+    };
+
+function speakerListInputToVoiceConfig(
+  input: SpeakerListInput,
+  voiceList: Voice[]
+): VoiceConfig["speakerConfig"] {
+  if (input.type === "single") {
+    if (input.speaker.voice === null) {
+      throw new Error("voice is required");
+    }
+    return {
+      type: "single",
+      speaker: {
+        name: input.speaker.voice.shortName,
+        localName: input.speaker.voice.localName,
+        style:
+          input.speaker.useStyle && input.speaker.style // style may be empty even if useStyle is true, when toggle is on but haven't selected style
+            ? [input.speaker.style]
+            : [],
+      },
+    };
+  } else {
+    if (voiceList.length === 0) {
+      throw new Error("speakers is required");
+    }
+    return {
+      type: input.type,
+      speakers: voiceList
+        .filter((v) =>
+          input.type === "all" ? true : v.shortName.startsWith("zh-")
+        )
+        .map((v) => ({
+          name: v.shortName,
+          localName: v.localName,
+          style: input.useAllStyle ? [...(v.styles ?? []), null] : [],
+        })),
+    };
+  }
+}
+
+type VoiceConfigInput = {
+  speakerConfig: SpeakerListInput;
   format: string;
   pitch: string;
   useCustomAgent: boolean;
   customAgent: string;
 };
-const voiceConfigInputAtom = atomWithStorage<VoiceConfigInput>(
-  "tts-i:voice-config-input",
-  {
-    voice: null,
-    useStyle: false,
-    style: "",
-    format: "audio-24khz-48kbitrate-mono-mp3",
-    pitch: "default",
-    useCustomAgent: false,
-    customAgent: "",
-  }
-);
+const voiceConfigInputAtom = atom<VoiceConfigInput>({
+  speakerConfig: {
+    type: "single",
+    speaker: {
+      voice: null,
+      useStyle: false,
+      style: "",
+    },
+  },
+  format: "audio-24khz-48kbitrate-mono-mp3",
+  pitch: "default",
+  useCustomAgent: false,
+  customAgent: "",
+});
 
 export type VoiceConfigWithState =
   | {
@@ -65,10 +123,15 @@ export const voiceConfigAtom = atom<VoiceConfigWithState>((get) => {
     };
   }
   const input = get(voiceConfigInputAtom);
-  if (!input.voice) {
-    return {
-      state: "no voice selected",
-    };
+
+  let speakerConfig: VoiceConfig["speakerConfig"];
+  try {
+    speakerConfig = speakerListInputToVoiceConfig(
+      input.speakerConfig,
+      get(voiceListAtom)
+    );
+  } catch {
+    return { state: "no voice selected" };
   }
   const { data, success } = voiceConfigSchema.safeDecode({
     shared: {
@@ -77,20 +140,7 @@ export const voiceConfigAtom = atom<VoiceConfigWithState>((get) => {
       customUA:
         input.useCustomAgent && input.customAgent ? input.customAgent : null,
     },
-    speakerConfig: {
-      type: "single",
-      speaker: {
-        name: input.voice.shortName,
-        localName: input.voice.localName,
-        style:
-          input.voice.styles &&
-          input.voice.styles.length > 0 &&
-          input.useStyle &&
-          input.style
-            ? [input.style]
-            : [],
-      },
-    },
+    speakerConfig,
   });
   if (!success) {
     return {
@@ -108,7 +158,7 @@ export function VoiceConfigurer() {
   return (
     <Card className="w-card">
       <CardHeader>
-        <CardTitle>Configure Voice</CardTitle>
+        <CardTitle>配置语音</CardTitle>
       </CardHeader>
       <CardContent>
         <ClientOnly
@@ -124,9 +174,7 @@ export function VoiceConfigurer() {
               </Link>
             </p>
           )}
-          <VoiceSelector />
-          <Separator />
-          <StyleSelector />
+          <SpeakerSelector />
           <Separator />
           <PitchSelector />
           <Separator />
@@ -146,20 +194,190 @@ export function VoiceConfigurer() {
   );
 }
 
-// MARK: voice-selector
-const voiceAtom = atom(
-  (get) => get(voiceConfigInputAtom).voice,
-  (_, set, voice: Voice | null) => {
+const speakerConfigAtom = atom(
+  (get) => get(voiceConfigInputAtom).speakerConfig,
+  (_, set, config: SpeakerListInput) => {
     set(voiceConfigInputAtom, (prev) => ({
       ...prev,
-      voice,
-      style: "",
-      useStyle: false,
+      speakerConfig: config,
     }));
   }
 );
-export function VoiceSelector() {
-  const [voice, setVoice] = useAtom(voiceAtom);
+const exportCountAtom = atom((get) => {
+  const voiceConfig = get(voiceConfigAtom);
+  if (voiceConfig.state !== "success") {
+    return 0;
+  }
+  const speakerConfig = voiceConfig.data.speakerConfig;
+  if (speakerConfig.type === "single") {
+    return dedupeSpeakerStyle(speakerConfig.speaker.style).length;
+  } else {
+    return speakerConfig.speakers.reduce((acc, speaker) => {
+      return acc + dedupeSpeakerStyle(speaker.style).length;
+    }, 0);
+  }
+});
+function SpeakerSelector() {
+  const [speakerConfig, setSpeakerConfig] = useAtom(speakerConfigAtom);
+  const exportCount = useAtomValue(exportCountAtom);
+
+  function onVoiceSelectChange(type: SpeakerListInput["type"]) {
+    switch (type) {
+      case "single":
+        setSpeakerConfig({
+          type: "single",
+          speaker: {
+            voice: null,
+            useStyle: false,
+            style: "",
+          },
+        });
+        break;
+      case "all":
+      case "all-zh":
+        setSpeakerConfig({
+          type,
+          useAllStyle: false,
+        });
+        break;
+    }
+  }
+  return (
+    <RadioGroup
+      defaultValue="single"
+      value={speakerConfig.type}
+      onValueChange={onVoiceSelectChange}
+    >
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-3">
+          <RadioGroupItem value="single" id="radio-single">
+            单选
+          </RadioGroupItem>
+          <Label htmlFor="radio-single">单选</Label>
+        </div>
+        {speakerConfig.type === "single" && (
+          <div className="ml-6">
+            <SingleVoiceSelect
+              speaker={speakerConfig.speaker}
+              setSpeaker={(v) =>
+                setSpeakerConfig({
+                  type: "single",
+                  speaker: v,
+                })
+              }
+            />
+          </div>
+        )}
+      </div>
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-3">
+          <RadioGroupItem value="all-zh" id="radio-all-zh">
+            全部中文
+          </RadioGroupItem>
+          <Label htmlFor="radio-all-zh">全部中文</Label>
+        </div>
+
+        {speakerConfig.type === "all-zh" && (
+          <div className="ml-7 flex flex-col gap-1">
+            <div className="flex justify-between items-center">
+              <Label>包含所有语音风格</Label>
+              <Switch
+                checked={speakerConfig.useAllStyle}
+                onCheckedChange={(v) =>
+                  setSpeakerConfig({
+                    type: "all-zh",
+                    useAllStyle: v,
+                  })
+                }
+              />
+            </div>
+            <p className="text-sm text-muted-foreground">
+              将导入 {exportCount} 个语音
+              {exportCount > 250 && (
+                <>
+                  <br />
+                  <span className="text-destructive">
+                    数量过多，二维码或网络导入方式可能失败。
+                  </span>
+                </>
+              )}
+            </p>
+          </div>
+        )}
+      </div>
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-3">
+          <RadioGroupItem value="all" id="radio-all">
+            全部
+          </RadioGroupItem>
+          <Label htmlFor="radio-all">全部</Label>
+        </div>
+        {speakerConfig.type === "all" && (
+          <div className="ml-7 flex flex-col gap-1">
+            <div className="flex justify-between items-center">
+              <Label>包含所有语音风格</Label>
+              <Switch
+                checked={speakerConfig.useAllStyle}
+                onCheckedChange={(v) =>
+                  setSpeakerConfig({
+                    type: "all",
+                    useAllStyle: v,
+                  })
+                }
+              />
+            </div>
+            <p className="text-sm text-muted-foreground">
+              将导入 {exportCount} 个语音
+              {exportCount > 250 && (
+                <>
+                  <br />
+                  <span className="text-destructive">
+                    数量过多，二维码或网络导入方式可能失败。
+                  </span>
+                </>
+              )}
+            </p>
+          </div>
+        )}
+      </div>
+    </RadioGroup>
+  );
+}
+
+function SingleVoiceSelect({
+  speaker,
+  setSpeaker,
+}: {
+  speaker: SpeakerSingleInput;
+  setSpeaker: (speaker: SpeakerSingleInput) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <VoiceSelector
+        voice={speaker.voice}
+        setVoice={(v) => setSpeaker({ voice: v, useStyle: false, style: "" })}
+      />
+      <StyleSelector
+        style={speaker.style}
+        useStyle={speaker.useStyle}
+        setStyle={(v) => setSpeaker({ ...speaker, style: v })}
+        setUseStyle={(v) =>
+          setSpeaker({ ...speaker, useStyle: v, style: v ? speaker.style : "" })
+        }
+        options={speaker.voice?.styles ?? null}
+      />
+    </div>
+  );
+}
+
+// MARK: voice-selector
+export function VoiceSelector({
+  voice,
+  setVoice,
+}: {
+  voice: Voice | null;
+  setVoice: (voice: Voice | null) => void;
+}) {
   const voiceList = useAtomValue(voiceListAtom);
 
   return (
@@ -170,48 +388,37 @@ export function VoiceSelector() {
   );
 }
 
-// MARK: style-selector
-const styleInputAtom = atom(
-  (get) => {
-    const opts = get(voiceConfigInputAtom).voice?.styles;
-    return {
-      options: opts?.length ? opts : null,
-      useStyle: get(voiceConfigInputAtom).useStyle,
-      style: get(voiceConfigInputAtom).style,
-    };
-  },
-  (get, set, update: Pick<VoiceConfigInput, "useStyle" | "style">) => {
-    set(voiceConfigInputAtom, {
-      ...get(voiceConfigInputAtom),
-      ...update,
-    });
-  }
-);
-function StyleSelector() {
-  const [styleInput, setStyleInput] = useAtom(styleInputAtom);
-  return styleInput.options ? (
+function StyleSelector({
+  style,
+  setStyle,
+  useStyle,
+  setUseStyle,
+  options,
+}: {
+  style: string;
+  useStyle: boolean;
+  setStyle: (style: string) => void;
+  setUseStyle: (useStyle: boolean) => void;
+  options: string[] | null;
+}) {
+  return options ? (
     <div className="space-y-2">
       <div className="flex justify-between items-center">
         <Label>使用语音风格</Label>
-        <Switch
-          checked={styleInput.useStyle}
-          onCheckedChange={(v) => setStyleInput({ useStyle: v, style: "" })}
-        />
+        <Switch checked={useStyle} onCheckedChange={(v) => setUseStyle(v)} />
       </div>
       <div className="space-y-1">
         <Label>风格</Label>
         <Select
-          value={styleInput.style}
-          onValueChange={(v) =>
-            setStyleInput({ useStyle: styleInput.useStyle, style: v })
-          }
-          disabled={!styleInput.useStyle}
+          value={style}
+          onValueChange={(v) => setStyle(v)}
+          disabled={!useStyle}
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="select style"></SelectValue>
           </SelectTrigger>
           <SelectContent>
-            {styleInput.options.map((style) => (
+            {options.map((style) => (
               <SelectItem key={style} value={style}>
                 {style}
               </SelectItem>

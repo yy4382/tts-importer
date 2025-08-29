@@ -3,43 +3,40 @@ import {
   azureStateSchema,
   dedupeSpeakerStyle,
   type AzureState,
-  type speakerSchema,
   type voiceConfigSchema,
 } from "./schema";
 import z from "zod";
 
 function buildSSML(
-  speaker: z.infer<typeof speakerSchema>,
+  { shortName, style }: { shortName: string; style: string | null },
   shared: z.infer<typeof voiceConfigSchema>["shared"]
 ) {
-  // TODO: support multiple styles
-  const styles = dedupeSpeakerStyle(speaker.style);
-
   const usePitch = shared.pitch && shared.pitch !== "default";
 
-  function getSSML(style: string | null) {
-    const ssml =
-      `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="zh-CN">` +
-      `<voice name="${speaker.name}">` +
-      `<prosody rate="{{speakSpeed*4}}%" ${
-        usePitch ? `pitch="${shared.pitch}"` : ""
-      }>` +
-      `${style ? `<mstts:express-as style="${style}">` : ""}` +
-      `{{speakText}}` +
-      `${style ? `</mstts:express-as>` : ""}` +
-      `</prosody></voice></speak>`;
-    return ssml;
-  }
-
-  return styles.map(getSSML);
+  const ssml =
+    `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="https://www.w3.org/2001/mstts" xml:lang="zh-CN">` +
+    `<voice name="${shortName}">` +
+    `<prosody rate="{{speakSpeed*4}}%" ${
+      usePitch ? `pitch="${shared.pitch}"` : ""
+    }>` +
+    `${style ? `<mstts:express-as style="${style}">` : ""}` +
+    `{{speakText}}` +
+    `${style ? `</mstts:express-as>` : ""}` +
+    `</prosody></voice></speak>`;
+  return ssml;
 }
 
 function buildConfig(
-  speaker: z.infer<typeof speakerSchema>,
+  {
+    shortName,
+    localName,
+    style,
+  }: { shortName: string; style: string | null; localName: string },
   shared: z.infer<typeof voiceConfigSchema>["shared"],
-  api: AzureState["api"]
+  api: AzureState["api"],
+  getId: () => number
 ) {
-  const ssmlList = buildSSML(speaker, shared);
+  const ssml = buildSSML({ shortName, style }, shared);
   const header = {
     "Ocp-Apim-Subscription-Key": api.key,
     "Content-Type": "application/ssml+xml",
@@ -47,33 +44,29 @@ function buildConfig(
     "User-Agent": shared.customUA ?? "legado",
   };
 
-  function getConfig(ssml: string) {
-    const urlConfig = {
-      method: "POST",
-      body: ssml,
-      headers: header,
-    };
+  const urlConfig = {
+    method: "POST",
+    body: ssml,
+    headers: header,
+  };
 
-    const config = {
-      concurrentRate: "0",
-      contentType: "audio/mpeg",
-      header: JSON.stringify(header),
-      id: Date.now(),
-      loginCheckJs: "",
-      loginUi: "",
-      loginUrl: "",
-      name: genName(speaker),
-      url: `https://${
-        api.region
-      }.tts.speech.microsoft.com/cognitiveservices/v1,${JSON.stringify(
-        urlConfig
-      )}`,
-    };
+  const config = {
+    concurrentRate: "0",
+    contentType: "audio/mpeg",
+    header: JSON.stringify(header),
+    id: getId(),
+    loginCheckJs: "",
+    loginUi: "",
+    loginUrl: "",
+    name: genName(localName, style),
+    url: `https://${
+      api.region
+    }.tts.speech.microsoft.com/cognitiveservices/v1,${JSON.stringify(
+      urlConfig
+    )}`,
+  };
 
-    return config;
-  }
-
-  return ssmlList.map(getConfig);
+  return config;
 }
 
 /**
@@ -83,16 +76,49 @@ function buildConfig(
  */
 export default function legadoConfig(state: AzureState) {
   const { api, voice: voiceConfig } = azureStateSchema.parse(state);
+
+  function idFactory() {
+    let start = Math.floor(Date.now() / 1000) * 1000;
+    function getId() {
+      return start++;
+    }
+    return getId;
+  }
+  const getId = idFactory();
+
   if (voiceConfig.speakerConfig.type !== "single") {
     const configs = voiceConfig.speakerConfig.speakers
-      .map((speaker) => {
-        return buildConfig(speaker, voiceConfig.shared, api);
-      })
+      .map((speaker) =>
+        dedupeSpeakerStyle(speaker.style).map((style) => {
+          return buildConfig(
+            {
+              shortName: speaker.name,
+              localName: speaker.localName,
+              style,
+            },
+            voiceConfig.shared,
+            api,
+            getId
+          );
+        })
+      )
       .flat();
     return JSON.stringify(configs);
   } else {
+    const speaker = voiceConfig.speakerConfig.speaker;
     return JSON.stringify(
-      buildConfig(voiceConfig.speakerConfig.speaker, voiceConfig.shared, api)
+      dedupeSpeakerStyle(speaker.style).map((style) =>
+        buildConfig(
+          {
+            shortName: speaker.name,
+            localName: speaker.localName,
+            style,
+          },
+          voiceConfig.shared,
+          api,
+          getId
+        )
+      )
     );
   }
 }

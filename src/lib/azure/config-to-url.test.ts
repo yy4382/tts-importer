@@ -171,6 +171,22 @@ describe("config2url and url2config conversion", () => {
       });
       expect(convertBackAndForward(complexState)).toEqual(complexState);
     });
+    it("super long speaker config", () => {
+      const superLongState = produce(baseAzureState, (draft) => {
+        draft.voice.speakerConfig = {
+          type: "all",
+          speakers: Array.from({ length: 1000 }, (_, i) => ({
+            name: `en-US-JennyNeural-${i}`,
+            localName: `Jenny-${i}`,
+            style: [],
+          })),
+        };
+      });
+      expect(config2urlSimple(superLongState).toString()).toContain(
+        "speaker-compressed=true"
+      );
+      expect(convertBackAndForward(superLongState)).toEqual(superLongState);
+    });
   });
 
   describe("config2urlNoThrow", () => {

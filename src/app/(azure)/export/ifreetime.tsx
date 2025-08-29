@@ -25,6 +25,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 
 export function IFreeTimeExport({
   api,
@@ -75,7 +76,11 @@ export function IFreeTimeExport({
               <DialogDescription>使用系统相机扫描二维码即可</DialogDescription>
             </DialogHeader>
             <div className="grid p-4 place-items-center">
-              <QRCodeSVG value={directUrl} size={256} />
+              <ErrorBoundary
+                errorComponent={() => <p>导入链接过长，无法生成二维码</p>}
+              >
+                <QRCodeSVG value={directUrl} size={256} />
+              </ErrorBoundary>
             </div>
             <div className="flex gap-4 justify-end">
               <LinkExportButton link={configUrl}>配置链接</LinkExportButton>
@@ -141,6 +146,11 @@ export function IFreeTimeExport({
           复制
         </Button>
       </ActionLine>
+      <p className="text-sm text-gray-500">
+        由于爱阅书香限制，无法同时导入多个语音风格。
+        <br />
+        当导入单个语音时，只会导入最先选中的语音风格；当导入多个语音时（全部中文/全部），对于每个语音只会导入不含语音风格的版本。
+      </p>
       <p className="text-sm text-gray-500">
         爱阅书香用户请查看
         <Link href="/help/ifreetime" className="text-blue-500">
