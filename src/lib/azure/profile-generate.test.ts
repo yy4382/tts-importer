@@ -184,13 +184,90 @@ describe("legadoConfig", () => {
         expect(config).toContain("normal");
       });
       // TODO: support multiple styles
-      it.todo("array with multiple strings");
-      it.todo("array with strings and null");
-      it.todo("array with strings and multiple null");
+      it("array with multiple strings", () => {
+        const state = modifyStyle(["normal", "style2"]);
+        const config = legadoConfig(state);
+        expect(isSsmlValidInLegadoConfig(config, 0), "SSML be valid xml").toBe(
+          true
+        );
+        expect(isSsmlValidInLegadoConfig(config, 1), "SSML be valid xml").toBe(
+          true
+        );
+        expect(JSON.parse(config)).toHaveLength(2);
+      });
+      it("array with strings and null", () => {
+        const state = modifyStyle(["normal", null]);
+        const config = legadoConfig(state);
+        expect(isSsmlValidInLegadoConfig(config), "SSML be valid xml").toBe(
+          true
+        );
+        expect(isSsmlValidInLegadoConfig(config, 1), "SSML be valid xml").toBe(
+          true
+        );
+        const parsed = JSON.parse(config);
+        expect(parsed).toHaveLength(2);
+        expect(JSON.stringify(parsed[0])).toContain("normal");
+        expect(JSON.stringify(parsed[0])).toContain("mstts:express-as");
+        expect(JSON.stringify(parsed[1])).not.toContain("mstts:express-as");
+      });
+      it("array with strings and multiple null", () => {
+        const state = modifyStyle(["normal", null, "style2", null]);
+        const config = legadoConfig(state);
+        expect(JSON.parse(config)).toHaveLength(3);
+      });
     });
   });
   // TODO: support multiple speakers
-  describe.todo("multiple speakers");
+  describe("multiple speakers", () => {
+    it("should generate a valid legado config", () => {
+      const state = produce(azureState, (draft) => {
+        draft.voice.speakerConfig = {
+          type: "all",
+          speakers: [
+            {
+              name: "zh-CN-XiaoxiaoNeural",
+              localName: "晓晓",
+              style: [],
+            },
+            {
+              name: "zh-CN-YunxiNeural",
+              localName: "云希",
+              style: [],
+            },
+          ],
+        };
+      });
+      const config = legadoConfig(state);
+      expect(JSON.parse(config)).toHaveLength(2);
+      expect(isSsmlValidInLegadoConfig(config, 0), "SSML be valid xml").toBe(
+        true
+      );
+      expect(isSsmlValidInLegadoConfig(config, 1), "SSML be valid xml").toBe(
+        true
+      );
+    });
+    it("should generate a valid legado config with multiple styles", () => {
+      const state = produce(azureState, (draft) => {
+        draft.voice.speakerConfig = {
+          type: "all",
+          speakers: [
+            {
+              name: "zh-CN-XiaoxiaoNeural",
+              localName: "晓晓",
+              style: ["normal", null],
+            },
+            {
+              name: "zh-CN-YunxiNeural",
+              localName: "云希",
+              style: [null],
+            },
+          ],
+        };
+      });
+      const config = legadoConfig(state);
+      expect(JSON.parse(config)).toHaveLength(3);
+    });
+  });
 });
 
 describe("ifreetimeConfig", () => {
@@ -233,7 +310,6 @@ describe("ifreetimeConfig", () => {
         draft.voice.shared.pitch = "default";
       });
       const config = ifreetimeConfig(state);
-      console.log(extractSsmlFromIfreetimeConfig(config));
       expect(isSsmlValidInConfig(config), "SSML be valid xml").toBe(true);
       expect(config).not.toContain("pitch=");
     });
@@ -335,12 +411,76 @@ describe("ifreetimeConfig", () => {
         expect(config).toContain("normal");
       });
       // TODO: support multiple styles
-      it.todo("array with multiple strings");
-      it.todo("array with strings and null");
-      it.todo("array with strings and multiple null");
+      it("array with multiple strings", () => {
+        const state = modifyStyle(["normal", "style2"]);
+        const config = ifreetimeConfig(state);
+        expect(isSsmlValidInConfig(config), "SSML be valid xml").toBe(true);
+        expect(config).toContain("style=");
+        expect(config).toContain("normal");
+        expect(config, "only first style should be used").not.toContain(
+          "style2"
+        );
+      });
+      it("array with strings and null", () => {
+        const state = modifyStyle([null, "normal", null]);
+        const config = ifreetimeConfig(state);
+        expect(isSsmlValidInConfig(config), "SSML be valid xml").toBe(true);
+        expect(config).not.toContain("style=");
+        expect(config).not.toContain("mstts:express-as");
+      });
     });
   });
 
   // TODO: support multiple speakers
-  describe.todo("multiple speakers");
+  describe("multiple speakers", () => {
+    it("should generate a valid ifreetime config", () => {
+      const state = produce(azureState, (draft) => {
+        draft.voice.speakerConfig = {
+          type: "all-zh",
+          speakers: [
+            {
+              name: "zh-CN-XiaoxiaoNeural",
+              localName: "晓晓",
+              style: [],
+            },
+            {
+              name: "zh-CN-YunxiNeural",
+              localName: "云希",
+              style: [],
+            },
+          ],
+        };
+      });
+      const config = ifreetimeConfig(state);
+      expect(config).toContain("voiceList");
+      expect(config).toContain("全中文");
+      const parsed = JSON.parse(config);
+      expect(parsed.voiceList).toHaveLength(2);
+
+      delete parsed._TTSConfigID;
+      expect(parsed).toMatchSnapshot();
+    });
+    it("should not use style", () => {
+      const state = produce(azureState, (draft) => {
+        draft.voice.speakerConfig = {
+          type: "all",
+          speakers: [
+            {
+              name: "zh-CN-XiaoxiaoNeural",
+              localName: "晓晓",
+              style: ["normal"],
+            },
+            {
+              name: "zh-CN-YunxiNeural",
+              localName: "云希",
+              style: [null],
+            },
+          ],
+        };
+      });
+      const config = ifreetimeConfig(state);
+      expect(config).not.toContain("style=");
+      expect(config).toContain("全语言");
+    });
+  });
 });

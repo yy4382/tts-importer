@@ -18,6 +18,16 @@ export const speakerSchema = z.object({
   style: z.array(z.union([z.string(), z.null()])),
 });
 
+export function dedupeSpeakerStyle(
+  style: z.infer<typeof speakerSchema>["style"]
+) {
+  if (style.length === 0) {
+    return [null];
+  }
+  const set = new Set(style);
+  return Array.from(set);
+}
+
 export const voiceConfigSchema = z.object({
   shared: z.object({
     /**
@@ -32,7 +42,8 @@ export const voiceConfigSchema = z.object({
   }),
   speakerConfig: z.discriminatedUnion("type", [
     z.object({ type: z.literal("single"), speaker: speakerSchema }),
-    z.object({ type: z.literal("multiple"), speakers: z.array(speakerSchema) }),
+    z.object({ type: z.literal("all-zh"), speakers: z.array(speakerSchema) }),
+    z.object({ type: z.literal("all"), speakers: z.array(speakerSchema) }),
   ]),
 });
 
@@ -67,33 +78,11 @@ export const azureStateToSearchParams = z.codec(
       if (state.voice.shared.customUA !== null) {
         params.set("custom-ua", state.voice.shared.customUA);
       }
-      if (state.voice.speakerConfig.type === "single") {
-        params.set(
-          "speaker",
-          JSON.stringify(state.voice.speakerConfig.speaker)
-        );
-      } else {
-        for (const speaker of state.voice.speakerConfig.speakers) {
-          params.append("speaker", JSON.stringify(speaker));
-        }
-      }
+      params.set("speaker", JSON.stringify(state.voice.speakerConfig));
 
       return params;
     },
-    encode: (params, ctx) => {
-      const speakers = params.getAll("speaker");
-      if (speakers.length === 0) {
-        ctx.issues.push({
-          code: "custom",
-          input: params,
-          message: "speaker is required",
-        });
-      }
-      const speakerConfig: z.infer<typeof voiceConfigSchema>["speakerConfig"] =
-        speakers.length === 1
-          ? { type: "single", speaker: JSON.parse(speakers[0]) }
-          : { type: "multiple", speakers: speakers.map((s) => JSON.parse(s)) };
-
+    encode: (params) => {
       return {
         api: {
           region: params.get("api-region")!,
@@ -105,7 +94,7 @@ export const azureStateToSearchParams = z.codec(
             format: params.get("format")!,
             customUA: params.get("custom-ua") ?? null,
           },
-          speakerConfig,
+          speakerConfig: JSON.parse(params.get("speaker")!),
         },
       };
     },
