@@ -11,7 +11,7 @@ export function AudioPreviewRa() {
   const config = useAtomValue(validRaVoiceConfigAtom);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
 
-  const getTestAudio = useCallback(
+  const getTestAudioUrl = useCallback(
     async (text: string) => {
       if (!api.url) {
         toast("API URL 未设置");
@@ -50,16 +50,46 @@ export function AudioPreviewRa() {
         if (volume) url.searchParams.set("volume", volume.toString());
         if (format) url.searchParams.set("format", format);
 
-        setAudioUrl(url.toString());
+        return url.toString();
       } catch (error) {
         toast("获取音频失败", {
           description: error instanceof Error ? error.message : "未知错误",
         });
-        setAudioUrl(null);
+        return null;
       }
     },
     [api, config]
   );
+
+  async function getTestAudio(text: string) {
+    const url = await getTestAudioUrl(text);
+    if (!url) return;
+    try {
+      const resp = await fetch(url);
+      if (!resp.ok) {
+        toast("获取音频失败：请求错误", {
+          description: `服务器返回 ${resp.status} ${resp.statusText}`,
+        });
+        return;
+      }
+      const blob = await resp.blob();
+      const newAudioUrl = URL.createObjectURL(blob);
+      if (audioUrl) {
+        try {
+          URL.revokeObjectURL(audioUrl);
+        } catch (e) {
+          console.warn("revoke object url error", e);
+        }
+      }
+      setAudioUrl(newAudioUrl);
+      toast("获取音频成功");
+    } catch (error) {
+      toast("获取音频失败：连接错误", {
+        description: error instanceof Error ? error.message : "未知错误",
+      });
+    }
+  }
+
   return (
     <AudioPreview
       enabled={!!api.url && !!config}
