@@ -2,7 +2,8 @@
 
 import { useAtomValue } from "jotai";
 import { useCallback, useState } from "react";
-import { ApiConfig, apiConfig } from "./api-input";
+import { apiConfig } from "./api-input";
+import type { ApiConfig } from "@/lib/azure/schema";
 import { voiceConfigAtom } from "./voice-configure";
 import { VoiceConfig } from "@/lib/azure/schema";
 import { AudioPreview } from "@/components/shared/audio-preview";

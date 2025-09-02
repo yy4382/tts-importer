@@ -50,7 +50,7 @@ export const voiceConfigSchema = z.object({
 
 export type VoiceConfig = z.infer<typeof voiceConfigSchema>;
 
-const apiConfigSchema = z.object({
+export const apiConfigSchema = z.object({
   region: z.string().nonempty("API 区域不能为空"),
   key: z.string().nonempty("API 密钥不能为空"),
 });

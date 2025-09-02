@@ -58,7 +58,7 @@ export function VoiceSelect<
           aria-expanded={open}
           className={cn("justify-between w-full")}
         >
-          {voice?.localName || voice?.shortName || "Select a voice"}
+          {voice?.localName || voice?.shortName || "选择语音"}
           <ChevronsUpDown className="opacity-50" size={10} />
         </Button>
       </PopoverTrigger>
@@ -82,7 +82,7 @@ export function VoiceSelect<
             />
           </div>
           <CommandList>
-            <CommandEmpty>No voice loaded.</CommandEmpty>
+            <CommandEmpty>还没有获取到语音。</CommandEmpty>
             <CommandGroup>
               {filteredVoices.map((option) => (
                 <CommandItem

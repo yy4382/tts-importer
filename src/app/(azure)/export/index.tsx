@@ -63,9 +63,41 @@ function TabContentExport({
   voice: VoiceConfigWithState;
   render: (voice: VoiceConfig) => React.ReactNode;
 }) {
+  const failureMessage = (
+    state: Omit<VoiceConfigWithState["state"], "success">
+  ) => {
+    switch (state) {
+      case "no voice available":
+        return (
+          <p>
+            还没有获取到语音。请检查 API 设置是否正确，并重新获取语音列表。
+            <br />
+            如果问题依旧，请尝试使用其他语音源。
+          </p>
+        );
+      case "parse error":
+        return (
+          <p>
+            内部错误（语音解析失败）。请尝试刷新页面。
+            <br />
+            如果问题依旧，请尝试使用其他语音源。
+          </p>
+        );
+      case "no voice selected":
+        return (
+          <p>
+            还没有选择语音。
+            <br />
+            请在配置语音卡片中选择语音。
+          </p>
+        );
+    }
+  };
   return (
     <ClientOnly serverFallback={<Skeleton className="h-16 w-full" />}>
-      {voice.state === "success" ? render(voice.data) : <p>{voice.state}</p>}
+      {voice.state === "success"
+        ? render(voice.data)
+        : failureMessage(voice.state)}
     </ClientOnly>
   );
 }

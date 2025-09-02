@@ -19,18 +19,19 @@ import { atomWithStorage } from "jotai/utils";
 import { toast } from "sonner";
 import Link from "next/link";
 import { posthog } from "posthog-js";
-
-export type ApiConfig = {
-  region: string;
-  key: string;
-};
+import { ApiConfig, apiConfigSchema } from "@/lib/azure/schema";
 
 const apiAtom = atomWithStorage<ApiConfig>("tts-i:settings", {
-  region: "eastasia",
+  region: "",
   key: "",
 });
 
 export const apiConfig = atom((get) => get(apiAtom));
+export const apiConfigReady = atom(
+  (get) =>
+    apiConfigSchema.safeParse(get(apiAtom)).success &&
+    get(voiceListAtom).length > 0
+);
 
 export type Voice = {
   shortName: string;
@@ -94,17 +95,19 @@ export function ApiInput() {
   return (
     <Card className="w-card">
       <CardHeader>
-        <CardTitle id="api-info">API Info</CardTitle>
-        <CardDescription>Input your Azure API key and region.</CardDescription>
+        <CardTitle id="api-info">API 设置</CardTitle>
+        <CardDescription>
+          需要填写 Azure API 密钥和区域来使用 Azure TTS。
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <form autoComplete="off">
           <div className="grid w-full items-center gap-4">
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="region">Region</Label>
+              <Label htmlFor="region">区域</Label>
               <Input
                 id="region"
-                placeholder="Azure region"
+                placeholder="Azure 语音服务的区域，如 eastasia"
                 value={api.region}
                 onInput={(e) => {
                   const value = e.currentTarget.value;
@@ -113,10 +116,10 @@ export function ApiInput() {
               />
             </div>
             <div className="flex flex-col space-y-1.5">
-              <Label htmlFor="key">Key</Label>
+              <Label htmlFor="key">密钥</Label>
               <Input
                 id="key"
-                placeholder="Azure API key"
+                placeholder="Azure 语音服务的密钥"
                 type="password"
                 autoComplete="off"
                 value={api.key}
@@ -143,12 +146,44 @@ export function ApiInput() {
           <Button onClick={onGetVoices}>获取声音列表</Button>
         </div>
         <p className="text-sm text-gray-500">
-          不知道从那里获得 Key？请看
+          不知道从那里获得区域和密钥？请看
           <Link href="/help/reg" className="text-blue-500">
             帮助：创建资源
           </Link>
         </p>
       </CardFooter>
     </Card>
+  );
+}
+
+export function ApiConfigHelp() {
+  return (
+    <div className="w-card mb-4 mt-10">
+      <h1 className="text-2xl text-foreground font-semibold mb-2">
+        开始之前……
+      </h1>
+      <p className="mb-2">
+        如果想要使用 Azure TTS 官方 API 用于听书，需要拥有一个 Azure
+        账号并创建一个「Azure 语音服务」资源。
+      </p>
+      <p className="mb-2">
+        将语音服务的区域和密钥填写在下方，点击「获取声音列表」按钮。获取到声音列表后即可开始配置语音和导入听书软件。
+      </p>
+      <p className="mb-2">
+        不知道从那里获得区域和密钥？请看
+        <Link href="/help/reg" className="text-blue-500">
+          帮助：创建资源
+        </Link>
+        。
+      </p>
+      <p className="text-sm text-muted-foreground">
+        不想注册 Azure 账号？也可以尝试自托管 Edge TTS（大声朗读）的 API
+        转发器，详见{" "}
+        <a href="https://ra.yfi.moe" className="text-blue-500">
+          Read Aloud
+        </a>{" "}
+        项目。
+      </p>
+    </div>
   );
 }
