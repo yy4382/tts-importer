@@ -67,8 +67,17 @@ export function AudioPreviewRa() {
     try {
       const resp = await fetch(url);
       if (!resp.ok) {
+        let responseText: string | undefined;
+        try {
+          responseText = await resp.text();
+          if (responseText.length > 50) {
+            responseText = responseText.slice(0, 50) + "...";
+          }
+        } catch {}
         toast("获取音频失败：请求错误", {
-          description: `服务器返回 ${resp.status} ${resp.statusText}`,
+          description: `服务器返回 ${resp.status} ${resp.statusText} ${
+            responseText ? `${responseText}` : ""
+          }`,
         });
         return;
       }
