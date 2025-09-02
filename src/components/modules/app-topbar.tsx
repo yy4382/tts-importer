@@ -15,7 +15,7 @@ export function AppTopbar(prop: {
   location: { title: string; link?: string }[];
 }) {
   return (
-    <header className="flex items-center w-full gap-2 px-4 h-12 border-b mb-4 sticky top-0 bg-background z-10">
+    <header className="flex items-center w-full gap-2 pr-4 pl-2 h-12 border-b mb-4 sticky top-0 bg-background z-10">
       <SidebarTrigger />
       <Separator orientation="vertical" className="mr-1 my-2 h-4" />
       <Breadcrumb>
