@@ -1,7 +1,7 @@
 import { useCopyToClipboard } from "@/hooks/use-clipboard";
 import { config2urlNoThrow } from "@/lib/azure/config-to-url";
 import { ApiConfig, VoiceConfig } from "@/lib/azure/schema";
-import { usePostHog } from "posthog-js/react";
+import { posthog } from "posthog-js";
 import { ActionLine } from "@/components/ui/action-line";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,7 +30,6 @@ export function SourceReaderExport({
   voiceConfig: VoiceConfig;
 }) {
   const copy = useCopyToClipboard();
-  const posthog = usePostHog();
 
   const configUrl = config2urlNoThrow(
     { api, voice: voiceConfig },

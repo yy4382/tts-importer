@@ -18,7 +18,7 @@ import { Separator } from "@/components/ui/separator";
 import { QRCodeSVG } from "qrcode.react";
 import { ActionLine } from "@/components/ui/action-line";
 import LinkExportButton from "./link-export-button";
-import { usePostHog } from "posthog-js/react";
+import { posthog } from "posthog-js";
 import { ErrorBoundary } from "next/dist/client/components/error-boundary";
 
 export function LegadoExport({
@@ -29,7 +29,6 @@ export function LegadoExport({
   voiceConfig: VoiceConfig;
 }) {
   const copy = useCopyToClipboard();
-  const posthog = usePostHog();
 
   const legadoConfig = useMemo(() => {
     return genLegadoConfig({ api, voice: voiceConfig });

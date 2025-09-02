@@ -18,7 +18,7 @@ import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { toast } from "sonner";
 import Link from "next/link";
-import { usePostHog } from "posthog-js/react";
+import { posthog } from "posthog-js";
 
 export type ApiConfig = {
   region: string;
@@ -49,8 +49,6 @@ export function ApiInput() {
   const hasMounted = useHasMounted();
 
   const voiceListCount = useAtomValue(voiceListCountAtom);
-
-  const posthog = usePostHog();
 
   const onGetVoices = async () => {
     // TODO error handling

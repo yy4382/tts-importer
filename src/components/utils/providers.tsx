@@ -10,7 +10,6 @@ import {
 } from "@tanstack/react-query";
 import { Provider } from "jotai";
 import type { PropsWithChildren } from "react";
-import { PostHogProvider } from "./posthog-provider";
 
 function makeQueryClient() {
   return new QueryClient({
@@ -47,15 +46,13 @@ function getQueryClient() {
 export const Providers = ({ children }: PropsWithChildren) => {
   const queryClient = getQueryClient();
   return (
-    <PostHogProvider>
-      <QueryClientProvider client={queryClient}>
-        <Provider>
-          <SidebarProvider>
-            {children}
-            <Toaster richColors />
-          </SidebarProvider>
-        </Provider>
-      </QueryClientProvider>
-    </PostHogProvider>
+    <QueryClientProvider client={queryClient}>
+      <Provider>
+        <SidebarProvider>
+          {children}
+          <Toaster richColors />
+        </SidebarProvider>
+      </Provider>
+    </QueryClientProvider>
   );
 };

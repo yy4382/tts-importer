@@ -19,7 +19,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { ActionLine } from "@/components/ui/action-line";
 import LinkExportButton from "./link-export-button";
 import Link from "next/link";
-import { usePostHog } from "posthog-js/react";
+import { posthog } from "posthog-js";
 import {
   Popover,
   PopoverContent,
@@ -35,7 +35,6 @@ export function IFreeTimeExport({
   voice: VoiceConfig;
 }) {
   const copy = useCopyToClipboard();
-  const posthog = usePostHog();
 
   const ifreetimeConfig = useMemo(() => {
     return genIfreetimeConfig({ api, voice });

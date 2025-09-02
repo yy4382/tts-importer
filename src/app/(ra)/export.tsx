@@ -13,7 +13,7 @@ import {
   generateProfileIreadnote,
 } from "@/app/(ra)/generate-profile";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { usePostHog } from "posthog-js/react";
+import { posthog } from "posthog-js";
 
 function copyToClipboard(text: string) {
   navigator.clipboard
@@ -40,7 +40,6 @@ function downloadFile(text: string, filename: string) {
 export function ExportRa() {
   const voiceConfig = useAtomValue(validRaVoiceConfigAtom);
   const api = useAtomValue(raApiConfigAtom);
-  const posthog = usePostHog();
 
   function onSubmit(type: "legado" | "ireadnote" | "sourcereader") {
     if (!api.url) {
