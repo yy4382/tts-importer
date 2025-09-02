@@ -142,7 +142,8 @@ export function ApiUrlHelp() {
         的服务，它支持被部署到 Cloudflare Worker, Vercel 或者 Docker 容器中。
       </p>
       <p className="">
-        部署完成后，在下方填入对应的 API URL 和 Token
+        部署完成后，在<span className="xl:hidden">下方</span>
+        <span className="xl:inline hidden">右侧</span>填入对应的 API URL 和 Token
         即可使用。或在自己部署的网页中点击“导入”按钮，会被重定向到当前网页并自动填入
         API URL。
       </p>

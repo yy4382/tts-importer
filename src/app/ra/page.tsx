@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <div className="w-full">
       <AppTopbar location={[{ title: "面板" }, { title: "Edge TTS 导入" }]} />
-      <div className="flex flex-col px-4 lg:px-0 w-fit flex-grow gap-4 mx-auto my-4">
+      <div className="flex flex-col xl:flex-row px-4 w-fit flex-grow gap-4 xl:gap-16 mx-auto my-16">
         <ApiUrlHelp />
         <div className="flex flex-col w-fit flex-grow gap-4 mx-auto">
           <Suspense>
