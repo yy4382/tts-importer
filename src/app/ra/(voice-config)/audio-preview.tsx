@@ -116,7 +116,7 @@ export function AudioPreviewRa() {
 
 export function FailToFetchExplain() {
   return (
-    <div className="prose prose-sm prose-p:my-0">
+    <div className="prose prose-sm dark:prose-invert prose-p:my-0">
       <p>出现 fetch 错误。常见原因：</p>
       <ul>
         <li>
