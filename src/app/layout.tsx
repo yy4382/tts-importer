@@ -40,8 +40,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <div className="hidden" style={{ fontSize: "3rem" }}>
+            如果看到这段话，说明你的 CSS
+            文件没有正确加载。尝试强制刷新页面或更换网络环境。
+          </div>
           <Providers>
             <AppSidebar />
+
             {children}
           </Providers>
         </NextThemesProvider>
