@@ -82,6 +82,10 @@ export function AudioPreviewAzure() {
   const getTestAudioCb = useCallback(
     async (text: string) => {
       if (voiceState.state !== "success") return;
+      if (voiceState.data.speakerConfig.type !== "single") {
+        toast("只能在选择单个语音时预览音色");
+        return;
+      }
       const blob = await getTestAudio(api, voiceState.data, text);
       if (url !== null) {
         try {
