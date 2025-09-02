@@ -1,9 +1,9 @@
 import { AppTopbar } from "@/components/modules/app-topbar";
-import ApiUrl from "../api-url";
+import ApiUrl from "./api-url";
 import { Suspense } from "react";
-import { RaVoiceConfig } from "../(voice-config)/voice-config";
-import { AudioPreviewRa } from "../(voice-config)/audio-preview";
-import { ExportRa } from "../export";
+import { RaVoiceConfig } from "./(voice-config)/voice-config";
+import { AudioPreviewRa } from "./(voice-config)/audio-preview";
+import { ExportRa } from "./export";
 
 export default function Home() {
   return (

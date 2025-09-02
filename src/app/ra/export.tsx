@@ -11,7 +11,7 @@ import {
 import {
   generateProfileLegado,
   generateProfileIreadnote,
-} from "@/app/(ra)/generate-profile";
+} from "@/app/ra/generate-profile";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { posthog } from "posthog-js";
 
