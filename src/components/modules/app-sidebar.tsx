@@ -59,8 +59,8 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarItemActive asChild pathname="/">
-                  <Link href="/">Azure TTS</Link>
+                <SidebarItemActive asChild pathname="/azure">
+                  <Link href="/azure">Azure TTS</Link>
                 </SidebarItemActive>
               </SidebarMenuItem>
               <SidebarMenuItem>

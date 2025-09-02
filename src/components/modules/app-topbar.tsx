@@ -1,15 +1,15 @@
-import { Fragment } from "react";
 import {
   Breadcrumb,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
+  BreadcrumbPage,
 } from "../ui/breadcrumb";
 import { Separator } from "../ui/separator";
 import { SidebarTrigger } from "../ui/sidebar";
 import { ModeToggle } from "../ui/theme-changer";
 import { buttonVariants } from "../ui/button";
+import { Fragment } from "react";
 
 export function AppTopbar(prop: {
   location: { title: string; link?: string }[];
@@ -23,10 +23,12 @@ export function AppTopbar(prop: {
           {prop.location.map((item, idx) => (
             <Fragment key={item.title}>
               {idx !== 0 && <BreadcrumbSeparator />}
-              {item.link ? (
-                <BreadcrumbLink href={item.link}>{item.title}</BreadcrumbLink>
-              ) : (
+              {idx === prop.location.length - 1 ? (
                 <BreadcrumbPage>{item.title}</BreadcrumbPage>
+              ) : (
+                <BreadcrumbLink href={item.link || "/"}>
+                  {item.title}
+                </BreadcrumbLink>
               )}
             </Fragment>
           ))}
