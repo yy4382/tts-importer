@@ -85,7 +85,18 @@ export function AudioPreviewRa() {
       toast("获取音频成功");
     } catch (error) {
       toast("获取音频失败：连接错误", {
-        description: error instanceof Error ? error.message : "未知错误",
+        description:
+          error instanceof Error ? (
+            error.message === "Failed to fetch" ? (
+              <FailToFetchExplain />
+            ) : (
+              error.message
+            )
+          ) : (
+            "未知错误"
+          ),
+        duration: 1000000,
+        closeButton: true,
       });
     }
   }
@@ -99,5 +110,35 @@ export function AudioPreviewRa() {
         toast("获取音频失败");
       }}
     />
+  );
+}
+
+export function FailToFetchExplain() {
+  return (
+    <div className="prose prose-sm prose-p:my-0">
+      <p>出现 Failed to fetch 错误。常见原因：</p>
+      <ul>
+        <li>
+          API URL 不正确。需要是 <code>http://</code> 或 <code>https://</code>{" "}
+          开头，并请检查拼写。
+        </li>
+        <li>
+          CORS
+          配置问题。这只会在浏览器中出现，可以尝试直接将语音导入听书软件中后在听书软件中测试。
+          <br />
+        </li>
+      </ul>
+      <p className="text-xs text-muted-foreground leading-4">
+        注：如果部署的是新版本 Read Aloud，不应该出现 CORS 错误。如果是在 2025
+        年 9 月之前部署的，请更新部署。如果依旧出现错误，请
+        <a
+          href="https://github.com/yy4382/read-aloud/issues/new?template=bug_report.md"
+          className="text-blue-500"
+        >
+          打开一个 Bug 报告
+        </a>
+        。
+      </p>
+    </div>
   );
 }
