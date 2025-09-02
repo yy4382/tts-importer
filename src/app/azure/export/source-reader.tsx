@@ -2,7 +2,7 @@ import { useCopyToClipboard } from "@/hooks/use-clipboard";
 import { config2urlNoThrow } from "@/lib/azure/config-to-url";
 import { ApiConfig, VoiceConfig } from "@/lib/azure/schema";
 import { posthog } from "posthog-js";
-import { ActionLine } from "@/components/ui/action-line";
+import { ActionLine } from "@/app/azure/export/action-line";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -53,7 +53,18 @@ export function SourceReaderExport({
             <p>在「语音管理-右上角三点-网络导入」中粘贴</p>
           </PopoverContent>
         </Popover>
-        <Button onClick={() => copy(configUrl)}>复制链接</Button>
+        <Button
+          onClick={() => {
+            copy(configUrl);
+            posthog.capture("profile exported", {
+              type: "azure",
+              app: "source-reader",
+              method: "copy-profile-url",
+            });
+          }}
+        >
+          复制链接
+        </Button>
       </ActionLine>
       <Separator />
       <ActionLine action="二维码导入">

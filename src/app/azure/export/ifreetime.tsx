@@ -16,8 +16,7 @@ import {
 import { config2urlNoThrow } from "@/lib/azure/config-to-url";
 import { Separator } from "@/components/ui/separator";
 import { QRCodeSVG } from "qrcode.react";
-import { ActionLine } from "@/components/ui/action-line";
-import LinkExportButton from "./link-export-button";
+import { ActionLine } from "@/app/azure/export/action-line";
 import Link from "next/link";
 import { posthog } from "posthog-js";
 import {
@@ -53,7 +52,10 @@ export function IFreeTimeExport({
 
   return (
     <div className="flex flex-col gap-2">
-      <ActionLine action="一键导入">
+      <ActionLine
+        action="二维码导入"
+        description="使用装有爱阅记的设备扫描二维码"
+      >
         <Dialog>
           <DialogTrigger asChild>
             <Button
@@ -71,7 +73,7 @@ export function IFreeTimeExport({
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>一键导入</DialogTitle>
+              <DialogTitle>二维码导入</DialogTitle>
               <DialogDescription>使用系统相机扫描二维码即可</DialogDescription>
             </DialogHeader>
             <div className="grid p-4 place-items-center">
@@ -81,12 +83,12 @@ export function IFreeTimeExport({
                 <QRCodeSVG value={directUrl} size={256} />
               </ErrorBoundary>
             </div>
-            <div className="flex gap-4 justify-end">
-              <LinkExportButton link={configUrl}>配置链接</LinkExportButton>
-              <LinkExportButton link={directUrl}>一键导入</LinkExportButton>
-            </div>
           </DialogContent>
         </Dialog>
+      </ActionLine>
+      <Separator />
+
+      <ActionLine action="一键导入" description="在装有爱阅记的设备上点击">
         <Button asChild>
           <a
             href={directUrl}
@@ -105,6 +107,22 @@ export function IFreeTimeExport({
         </Button>
       </ActionLine>
       <Separator />
+      <ActionLine action="配置链接" description="可用于调试输出">
+        <Button
+          onClick={() => {
+            copy(configUrl);
+            posthog.capture("profile exported", {
+              type: "azure",
+              app: "ifreetime",
+              method: "copy-profile-url",
+            });
+          }}
+        >
+          复制链接
+        </Button>
+      </ActionLine>
+      <Separator />
+
       <ActionLine action="配置文本">
         <Popover>
           <PopoverTrigger asChild>
@@ -145,6 +163,8 @@ export function IFreeTimeExport({
           复制
         </Button>
       </ActionLine>
+      <Separator />
+
       <p className="text-sm text-gray-500">
         由于爱阅书香限制，无法同时导入多个语音风格。
         <br />

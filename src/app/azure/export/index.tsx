@@ -20,8 +20,8 @@ export function Export() {
         <CardTitle>导入</CardTitle>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="ifreetime">
-          <TabsList>
+        <Tabs defaultValue="ifreetime" className="gap-4">
+          <TabsList className="-ml-1">
             <TabsTrigger value="legado">阅读</TabsTrigger>
             <TabsTrigger value="ifreetime">爱阅记</TabsTrigger>
             <TabsTrigger value="source-reader">源阅读</TabsTrigger>

@@ -4,7 +4,7 @@ export function ActionLine({
   description,
 }: React.PropsWithChildren<{ action: string; description?: string }>) {
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex justify-between items-center gap-4">
       <div>
         <p>{action}</p>
         {description && (
