@@ -93,17 +93,9 @@ export function AudioPreviewRa() {
       setAudioUrl(newAudioUrl);
       toast("获取音频成功");
     } catch (error) {
+      console.error("get test audio error", error);
       toast("获取音频失败：连接错误", {
-        description:
-          error instanceof Error ? (
-            error.message === "Failed to fetch" ? (
-              <FailToFetchExplain />
-            ) : (
-              error.message
-            )
-          ) : (
-            "未知错误"
-          ),
+        description: <FailToFetchExplain />,
         duration: 1000000,
         closeButton: true,
       });
@@ -125,7 +117,7 @@ export function AudioPreviewRa() {
 export function FailToFetchExplain() {
   return (
     <div className="prose prose-sm prose-p:my-0">
-      <p>出现 Failed to fetch 错误。常见原因：</p>
+      <p>出现 fetch 错误。常见原因：</p>
       <ul>
         <li>
           API URL 不正确。需要是 <code>http://</code> 或 <code>https://</code>{" "}
