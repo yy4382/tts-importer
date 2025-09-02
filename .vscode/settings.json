@@ -5,6 +5,7 @@
     "Ireadnote",
     "Legado",
     "mstts",
+    "nuqs",
     "Oneline",
     "posthog",
     "qrcode",
@@ -15,5 +16,6 @@
   ],
   "typescript.preferences.autoImportFileExcludePatterns": [
     "lucide-react"
-  ]
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

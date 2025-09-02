@@ -10,20 +10,26 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAtom } from "jotai";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useQueryState } from "nuqs";
 import { useEffect } from "react";
 import { raApiConfigAtom } from "./ra-data";
 
 export default function ApiUrl() {
   const [api, setApi] = useAtom(raApiConfigAtom);
-  const searchParams = useSearchParams();
-  const urlFromSearch = searchParams.get("api-site");
-  // sync api.url with urlFromSearch
+  const [apiSite, setApiSite] = useQueryState("api-site", {
+    shallow: true,
+    limitUrlUpdates: {
+      method: "throttle",
+      timeMs: 300,
+    },
+  });
+
+  // sync api.url with apiSite URL param (only from URL to state)
   useEffect(() => {
-    if (urlFromSearch) {
-      setApi((prev) => ({ ...prev, url: urlFromSearch }));
+    if (apiSite) {
+      setApi((prev) => ({ ...prev, url: apiSite }));
     }
-  }, [urlFromSearch, setApi]);
+  }, [apiSite, setApi]);
 
   return (
     <Card className="w-card">
@@ -44,7 +50,9 @@ export default function ApiUrl() {
               value={api.url}
               onChange={(e) => {
                 setApi((prev) => ({ ...prev, url: e.target.value }));
-                updateUrl(e.target.value);
+                setTimeout(() => {
+                  setApiSite(e.target.value || null);
+                }, 50);
               }}
             />
             <p className="text-[0.8rem] text-neutral-500 dark:text-neutral-400">
@@ -75,16 +83,4 @@ export default function ApiUrl() {
       </CardContent>
     </Card>
   );
-}
-
-function updateUrl(apiUrl: string) {
-  const currentParams = new URLSearchParams(window.location.search);
-  if (apiUrl) {
-    currentParams.set("api-site", apiUrl);
-  } else {
-    currentParams.delete("api-site");
-  }
-  const newSearch = currentParams.toString();
-  const newUrl = newSearch ? `?${newSearch}` : window.location.pathname;
-  window.history.replaceState({}, "", newUrl);
 }
