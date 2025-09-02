@@ -1,20 +1,14 @@
 ---
-title: 爱阅系列导入
+title: 爱阅书香 Azure 导入
 order: 2
 slug: ifreetime
 ---
 
 感谢 CJ'sPig 提供的的语音库导入模板。
 
-## 爱阅记导入
+## 爱阅书香 Azure 导入
 
-如果选择了复制配置，需要这样导入：打开爱阅记，在“设置”-“在线语音库管理”-右上角“菜单”-“JSON 输入”中粘贴刚才复制的内容，点击“导入”即可。
-
-如果点击一键导入，只要安装了爱阅记，会自动跳转。
-
-## 爱阅书香导入
-
-从 App Store 下载一个爱阅记，首先导入到它里面，然后查看它的语音源，把每个选项复制粘贴到爱阅书香里。
+从 App Store 下载一个爱阅记，首先将一个“单个语音”导入到爱阅记中，然后查看它的语音源，把选项逐一复制粘贴到爱阅书香里。
 
 简单来说，需要对照着爱阅记的内容修改以下内容：
 
@@ -36,8 +30,6 @@ slug: ifreetime
 - `参数`：和爱阅记中一样，添加一个 `text` 参数，值从爱阅记中复制
 - `解析字段`: 和爱阅记中一样，添加一个 `playData` 参数，值为 `ResponseData`
 
-{/* ![TTS 语音步骤：1](/img/text.jpeg) */}
-
 <img
   src="/img/text.jpeg"
   alt="TTS 语音步骤：1"
@@ -46,9 +38,9 @@ slug: ifreetime
   style={{ width: "50%", margin: "0 auto" }}
 />
 
-##### “Http 配置” 中
+#### “Http 配置” 中
 
-首先，页面上有两个“Http 配置”，保证你进的是正确的那个。
+首先，页面上有两个“Http 配置”，保证你进的是“TTS 语音步骤：1” 段中的那个。
 
 <img
   src="/img/select-http-config.jpeg"
@@ -71,4 +63,4 @@ slug: ifreetime
 #### 测试发音
 
 点击测试发音，如果能听到声音即为成功。
-如果出现合成失败，截图“查看请求与响应”的内容和配置内容（记得给 key 打码），发给[我](mailto:i@yfi.moe)或者发[群](https://t.me/aiyueshuxiangy)里，我会帮你看看。
+如果出现合成失败，截图“查看请求与响应”的内容和配置内容（记得给 key 打码），给我[发邮件](mailto:i@yfi.moe)或者在[爱阅书香群](https://t.me/aiyueshuxiangy)里@我(@yunfini)，我会帮你看看。
