@@ -50,6 +50,9 @@ jobs:
       
       - name: run content collections
         run: pnpm exec content-collections build
+      
+      - shell: bash
+        run: echo -e '/// <reference types="next" />\n/// <reference types="next/image-types/global" />' > next-env.d.ts
 
       - name: Run type check
         run: pnpm exec tsc --noEmit
