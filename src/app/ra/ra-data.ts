@@ -81,14 +81,17 @@ const raStateSchema = z
 
 export type RaState = z.infer<typeof raStateSchema>;
 
-
-
 export {
   raVoiceConfigAtom,
   validRaVoiceConfigAtom,
   raApiConfigAtom,
   raStateSchema,
 };
+
+export const legadoSpecificConfigSchema = z.object({
+  rateTemplate: z.string().optional(),
+})
+export type LegadoSpecificConfig = z.infer<typeof legadoSpecificConfigSchema>;
 
 async function fetchVoices() {
   const res = await fetch(

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useAtomValue } from "jotai";
 import { toast } from "sonner";
 import {
+  LegadoSpecificConfig,
   RaApiConfig,
   raApiConfigAtom,
   RaState,
@@ -19,6 +20,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { posthog } from "posthog-js";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TabsContent } from "@radix-ui/react-tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
 
 function copyToClipboard(text: string) {
   navigator.clipboard
@@ -102,15 +106,53 @@ export function ExportRa() {
   );
 }
 
+function LegadoSpecificConfigComp({
+  config,
+  setConfig,
+}: {
+  config: LegadoSpecificConfig;
+  setConfig: (config: LegadoSpecificConfig) => void;
+}) {
+  return (
+    <div>
+      <Label className="mt-4 flex flex-col gap-2 items-start">
+        语速映射模板（可选）
+        <Input
+          value={config.rateTemplate}
+          onChange={(e) =>
+            setConfig({ ...config, rateTemplate: e.target.value })
+          }
+          placeholder="{{speakSpeed/10}}"
+        />
+      </Label>
+      <div className="prose dark:prose-invert prose-sm mt-2 prose-p:my-1">
+        <p>
+          默认为 <code>{"{{speakSpeed/10}}"}</code>。
+          除非必要，请勿修改（保持留空即为默认值）。
+          <a
+            href="https://github.com/yy4382/read-aloud/issues/12#issuecomment-3334516431"
+            className="text-blue-500 underline"
+          >
+            查看详情
+          </a>
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function LegadoPanel() {
   const voiceConfig = useAtomValue(validRaVoiceConfigAtom);
   const api = useAtomValue(raApiConfigAtom);
+  const [legadoConfig, setLegadoConfig] = useState<LegadoSpecificConfig>({
+    rateTemplate: "",
+  });
 
   function onExport() {
     const raState = parseRaState(api, voiceConfig);
     if (!raState) return;
 
-    const result = generateProfileLegado(raState);
+    const result = generateProfileLegado(raState, legadoConfig);
 
     capture("legado");
 
@@ -137,6 +179,10 @@ function LegadoPanel() {
           对于多个语音，下载配置后在「朗读引擎」界面直接点三个点，选择本地导入即可。
         </p>
       </div>
+      <LegadoSpecificConfigComp
+        config={legadoConfig}
+        setConfig={setLegadoConfig}
+      />
     </div>
   );
 }
@@ -162,9 +208,7 @@ function IreadnotePanel() {
         复制爱阅记配置
       </Button>
       <div className="prose dark:prose-invert prose-sm mt-2 prose-p:my-1">
-        <p>
-          在线语音库管理 - 右上角三点 - JSON 输入 中粘贴即可。
-        </p>
+        <p>在线语音库管理 - 右上角三点 - JSON 输入 中粘贴即可。</p>
       </div>
     </div>
   );
@@ -173,12 +217,16 @@ function IreadnotePanel() {
 function SourcereaderPanel() {
   const voiceConfig = useAtomValue(validRaVoiceConfigAtom);
   const api = useAtomValue(raApiConfigAtom);
+  const [sourcereaderConfig, setSourcereaderConfig] =
+    useState<LegadoSpecificConfig>({
+      rateTemplate: "",
+    });
 
   function onExport() {
     const raState = parseRaState(api, voiceConfig);
     if (!raState) return;
 
-    const result = generateProfileLegado(raState);
+    const result = generateProfileLegado(raState, sourcereaderConfig);
 
     capture("sourcereader");
 
@@ -197,10 +245,12 @@ function SourcereaderPanel() {
         下载源阅读配置
       </Button>
       <div className="prose dark:prose-invert prose-sm mt-2 prose-p:my-1">
-        <p>
-          使用「本地导入」功能导入即可。
-        </p>
+        <p>使用「本地导入」功能导入即可。</p>
       </div>
+      <LegadoSpecificConfigComp
+        config={sourcereaderConfig}
+        setConfig={setSourcereaderConfig}
+      />
     </div>
   );
 }

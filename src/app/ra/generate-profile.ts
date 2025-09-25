@@ -1,4 +1,5 @@
 import {
+  LegadoSpecificConfig,
   raApiConfigSchema,
   RaState,
   raVoiceConfigAdvancedSchema,
@@ -11,25 +12,26 @@ function getSynthesisUrl(apiBase: string) {
   url.pathname = "/api/synthesis";
   return url;
 }
-
+export const DEFAULT_LEGADO_RATE_TEMPLATE = "{{speakSpeed/10}}";
 function buildLegadoUrl(
   api: z.infer<typeof raApiConfigSchema>,
   voiceName: string,
-  advanced: z.infer<typeof raVoiceConfigAdvancedSchema>
+  advanced: z.infer<typeof raVoiceConfigAdvancedSchema>,
+  legadoSpecific: LegadoSpecificConfig
 ) {
   const { pitch, volume, format } = advanced;
+  const rate = legadoSpecific.rateTemplate || DEFAULT_LEGADO_RATE_TEMPLATE;
   const url = getSynthesisUrl(api.url);
   const { token } = api;
   url.searchParams.set("voiceName", voiceName);
   if (pitch) url.searchParams.set("pitch", pitch);
-  // if (rate) url.searchParams.set("rate", rate);
   if (volume) url.searchParams.set("volume", volume);
   if (token) url.searchParams.set("token", token);
   if (format) url.searchParams.set("format", format);
-  return `${url.toString()}&rate={{speakSpeed - 9}}&text={{String(speakText).replace(/&/g, '&amp;').replace(/\\\"/g, '&quot;').replace(/'/g, '&apos;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}}`;
+  return `${url.toString()}&rate=${rate}&text={{String(speakText).replace(/&/g, '&amp;').replace(/\\\"/g, '&quot;').replace(/'/g, '&apos;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}}`;
 }
 
-export function generateProfileLegado(state: RaState) {
+export function generateProfileLegado(state: RaState, legadoSpecific: LegadoSpecificConfig) {
   function idFactory() {
     let start = Math.floor(Date.now() / 1000) * 1000;
     function getId() {
@@ -43,13 +45,13 @@ export function generateProfileLegado(state: RaState) {
     if (voice.voiceName.type !== "single") {
       return voice.voiceName.nameList.map((v) => ({
         name: `☁️ Read Aloud ${v}`,
-        url: buildLegadoUrl(api, v, voice.advanced),
+        url: buildLegadoUrl(api, v, voice.advanced, legadoSpecific),
         id: id(),
       }));
     }
     return {
       name: `☁️ Read Aloud ${voice.voiceName.name}`,
-      url: buildLegadoUrl(api, voice.voiceName.name, voice.advanced),
+      url: buildLegadoUrl(api, voice.voiceName.name, voice.advanced, legadoSpecific),
       id: id(),
     };
   }
