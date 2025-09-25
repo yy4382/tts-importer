@@ -47,6 +47,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      
+      - name: run content collections
+        run: pnpm exec content-collections build
 
       - name: Run type check
         run: pnpm exec tsc --noEmit
