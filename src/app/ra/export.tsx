@@ -168,7 +168,10 @@ function LegadoPanel() {
 
   return (
     <div>
-      <Button disabled={voiceConfig === null} onClick={onExport}>
+      <Button
+        disabled={voiceConfig === null || api.url === ""}
+        onClick={onExport}
+      >
         {voiceConfig?.voiceName.type === "single" ? "复制" : "下载"}阅读配置
       </Button>
       <div className="prose dark:prose-invert prose-sm mt-2 prose-p:my-1">
