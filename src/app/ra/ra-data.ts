@@ -81,20 +81,13 @@ const raStateSchema = z
 
 export type RaState = z.infer<typeof raStateSchema>;
 
-function parseRaState(state: { api: RaApiConfig; voice: RaVoiceConfig }) {
-  const appState = raStateSchema.safeParse(state);
-  if (!appState.success) {
-    throw new Error(appState.error.issues[0].message);
-  }
-  return appState.data;
-}
+
 
 export {
   raVoiceConfigAtom,
   validRaVoiceConfigAtom,
   raApiConfigAtom,
   raStateSchema,
-  parseRaState,
 };
 
 async function fetchVoices() {
