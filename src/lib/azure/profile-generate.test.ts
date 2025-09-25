@@ -9,7 +9,7 @@ import ifreetimeConfig from "./ifreetime";
 import { isValid } from "ulid";
 
 beforeEach(() => {
-  vi.setSystemTime(new Date(2025, 0, 1));
+  vi.setSystemTime(new Date("2025-01-01T00:00:00.000Z"));
 });
 afterEach(() => {
   vi.useRealTimers();

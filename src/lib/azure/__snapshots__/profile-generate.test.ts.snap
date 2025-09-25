@@ -108,7 +108,7 @@ exports[`legadoConfig > should generate a valid legado config 1`] = `
     "concurrentRate": "0",
     "contentType": "audio/mpeg",
     "header": "{"Ocp-Apim-Subscription-Key":"test","Content-Type":"application/ssml+xml","X-Microsoft-OutputFormat":"audio-16khz-128kbitrate-mono-mp3","User-Agent":"legado"}",
-    "id": 1735660800000,
+    "id": 1735689600000,
     "loginCheckJs": "",
     "loginUi": "",
     "loginUrl": "",
