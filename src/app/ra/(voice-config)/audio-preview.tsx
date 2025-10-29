@@ -42,7 +42,7 @@ export function AudioPreviewRa() {
           );
         }
 
-        url.searchParams.set("voice", config.voiceName.name);
+        url.searchParams.set("voiceName", config.voiceName.name);
 
         const { pitch, rate, volume, format } = config.advanced;
         if (pitch) url.searchParams.set("pitch", pitch.toString());
