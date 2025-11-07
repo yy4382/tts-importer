@@ -4,6 +4,7 @@ import rehypeImageOptimization, {
   defineOptions as defineOptimizeOptions,
 } from "rehype-image-optim";
 import { z } from "zod";
+import remarkGfm from "remark-gfm";
 
 const help = defineCollection({
   name: "help",
@@ -16,6 +17,7 @@ const help = defineCollection({
   }),
   transform: async (document, context) => {
     const mdx = await compileMDX(context, document, {
+      remarkPlugins: [remarkGfm],
       rehypePlugins: [
         [
           rehypeImageOptimization,

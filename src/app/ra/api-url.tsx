@@ -8,34 +8,43 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import Link from "next/link";
-import { useQueryState } from "nuqs";
-import { useEffect } from "react";
-import { raApiConfigAtom } from "./ra-data";
+import { debounce } from "es-toolkit";
+import { useCallback, useEffect } from "react";
+import { raApiConfigAtom, raApiUrlFromQueryAtom } from "./ra-data";
 import {
   Accordion,
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function ApiUrl() {
   const [api, setApi] = useAtom(raApiConfigAtom);
-  const [apiSite, setApiSite] = useQueryState("api-site", {
-    shallow: true,
-    limitUrlUpdates: {
-      method: "throttle",
-      timeMs: 300,
-    },
-  });
+  const setApiUrlFromQuery = useSetAtom(raApiUrlFromQueryAtom);
+  const searchParams = useSearchParams();
+  const apiSite = searchParams.get("api-site");
+  const router = useRouter();
+
+  const setApiUrlQuery = useCallback(
+    debounce((url: string | null) => {
+      if (url) {
+        router.replace(`/ra?api-site=${url}`);
+      } else {
+        router.replace("/ra");
+      }
+    }, 300),
+    [router]
+  );
 
   // sync api.url with apiSite URL param (only from URL to state)
   useEffect(() => {
     if (apiSite) {
-      setApi((prev) => ({ ...prev, url: apiSite }));
+      setApiUrlFromQuery(apiSite);
     }
-  }, [apiSite, setApi]);
+  }, [apiSite, setApiUrlFromQuery]);
 
   return (
     <Card className="w-card">
@@ -60,7 +69,7 @@ export default function ApiUrl() {
               onChange={(e) => {
                 setApi((prev) => ({ ...prev, url: e.target.value }));
                 setTimeout(() => {
-                  setApiSite(e.target.value || null);
+                  setApiUrlQuery(e.target.value || null);
                 }, 50);
               }}
             />
@@ -143,7 +152,8 @@ export function ApiUrlHelp() {
       </p>
       <p className="">
         部署完成后，在<span className="xl:hidden">下方</span>
-        <span className="xl:inline hidden">右侧</span>填入对应的 API URL 和 Token
+        <span className="xl:inline hidden">右侧</span>填入对应的 API URL 和
+        Token
         即可使用。或在自己部署的网页中点击“导入”按钮，会被重定向到当前网页并自动填入
         API URL。
       </p>

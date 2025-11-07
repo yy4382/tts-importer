@@ -178,11 +178,11 @@ export function ApiConfigHelp() {
       </p>
       <p className="text-sm text-muted-foreground">
         不想注册 Azure 账号？也可以尝试自托管 Edge TTS（大声朗读）的 API
-        转发器，详见{" "}
-        <a href="https://ra.yfi.moe" className="text-blue-500">
-          Read Aloud
-        </a>{" "}
-        项目。
+        转发器。查看两种 API 的
+        <Link href="/help/azure-vs-ra" className="text-blue-500">
+          区别对比
+        </Link>
+        。
       </p>
     </div>
   );

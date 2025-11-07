@@ -1,6 +1,7 @@
-import { atom } from "jotai";
+import { atom, SetStateAction } from "jotai";
 import z from "zod";
 import { queryOptions } from "@tanstack/react-query";
+import { atomWithStorage } from "jotai/utils";
 
 export const raApiConfigSchema = z.object({
   url: z.url("API URL 需要是合法 URL"),
@@ -9,10 +10,33 @@ export const raApiConfigSchema = z.object({
 
 export type RaApiConfig = z.infer<typeof raApiConfigSchema>;
 
-const raApiConfigAtom = atom<z.infer<typeof raApiConfigSchema>>({
-  url: "",
-  token: "",
-});
+export const raApiUrlFromQueryAtom = atom<string | null>(null);
+export const raApiConfigFromStorageAtom = atomWithStorage(
+  "tts-i:ra-api-config",
+  {
+    url: "",
+    token: "",
+  }
+);
+
+const raApiConfigAtom = atom(
+  (get) => {
+    const url =
+      get(raApiUrlFromQueryAtom) ?? get(raApiConfigFromStorageAtom).url;
+
+    return {
+      url,
+      token: get(raApiConfigFromStorageAtom).token,
+    };
+  },
+  (get, set, update: SetStateAction<z.infer<typeof raApiConfigSchema>>) => {
+    const newConfig =
+      typeof update === "function" ? update(get(raApiConfigAtom)) : update;
+
+    set(raApiConfigFromStorageAtom, newConfig);
+    set(raApiUrlFromQueryAtom, newConfig.url);
+  }
+);
 
 export const raVoiceConfigAdvancedSchema = z.object({
   pitch: z.string(),
@@ -90,7 +114,7 @@ export {
 
 export const legadoSpecificConfigSchema = z.object({
   rateTemplate: z.string().optional(),
-})
+});
 export type LegadoSpecificConfig = z.infer<typeof legadoSpecificConfigSchema>;
 
 async function fetchVoices() {

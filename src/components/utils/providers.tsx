@@ -10,7 +10,6 @@ import {
 } from "@tanstack/react-query";
 import { Provider } from "jotai";
 import type { PropsWithChildren } from "react";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 function makeQueryClient() {
   return new QueryClient({
@@ -48,14 +47,12 @@ export const Providers = ({ children }: PropsWithChildren) => {
   const queryClient = getQueryClient();
   return (
     <QueryClientProvider client={queryClient}>
-      <NuqsAdapter>
-        <Provider>
-          <SidebarProvider>
-            {children}
-            <Toaster richColors />
-          </SidebarProvider>
-        </Provider>
-      </NuqsAdapter>
+      <Provider>
+        <SidebarProvider>
+          {children}
+          <Toaster richColors />
+        </SidebarProvider>
+      </Provider>
     </QueryClientProvider>
   );
 };
