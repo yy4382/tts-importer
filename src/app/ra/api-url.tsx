@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { useAtom, useSetAtom } from "jotai";
 import Link from "next/link";
 import { debounce } from "es-toolkit";
-import { useCallback, useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { raApiConfigAtom, raApiUrlFromQueryAtom } from "./ra-data";
 import {
   Accordion,
@@ -28,16 +28,15 @@ export default function ApiUrl() {
   const apiSite = searchParams.get("api-site");
   const router = useRouter();
 
-  const setApiUrlQuery = useCallback(
-    debounce((url: string | null) => {
+  const debouncedSetApiUrlQuery = useMemo(() => {
+    return debounce((url: string | null) => {
       if (url) {
-        router.replace(`/ra?api-site=${url}`);
+        router.replace(`/ra?api-site=${url}`, { scroll: false });
       } else {
-        router.replace("/ra");
+        router.replace("/ra", { scroll: false });
       }
-    }, 300),
-    [router]
-  );
+    }, 300);
+  }, [router]);
 
   // sync api.url with apiSite URL param (only from URL to state)
   useEffect(() => {
@@ -69,7 +68,7 @@ export default function ApiUrl() {
               onChange={(e) => {
                 setApi((prev) => ({ ...prev, url: e.target.value }));
                 setTimeout(() => {
-                  setApiUrlQuery(e.target.value || null);
+                  debouncedSetApiUrlQuery(e.target.value || null);
                 }, 50);
               }}
             />
