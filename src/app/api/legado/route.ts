@@ -17,7 +17,8 @@ export async function GET(request: Request) {
       },
     });
     posthog?.shutdown();
-    return new Response(legadoConfig(result.data), {
+    const rateTemplate = url.searchParams.get("rate-template") ?? undefined;
+    return new Response(legadoConfig(result.data, rateTemplate), {
       headers: {
         "content-type": "application/json",
       },
