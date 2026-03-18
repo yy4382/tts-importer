@@ -1,8 +1,8 @@
 "use client";
 import type { VoiceConfig, ApiConfig } from "@/lib/azure/schema";
 import { useCopyToClipboard } from "@/hooks/use-clipboard";
-import genLegadoConfig from "@/lib/azure/legado";
-import { useMemo } from "react";
+import genLegadoConfig, { DEFAULT_AZURE_RATE_TEMPLATE } from "@/lib/azure/legado";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { QrCodeIcon, CircleHelp } from "lucide-react";
 import {
@@ -24,6 +24,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+function appendRateTemplate(baseUrl: string, rateTemplate: string) {
+  if (!rateTemplate) return baseUrl;
+  const url = new URL(baseUrl);
+  url.searchParams.set("rate-template", rateTemplate);
+  return url.toString();
+}
 
 export function LegadoExport({
   api,
@@ -33,20 +42,22 @@ export function LegadoExport({
   voiceConfig: VoiceConfig;
 }) {
   const copy = useCopyToClipboard();
+  const [rateTemplate, setRateTemplate] = useState("");
 
   const legadoConfig = useMemo(() => {
-    return genLegadoConfig({ api, voice: voiceConfig });
-  }, [api, voiceConfig]);
+    return genLegadoConfig({ api, voice: voiceConfig }, rateTemplate || undefined);
+  }, [api, voiceConfig, rateTemplate]);
 
-  const configUrl = config2urlNoThrow(
+  const baseConfigUrl = config2urlNoThrow(
     { api, voice: voiceConfig },
     window.location.origin,
     "/api/legado"
   );
-  if (configUrl instanceof Error) {
-    return <p>{configUrl.message}</p>;
+  if (baseConfigUrl instanceof Error) {
+    return <p>{baseConfigUrl.message}</p>;
   }
 
+  const configUrl = appendRateTemplate(baseConfigUrl, rateTemplate);
   const directUrl = `legado://import/httpTTS?src=${encodeURIComponent(
     configUrl
   )}`;
@@ -150,6 +161,28 @@ export function LegadoExport({
         </Button>
       </ActionLine>
       <Separator />
+
+      <Label className="mt-2 flex flex-col gap-2 items-start">
+        语速映射模板（可选）
+        <Input
+          value={rateTemplate}
+          onChange={(e) => setRateTemplate(e.target.value)}
+          placeholder={DEFAULT_AZURE_RATE_TEMPLATE}
+        />
+      </Label>
+      <div className="prose dark:prose-invert prose-sm prose-p:my-1">
+        <p>
+          默认为 <code>{DEFAULT_AZURE_RATE_TEMPLATE}</code>。
+          除非必要，请勿修改（保持留空即为默认值）。
+          <a
+            href="https://github.com/yy4382/read-aloud/issues/12#issuecomment-3334516431"
+            className="text-blue-500 underline"
+          >
+            查看详情
+          </a>
+        </p>
+      </div>
+
       <p className="text-sm text-gray-500">
         同样适用于服务器端阅读等其他支持阅读格式语音源的软件。
       </p>
