@@ -174,6 +174,12 @@ export function LegadoExport({
         <p>
           默认为 <code>{DEFAULT_AZURE_RATE_TEMPLATE}</code>。
           除非必要，请勿修改（保持留空即为默认值）。
+          <a
+            href="https://github.com/yy4382/read-aloud/issues/12#issuecomment-3334516431"
+            className="text-blue-500 underline"
+          >
+            查看详情
+          </a>
         </p>
       </div>
 
