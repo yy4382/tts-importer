@@ -7,7 +7,7 @@ import {
 } from "./schema";
 import z from "zod";
 
-export const DEFAULT_AZURE_RATE_TEMPLATE = "{{speakSpeed*4}}%";
+export const DEFAULT_AZURE_RATE_TEMPLATE = "{{speakSpeed/10}}";
 
 function buildSSML(
   { shortName, style }: { shortName: string; style: string | null },
