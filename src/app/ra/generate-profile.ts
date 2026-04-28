@@ -28,7 +28,7 @@ function buildLegadoUrl(
   if (volume) url.searchParams.set("volume", volume);
   if (token) url.searchParams.set("token", token);
   if (format) url.searchParams.set("format", format);
-  return `${url.toString()}&rate=${rate}&text={{String(speakText).replace(/&/g, '&amp;').replace(/\\\"/g, '&quot;').replace(/'/g, '&apos;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}}`;
+  return `${url.toString()}&rate=${rate}&text={{encodeURIComponent(speakText)}}`;
 }
 
 export function generateProfileLegado(state: RaState, legadoSpecific: LegadoSpecificConfig) {
