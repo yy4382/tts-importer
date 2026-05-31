@@ -112,8 +112,15 @@ export {
   raStateSchema,
 };
 
+export const legadoTextEncodingSchema = z.enum([
+  "encodeURIComponent",
+  "xmlEscape",
+]);
+export type LegadoTextEncoding = z.infer<typeof legadoTextEncodingSchema>;
+
 export const legadoSpecificConfigSchema = z.object({
   rateTemplate: z.string().optional(),
+  textEncoding: legadoTextEncodingSchema.optional(),
 });
 export type LegadoSpecificConfig = z.infer<typeof legadoSpecificConfigSchema>;
 

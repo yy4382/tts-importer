@@ -108,6 +108,26 @@ describe("generateProfileLegado", () => {
     expect(config.url).toContain("rate={{customRate}}");
   });
 
+  it("defaults to the encodeURIComponent text template", () => {
+    const state = createState();
+
+    const result = generateProfileLegado(state, {});
+    const config = JSON.parse(result) as { url: string };
+
+    expect(config.url).toContain("text={{encodeURIComponent(speakText)}}");
+  });
+
+  it("uses the legacy replace template in xmlEscape compat mode", () => {
+    const state = createState();
+
+    const result = generateProfileLegado(state, { textEncoding: "xmlEscape" });
+    const config = JSON.parse(result) as { url: string };
+
+    expect(config.url).toContain("String(speakText).replace(");
+    expect(config.url).toContain("&amp;");
+    expect(config.url).not.toContain("encodeURIComponent");
+  });
+
   it("builds multiple entries when multiple voices supplied", () => {
     const state = createState({
       voice: {

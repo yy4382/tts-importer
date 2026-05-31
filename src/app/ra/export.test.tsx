@@ -46,6 +46,7 @@ vi.mock(
 vi.mock(import("./generate-profile"), () => ({
   generateProfileLegado: mocks.generate.legado,
   generateProfileIreadnote: mocks.generate.ireadnote,
+  DEFAULT_LEGADO_TEXT_ENCODING: "encodeURIComponent",
 }));
 
 vi.stubGlobal("navigator", {
@@ -199,6 +200,29 @@ describe("legado export", () => {
       expect.anything(),
       expect.objectContaining({
         rateTemplate: "{{(speakSpeed-4.9)/30+0.5}}",
+      })
+    );
+  });
+  test("text encoding compat mode applied", async () => {
+    const user = userEvent.setup();
+    render(<ExportRa />, {
+      wrapper: ({ children }) => (
+        <TestProvider
+          // @ts-expect-error ignore
+          initialValues={[
+            [raApiConfigAtom, { url: "https://example.com", token: "" }],
+          ]}
+        >
+          {children}
+        </TestProvider>
+      ),
+    });
+    await user.click(screen.getByRole("radio", { name: /兼容模式/ }));
+    await user.click(screen.getByRole("button"));
+    expect(mocks.generate.legado).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        textEncoding: "xmlEscape",
       })
     );
   });

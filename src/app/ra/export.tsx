@@ -5,6 +5,7 @@ import { useAtomValue } from "jotai";
 import { toast } from "sonner";
 import {
   LegadoSpecificConfig,
+  LegadoTextEncoding,
   RaApiConfig,
   raApiConfigAtom,
   RaState,
@@ -15,6 +16,7 @@ import {
 import {
   generateProfileLegado,
   generateProfileIreadnote,
+  DEFAULT_LEGADO_TEXT_ENCODING,
 } from "@/app/ra/generate-profile";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { posthog } from "posthog-js";
@@ -22,6 +24,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TabsContent } from "@radix-ui/react-tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useState } from "react";
 
 function copyToClipboard(text: string) {
@@ -113,6 +116,7 @@ function LegadoSpecificConfigComp({
   config: LegadoSpecificConfig;
   setConfig: (config: LegadoSpecificConfig) => void;
 }) {
+  const textEncoding = config.textEncoding ?? DEFAULT_LEGADO_TEXT_ENCODING;
   return (
     <div>
       <Label className="mt-4 flex flex-col gap-2 items-start">
@@ -131,6 +135,38 @@ function LegadoSpecificConfigComp({
           除非必要，请勿修改（保持留空即为默认值）。
           <a
             href="https://github.com/yy4382/read-aloud/issues/12#issuecomment-3334516431"
+            className="text-blue-500 underline"
+          >
+            查看详情
+          </a>
+        </p>
+      </div>
+      <div className="mt-4 flex flex-col gap-2 items-start">
+        <Label>兼容模式</Label>
+        <RadioGroup
+          value={textEncoding}
+          onValueChange={(value) =>
+            setConfig({
+              ...config,
+              textEncoding: value as LegadoTextEncoding,
+            })
+          }
+        >
+          <Label className="flex items-center gap-2 font-normal">
+            <RadioGroupItem value="encodeURIComponent" />
+            默认
+          </Label>
+          <Label className="flex items-center gap-2 font-normal">
+            <RadioGroupItem value="xmlEscape" />
+            兼容模式
+          </Label>
+        </RadioGroup>
+      </div>
+      <div className="prose dark:prose-invert prose-sm mt-2 prose-p:my-1">
+        <p>
+          一般保持默认即可。如果导入后朗读报错或没有声音，请切换到兼容模式再试。
+          <a
+            href="https://github.com/yy4382/tts-importer/pull/33#issuecomment-4586817872"
             className="text-blue-500 underline"
           >
             查看详情

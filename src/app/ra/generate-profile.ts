@@ -1,5 +1,6 @@
 import {
   LegadoSpecificConfig,
+  LegadoTextEncoding,
   raApiConfigSchema,
   RaState,
   raVoiceConfigAdvancedSchema,
@@ -13,6 +14,23 @@ function getSynthesisUrl(apiBase: string) {
   return url;
 }
 export const DEFAULT_LEGADO_RATE_TEMPLATE = "{{speakSpeed/10}}";
+
+export const DEFAULT_LEGADO_TEXT_ENCODING: LegadoTextEncoding =
+  "encodeURIComponent";
+
+/**
+ * Legado-style apps embed a JS-like expression for the `text` param. Different
+ * readers support different runtimes, so we offer multiple "compat modes":
+ * - `encodeURIComponent` (default): correctly handles `%` and other reserved
+ *   characters, but requires the reader to expose `encodeURIComponent`.
+ * - `xmlEscape`: the legacy fallback that only does `String.replace`, which
+ *   more limited template parsers support.
+ */
+const LEGADO_TEXT_TEMPLATES: Record<LegadoTextEncoding, string> = {
+  encodeURIComponent: "{{encodeURIComponent(speakText)}}",
+  xmlEscape: `{{String(speakText).replace(/&/g, '&amp;').replace(/\\"/g, '&quot;').replace(/'/g, '&apos;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}}`,
+};
+
 function buildLegadoUrl(
   api: z.infer<typeof raApiConfigSchema>,
   voiceName: string,
@@ -21,6 +39,10 @@ function buildLegadoUrl(
 ) {
   const { pitch, volume, format } = advanced;
   const rate = legadoSpecific.rateTemplate || DEFAULT_LEGADO_RATE_TEMPLATE;
+  const textTemplate =
+    LEGADO_TEXT_TEMPLATES[
+      legadoSpecific.textEncoding ?? DEFAULT_LEGADO_TEXT_ENCODING
+    ];
   const url = getSynthesisUrl(api.url);
   const { token } = api;
   url.searchParams.set("voiceName", voiceName);
@@ -28,7 +50,7 @@ function buildLegadoUrl(
   if (volume) url.searchParams.set("volume", volume);
   if (token) url.searchParams.set("token", token);
   if (format) url.searchParams.set("format", format);
-  return `${url.toString()}&rate=${rate}&text={{encodeURIComponent(speakText)}}`;
+  return `${url.toString()}&rate=${rate}&text=${textTemplate}`;
 }
 
 export function generateProfileLegado(state: RaState, legadoSpecific: LegadoSpecificConfig) {
