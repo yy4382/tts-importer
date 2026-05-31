@@ -46,7 +46,7 @@ vi.mock(
 vi.mock(import("./generate-profile"), () => ({
   generateProfileLegado: mocks.generate.legado,
   generateProfileIreadnote: mocks.generate.ireadnote,
-  DEFAULT_LEGADO_TEXT_ENCODING: "encodeURIComponent",
+  DEFAULT_LEGADO_TEXT_ENCODING: "encodeURIComponent" as const,
 }));
 
 vi.stubGlobal("navigator", {
